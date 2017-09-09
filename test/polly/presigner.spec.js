@@ -2,19 +2,6 @@ var helpers = require('../helpers');
 var AWS = helpers.AWS;
 
 describe('AWS.Polly.Presigner', function() {
-  var getDate = null;
-  // Each test will treat the date as 'Date(0)'
-  beforeEach(function() {
-    getDate = AWS.util.date.getDate;
-    AWS.util.date.getDate = function() {
-      return new Date(0);
-    };
-  });
-
-  afterEach(function() {
-    AWS.util.date.getDate = getDate;
-  });
-
   describe('constructor', function() {
 
     it('can use global config if no options are provided', function() {
