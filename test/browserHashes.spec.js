@@ -21,7 +21,7 @@ describe('Browser hash implementations', function() {
                     return function() {
                         var hash = new ctor();
                         hash.update(input);
-                        expect(hash.digest('hex')).to.equal(expected);
+                        expect(hash.digest()).to.eql(new Buffer(expected, 'hex'));
                     }
                 })(
                     new Buffer(hashVectors[i].input, 'base64'),
@@ -43,7 +43,8 @@ describe('Browser hash implementations', function() {
                         if (truncate) {
                             digest = digest.slice(0, truncate);
                         }
-                        expect(digest.toString('hex')).to.equal(expected);
+                        //in node <= 0.10 buffer.toString cannot guarentee transfer to string, sometimes returns a Dataview
+                        expect(digest.toString() === '[object Uint8Array]' ? new Buffer(digest) : digest).to.eql(new Buffer(expected, 'hex'));
                     }
                 })(
                     new Buffer(hmacVectors[i].key, 'hex'),
