@@ -640,7 +640,7 @@
   });
 
   describe('AWS.util.merge', function() {
-    return it('should merge an object into another and return new object', function() {
+    it('should merge an object into another and return new object', function() {
       var newObj, obj;
       obj = {
         a: 1,
