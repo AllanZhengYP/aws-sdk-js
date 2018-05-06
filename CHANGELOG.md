@@ -1,6 +1,19 @@
 # Changelog for AWS SDK for JavaScript
-<!--LATEST=2.230.1-->
+<!--LATEST=2.233.1-->
 <!--ENTRYINSERT-->
+
+## 2.233.1
+* feature: GuardDuty: Amazon GuardDuty is adding five new API operations for creating and managing filters. For each filter, you can specify a criteria and an action. The action you specify is applied to findings that match the specified criteria.
+
+## 2.232.1
+* feature: AppSync: This release adds support for authorizing your AWS AppSync endpoint with an OpenID Connect compliant service and also to configure your AWS AppSync endpoint to log requests to Amazon CloudWatch Logs.
+* feature: CodeBuild: CodeBuild now supports CORS. The CodeBuild service is now included in the default browser version of the SDK.
+* feature: ConfigService: Update ResourceType enum with values for Lambda, ElasticBeanstalk, WAF and ElasticLoadBalancing resources
+
+## 2.231.1
+* feature: CodePipeline: Added support for webhooks with accompanying definitions as needed in the AWS CodePipeline API Guide.
+* feature: EC2: Amazon EC2 Fleet is a new feature that simplifies the provisioning of Amazon EC2 capacity across different EC2 instance types, Availability Zones, and the On-Demand, Reserved Instance, and Spot Instance purchase models. With a single API call, you can now provision capacity to achieve desired scale, performance, and cost.
+* feature: SSM: Added support for new parameter, DocumentVersion, for SendCommand API. Users can now specify version of SSM document to be executed on the target(s).
 
 ## 2.230.1
 * feature: AlexaForBusiness: Adds ListDeviceEvents API to get a paginated list of device events (such as ConnectionStatus). This release also adds ConnectionStatus field to GetDevice and SearchDevices API.

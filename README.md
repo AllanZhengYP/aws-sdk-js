@@ -25,7 +25,7 @@ version.
 To use the SDK in the browser, simply add the following script tag to your
 HTML pages:
 
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.230.1.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.233.1.min.js"></script>
 
 You can also build a custom browser SDK with your specified set of AWS services.
 This can allow you to reduce the SDK's size, specify different API versions of
@@ -131,7 +131,7 @@ var S3 = require('aws-sdk/clients/s3');
 
 ### With React
 
-To create React applications with AWS SDK, you can use [AWS Amplify Library](https://aws.github.io/aws-amplify/media/react_native_guide?utm_source=aws-js-sdk&utm_campaign=react) which provides React components and CLI support to work with AWS services.
+To create React applications with AWS SDK, you can use [AWS Amplify Library](https://aws.github.io/aws-amplify/media/react_guide?utm_source=aws-js-sdk&utm_campaign=react) which provides React components and CLI support to work with AWS services.
 
 ### With Angular
 Due to the SDK's reliance on node.js typings, you may encounter compilation 
@@ -141,7 +141,7 @@ typings provided by the SDK in an Angular project created using the Angular CLI.
 To resolve these issues, either add `"types": ["node"]` to the project's `tsconfig.app.json`
 file, or remove the `"types"` field entirely.
 
-[AWS Amplify Library](https://aws.github.io/aws-amplify/media/react_native_guide?utm_source=aws-js-sdk&utm_campaign=angular) provides Angular components and CLI support to work with AWS services.
+[AWS Amplify Library](https://aws.github.io/aws-amplify/media/angular_guide?utm_source=aws-js-sdk&utm_campaign=angular) provides Angular components and CLI support to work with AWS services.
 
 ### Known Limitations
 There are a few known limitations with the bundled TypeScript definitions at this time:
