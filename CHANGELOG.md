@@ -1,6 +1,46 @@
 # Changelog for AWS SDK for JavaScript
-<!--LATEST=2.244.1-->
+<!--LATEST=2.252.1-->
 <!--ENTRYINSERT-->
+
+## 2.252.1
+* feature: CostExplorer: Cost Explorer API is providing programmatic access to RI saving metrics to enable customers to optimize their reservations.
+* feature: Polly: Amazon Polly adds new French voice - "Lea"
+* feature: RDS: This release adds customizable processor features for RDS instances.
+* feature: Shield: DDoS Response Team access management for AWS Shield
+
+## 2.251.1
+* feature: AppStream: Amazon AppStream 2.0 adds support for Google Drive for G Suite. With this feature, customers will be able to connect their G Suite accounts with AppStream 2.0 and enable Google Drive access for an AppStream 2.0 stack. Users of the stack can then link their Google Drive using their G Suite login credentials and use their existing files stored in Drive with their AppStream 2.0 applications. File changes will be synced automatically to Google cloud. 
+* feature: EC2: You are now able to use instance storage (up to 3600 GB of NVMe based SSD) on M5 instances, the next generation of EC2's General Purpose instances in us-east-1, us-west-2, us-east-2, eu-west-1 and ca-central-1. M5 instances offer up to 96 vCPUs, 384 GiB of DDR4 instance memory, 25 Gbps in Network bandwidth and improved EBS and Networking bandwidth on smaller instance sizes and provide a balance of compute, memory and network resources for many applications.
+* feature: EKS: Amazon Elastic Container Service for Kubernetes (Amazon EKS) is a fully managed service that makes it easy to deploy, manage, and scale containerized applications using Kubernetes on AWS. Amazon EKS runs the Kubernetes control plane for you across multiple AWS availability zones to eliminate a single point of failure. Amazon EKS is certified Kubernetes conformant so you can use existing tooling and plugins from partners and the Kubernetes community. Applications running on any standard Kubernetes environment are fully compatible and can be easily migrated to Amazon EKS. 
+* feature: MediaConvert: This release adds the support for Common Media Application Format (CMAF) fragmented outputs, RF64 WAV audio output format, and HEV1 or HEVC1 MP4 packaging types when using HEVC in DASH or CMAF outputs.
+* feature: SageMaker: Amazon SageMaker has added the ability to run hyperparameter tuning jobs. A hyperparameter tuning job will create and evaluate multiple training jobs while tuning algorithm hyperparameters, to optimize a customer specified objective metric.
+
+## 2.250.1
+* feature: DirectoryService: Added ResetUserPassword API. Customers can now reset their users' passwords without providing the old passwords in Simple AD and Microsoft AD.
+* feature: Iot: We are releasing force CancelJob and CancelJobExecution functionalities to customers.
+* feature: MediaTailor: AWS Elemental MediaTailor is a personalization and monetization service that allows scalable server-side ad insertion. The service enables you to serve targeted ads to viewers while maintaining broadcast quality in over-the-top (OTT) video applications. This SDK allows user access to the AWS Elemental MediaTailor configuration interface.
+* feature: SNS: The SNS Subscribe API has been updated with two new optional parameters: Attributes and ReturnSubscriptionArn. Attributes is a map of subscription attributes which can be one or more of: FilterPolicy, DeliveryPolicy, and RawMessageDelivery. ReturnSubscriptionArn is a boolean parameter that overrides the default behavior of returning "pending confirmation" for subscriptions that require confirmation instead of returning the subscription ARN.
+
+## 2.249.1
+* feature: ELBv2: This release of Elastic Load Balancing introduces user authentication on Application Load Balancer.
+* feature: Neptune: Amazon Neptune is a fast, reliable graph database service that makes it easy to build and run applications that work with highly connected datasets. Neptune supports popular graph models Property Graph and W3C's Resource Description Frame (RDF), and their respective query languages Apache TinkerPop Gremlin 3.3.2 and SPARQL 1.1. 
+
+## 2.248.1
+* feature: PI: Performance Insights is a feature of Amazon Relational Database Service (RDS) that helps you quickly assess the load on your database, and determine when and where to take action. You can use the SDK to retrieve Performance Insights data and integrate your monitoring solutions.
+
+## 2.247.1
+* feature: AppStream: This API update enables customers to control whether users can transfer data between their local devices and their streaming applications through file uploads and downloads, clipboard operations, or printing to local devices
+* feature: ConfigService: AWS Config adds support for retention period, allowing you to specify a retention period for your AWS Config configuration items.
+* feature: Glue: AWS Glue now sends a delay notification to Amazon CloudWatch Events when an ETL job runs longer than the specified delay notification threshold.
+* feature: Iot: We are exposing DELETION_IN_PROGRESS as a new job status in regards to the release of DeleteJob API.
+
+## 2.246.1
+* feature: CodeBuild: AWS CodeBuild Adds Support for Windows Builds.
+* feature: RDS: This release adds CloudWatch Logs integration capabilities to RDS Aurora MySQL clusters
+
+## 2.245.1
+* feature: ECS: Amazon Elastic Container Service (ECS) adds service discovery for services that use host or bridged network mode. ECS can now also register instance IPs for active tasks using bridged and host networking with Route 53, making them available via DNS.
+* feature: Inspector: We are launching the ability to target all EC2 instances. With this launch, resourceGroupArn is now optional for CreateAssessmentTarget and UpdateAssessmentTarget. If resourceGroupArn is not specified, all EC2 instances in the account in the AWS region are included in the assessment target.
 
 ## 2.244.1
 * feature: CloudFormation: 1) Filtered Update for StackSet based on Accounts and Regions: This feature will allow flexibility for the customers to roll out updates on a StackSet based on specific Accounts and Regions.   2) Support for customized ExecutionRoleName: This feature will allow customers to attach ExecutionRoleName to the StackSet thus ensuring more security and controlling the behavior of any AWS resources in the target accounts.

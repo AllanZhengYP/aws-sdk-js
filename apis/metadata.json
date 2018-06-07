@@ -566,5 +566,17 @@
   "iot1clickprojects": {
     "prefix": "iot1click-projects",
     "name": "IoT1ClickProjects"
+  },
+  "pi": {
+    "name": "PI"
+  },
+  "neptune": {
+    "name": "Neptune"
+  },
+  "mediatailor": {
+    "name": "MediaTailor"
+  },
+  "eks": {
+    "name": "EKS"
   }
 }
