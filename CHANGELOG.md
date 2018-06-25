@@ -1,6 +1,52 @@
 # Changelog for AWS SDK for JavaScript
-<!--LATEST=2.252.1-->
+<!--LATEST=2.263.1-->
 <!--ENTRYINSERT-->
+
+## 2.263.1
+* feature: AlexaForBusiness:  Introduce DeviceNotRegisteredException for AWSMoneypenny
+* feature: AppStream: This API update enables customers to find their VPC private IP address and ENI ID associated with AppStream streaming sessions.
+
+## 2.262.1
+* feature: CloudDirectory: SDK release to support Flexible Schema initiative being carried out by Amazon Cloud Directory. This feature lets customers using new capabilities like: variant typed attributes, dynamic facets and AWS managed Cloud Directory schemas.
+
+## 2.261.1
+* feature: Macie: Amazon Macie is a security service that uses machine learning to automatically discover, classify, and protect sensitive data in AWS. With this release, we are launching the following Macie HTTPS API operations: AssociateMemberAccount, AssociateS3Resources, DisassociateMemberAccount, DisassociateS3Resources, ListMemberAccounts, ListS3Resources, and UpdateS3Resources. With these API operations you can issue HTTPS requests directly to the service.
+* feature: Neptune: Deprecates the PubliclyAccessible parameter that is not supported by Amazon Neptune.
+* feature: SSM: Adds Amazon Linux 2 support to Patch Manager
+
+## 2.260.1
+* feature: ACMPCA: CA Restore is a new feature within AWS Certificate Manager Private Certificate Authority (ACM PCA) that allows you to restore a private certificate authority that has been deleted. When you issue the DeleteCertificateAuthority call, you can now specify the number of days (7-30, with 30 being the default) in which the private certificate authority will remain in the DELETED state. During this time, the private certificate authority can be restored with the RestoreCertificateAuthority API call and then be returned to the PENDING_CERTIFICATE or DISABLED state, depending upon the state prior to deletion.  Summary of API Changes: 1). Added RestoreCertificateAuthority API call; 2). Added optional PermanentDeletionTimeInDays parameter to DeleteCertificateAuthority API call. If this parameter is not specified, the DeleteCertificateAuthority API call will use a 30 day restore period as default.
+* feature: MediaLive: AWS Elemental MediaLive now makes Reserved Outputs and Inputs available through the AWS Management Console and API. You can reserve outputs and inputs with a 12 month commitment in exchange for discounted hourly rates. Pricing is available at https://aws.amazon.com/medialive/pricing/
+* feature: RDS: This release adds a new parameter to specify the retention period for Performance Insights data for RDS instances. You can either choose 7 days (default) or 731 days. For more information, see Amazon RDS Documentation.
+
+## 2.259.1
+* bugfix: S3: Fixes edge case where event message lengths were sometimes incorrectly calculated.
+* feature: MediaConvert: This release adds language code support according to the ISO-639-3 standard. Custom 3-character language codes are now supported on input and output for both audio and captions.
+
+## 2.258.1
+* bugfix: Core: Updates SDK to attempt to determine the Content-Length of a payload when an operation uses the unsigned-body trait. Content-Length will still not be calculated for non-file streams. This will allow file streams to be passed to MediaStoreData.putObject.
+* feature: APIGateway: Support for PRIVATE endpoint configuration type
+* feature: DynamoDB: Added two new fields SSEType and KMSMasterKeyArn to SSEDescription block in describe-table output.
+* feature: IoTAnalytics: With this release, AWS IoT Analytics allows you to tag resources. Tags are metadata that you can create and use to manage your IoT Analytics resources. For more information about tagging, see AWS Tagging Strategies. For technical documentation, look for the tagging operations in the AWS IoT Analytics API reference or User Guide.
+
+## 2.257.1
+* feature: SSM: Added support for new parameter, CloudWatchOutputConfig, for SendCommand API. Users can now have RunCommand output sent to CloudWatchLogs.
+* feature: ServiceCatalog: Introduced new length limitations for few of the product fields.
+
+## 2.256.1
+* feature: DeviceFarm: Adding VPCEndpoint support for Remote access. Allows customers to be able to access their private endpoints/services running in their VPC during remote access.
+* feature: ECS: Introduces daemon scheduling capability to deploy one task per instance on selected instances in a cluster.  Adds a "force" flag to the DeleteService API to delete a service without requiring to scale down the number of tasks to zero.
+* feature: S3: Adds support for S3 Select.
+
+## 2.255.1
+* feature: CloudDirectory: Amazon Cloud Directory now supports optional attributes on Typed Links, giving users the ability to associate and manage data on Typed Links. 
+* feature: StorageGateway:  AWS Storage Gateway now enables you to create cached volumes and tapes with AWS KMS support.
+
+## 2.254.1
+* feature: MediaTailor: Fixes a bug in the request URIs for MediaTailor PlaybackConfiguration operations.
+
+## 2.253.1
+* feature: MediaLive: AWS Elemental MediaLive now makes channel log information available through Amazon CloudWatch Logs. You can set up each MediaLive channel with a logging level; when the channel is run, logs will automatically be published to your account on Amazon CloudWatch Logs
 
 ## 2.252.1
 * feature: CostExplorer: Cost Explorer API is providing programmatic access to RI saving metrics to enable customers to optimize their reservations.
