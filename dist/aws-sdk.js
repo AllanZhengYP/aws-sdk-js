@@ -1,4 +1,4 @@
-// AWS SDK for JavaScript v2.263.1
+// AWS SDK for JavaScript v2.265.1
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // License at https://sdk.amazonaws.com/js/BUNDLE_LICENSE.txt
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
@@ -13361,25 +13361,6 @@ module.exports={
         }
       }
     },
-    "DeleteServiceLinkedRole": {
-      "http": {
-        "method": "DELETE",
-        "requestUri": "/2017-10-30/service-linked-role/{RoleName}",
-        "responseCode": 204
-      },
-      "input": {
-        "type": "structure",
-        "required": [
-          "RoleName"
-        ],
-        "members": {
-          "RoleName": {
-            "location": "uri",
-            "locationName": "RoleName"
-          }
-        }
-      }
-    },
     "DeleteStreamingDistribution": {
       "http": {
         "method": "DELETE",
@@ -13893,7 +13874,7 @@ module.exports={
         "type": "structure",
         "members": {
           "DistributionList": {
-            "shape": "S4h"
+            "shape": "S4g"
           }
         },
         "payload": "DistributionList"
@@ -13928,7 +13909,7 @@ module.exports={
         "type": "structure",
         "members": {
           "DistributionList": {
-            "shape": "S4h"
+            "shape": "S4g"
           }
         },
         "payload": "DistributionList"
@@ -15622,7 +15603,7 @@ module.exports={
         }
       }
     },
-    "S4h": {
+    "S4g": {
       "type": "structure",
       "required": [
         "Marker",
@@ -67008,6 +66989,26 @@ module.exports={
         }
       }
     },
+    "CreateExclusionsPreview": {
+      "input": {
+        "type": "structure",
+        "required": [
+          "assessmentTemplateArn"
+        ],
+        "members": {
+          "assessmentTemplateArn": {}
+        }
+      },
+      "output": {
+        "type": "structure",
+        "required": [
+          "previewToken"
+        ],
+        "members": {
+          "previewToken": {}
+        }
+      }
+    },
     "CreateResourceGroup": {
       "input": {
         "type": "structure",
@@ -67016,7 +67017,7 @@ module.exports={
         ],
         "members": {
           "resourceGroupTags": {
-            "shape": "Sm"
+            "shape": "Sp"
           }
         }
       },
@@ -67071,7 +67072,7 @@ module.exports={
         ],
         "members": {
           "assessmentRunArns": {
-            "shape": "Sv"
+            "shape": "Sy"
           }
         }
       },
@@ -67194,7 +67195,7 @@ module.exports={
         ],
         "members": {
           "assessmentTargetArns": {
-            "shape": "Sv"
+            "shape": "Sy"
           }
         }
       },
@@ -67242,7 +67243,7 @@ module.exports={
         ],
         "members": {
           "assessmentTemplateArns": {
-            "shape": "Sv"
+            "shape": "Sy"
           }
         }
       },
@@ -67315,6 +67316,59 @@ module.exports={
         }
       }
     },
+    "DescribeExclusions": {
+      "input": {
+        "type": "structure",
+        "required": [
+          "exclusionArns"
+        ],
+        "members": {
+          "exclusionArns": {
+            "type": "list",
+            "member": {}
+          },
+          "locale": {}
+        }
+      },
+      "output": {
+        "type": "structure",
+        "required": [
+          "exclusions",
+          "failedItems"
+        ],
+        "members": {
+          "exclusions": {
+            "type": "map",
+            "key": {},
+            "value": {
+              "type": "structure",
+              "required": [
+                "arn",
+                "title",
+                "description",
+                "recommendation",
+                "scopes"
+              ],
+              "members": {
+                "arn": {},
+                "title": {},
+                "description": {},
+                "recommendation": {},
+                "scopes": {
+                  "shape": "S1x"
+                },
+                "attributes": {
+                  "shape": "S21"
+                }
+              }
+            }
+          },
+          "failedItems": {
+            "shape": "S9"
+          }
+        }
+      }
+    },
     "DescribeFindings": {
       "input": {
         "type": "structure",
@@ -67323,7 +67377,7 @@ module.exports={
         ],
         "members": {
           "findingArns": {
-            "shape": "Sv"
+            "shape": "Sy"
           },
           "locale": {}
         }
@@ -67400,7 +67454,7 @@ module.exports={
                   "type": "boolean"
                 },
                 "attributes": {
-                  "shape": "S27"
+                  "shape": "S21"
                 },
                 "userAttributes": {
                   "shape": "S4"
@@ -67428,7 +67482,7 @@ module.exports={
         ],
         "members": {
           "resourceGroupArns": {
-            "shape": "Sv"
+            "shape": "Sy"
           }
         }
       },
@@ -67451,7 +67505,7 @@ module.exports={
               "members": {
                 "arn": {},
                 "tags": {
-                  "shape": "Sm"
+                  "shape": "Sp"
                 },
                 "createdAt": {
                   "type": "timestamp"
@@ -67473,7 +67527,7 @@ module.exports={
         ],
         "members": {
           "rulesPackageArns": {
-            "shape": "Sv"
+            "shape": "Sy"
           },
           "locale": {}
         }
@@ -67535,6 +67589,57 @@ module.exports={
         }
       }
     },
+    "GetExclusionsPreview": {
+      "input": {
+        "type": "structure",
+        "required": [
+          "assessmentTemplateArn",
+          "previewToken"
+        ],
+        "members": {
+          "assessmentTemplateArn": {},
+          "previewToken": {},
+          "nextToken": {},
+          "maxResults": {
+            "type": "integer"
+          },
+          "locale": {}
+        }
+      },
+      "output": {
+        "type": "structure",
+        "required": [
+          "previewStatus"
+        ],
+        "members": {
+          "previewStatus": {},
+          "exclusionPreviews": {
+            "type": "list",
+            "member": {
+              "type": "structure",
+              "required": [
+                "title",
+                "description",
+                "recommendation",
+                "scopes"
+              ],
+              "members": {
+                "title": {},
+                "description": {},
+                "recommendation": {},
+                "scopes": {
+                  "shape": "S1x"
+                },
+                "attributes": {
+                  "shape": "S21"
+                }
+              }
+            }
+          },
+          "nextToken": {}
+        }
+      }
+    },
     "GetTelemetryMetadata": {
       "input": {
         "type": "structure",
@@ -67552,7 +67657,7 @@ module.exports={
         ],
         "members": {
           "telemetryMetadata": {
-            "shape": "S2r"
+            "shape": "S3a"
           }
         }
       }
@@ -67613,7 +67718,7 @@ module.exports={
                 "agentHealthDetails": {},
                 "autoScalingGroup": {},
                 "telemetryMetadata": {
-                  "shape": "S2r"
+                  "shape": "S3a"
                 }
               }
             }
@@ -67627,7 +67732,7 @@ module.exports={
         "type": "structure",
         "members": {
           "assessmentTemplateArns": {
-            "shape": "S37"
+            "shape": "S3o"
           },
           "filter": {
             "type": "structure",
@@ -67638,19 +67743,19 @@ module.exports={
                 "member": {}
               },
               "durationRange": {
-                "shape": "S3b"
+                "shape": "S3s"
               },
               "rulesPackageArns": {
-                "shape": "S3c"
+                "shape": "S3t"
               },
               "startTimeRange": {
-                "shape": "S3d"
+                "shape": "S3u"
               },
               "completionTimeRange": {
-                "shape": "S3d"
+                "shape": "S3u"
               },
               "stateChangeTimeRange": {
-                "shape": "S3d"
+                "shape": "S3u"
               }
             }
           },
@@ -67667,7 +67772,7 @@ module.exports={
         ],
         "members": {
           "assessmentRunArns": {
-            "shape": "S3f"
+            "shape": "S3w"
           },
           "nextToken": {}
         }
@@ -67696,7 +67801,7 @@ module.exports={
         ],
         "members": {
           "assessmentTargetArns": {
-            "shape": "S3f"
+            "shape": "S3w"
           },
           "nextToken": {}
         }
@@ -67707,17 +67812,17 @@ module.exports={
         "type": "structure",
         "members": {
           "assessmentTargetArns": {
-            "shape": "S37"
+            "shape": "S3o"
           },
           "filter": {
             "type": "structure",
             "members": {
               "namePattern": {},
               "durationRange": {
-                "shape": "S3b"
+                "shape": "S3s"
               },
               "rulesPackageArns": {
-                "shape": "S3c"
+                "shape": "S3t"
               }
             }
           },
@@ -67734,7 +67839,7 @@ module.exports={
         ],
         "members": {
           "assessmentTemplateArns": {
-            "shape": "S3f"
+            "shape": "S3w"
           },
           "nextToken": {}
         }
@@ -67792,12 +67897,39 @@ module.exports={
         }
       }
     },
+    "ListExclusions": {
+      "input": {
+        "type": "structure",
+        "required": [
+          "assessmentRunArn"
+        ],
+        "members": {
+          "assessmentRunArn": {},
+          "nextToken": {},
+          "maxResults": {
+            "type": "integer"
+          }
+        }
+      },
+      "output": {
+        "type": "structure",
+        "required": [
+          "exclusionArns"
+        ],
+        "members": {
+          "exclusionArns": {
+            "shape": "S3w"
+          },
+          "nextToken": {}
+        }
+      }
+    },
     "ListFindings": {
       "input": {
         "type": "structure",
         "members": {
           "assessmentRunArns": {
-            "shape": "S37"
+            "shape": "S3o"
           },
           "filter": {
             "type": "structure",
@@ -67819,16 +67951,16 @@ module.exports={
                 "member": {}
               },
               "rulesPackageArns": {
-                "shape": "S3c"
+                "shape": "S3t"
               },
               "attributes": {
-                "shape": "S27"
+                "shape": "S21"
               },
               "userAttributes": {
-                "shape": "S27"
+                "shape": "S21"
               },
               "creationTimeRange": {
-                "shape": "S3d"
+                "shape": "S3u"
               }
             }
           },
@@ -67845,7 +67977,7 @@ module.exports={
         ],
         "members": {
           "findingArns": {
-            "shape": "S3f"
+            "shape": "S3w"
           },
           "nextToken": {}
         }
@@ -67868,7 +68000,7 @@ module.exports={
         ],
         "members": {
           "rulesPackageArns": {
-            "shape": "S3f"
+            "shape": "S3w"
           },
           "nextToken": {}
         }
@@ -67891,7 +68023,7 @@ module.exports={
         ],
         "members": {
           "tags": {
-            "shape": "S45"
+            "shape": "S4o"
           }
         }
       }
@@ -67988,7 +68120,7 @@ module.exports={
         "members": {
           "resourceArn": {},
           "tags": {
-            "shape": "S45"
+            "shape": "S4o"
           }
         }
       }
@@ -68113,7 +68245,7 @@ module.exports={
       "type": "list",
       "member": {}
     },
-    "Sm": {
+    "Sp": {
       "type": "list",
       "member": {
         "type": "structure",
@@ -68126,17 +68258,27 @@ module.exports={
         }
       }
     },
-    "Sv": {
+    "Sy": {
       "type": "list",
       "member": {}
     },
-    "S27": {
+    "S1x": {
+      "type": "list",
+      "member": {
+        "type": "structure",
+        "members": {
+          "key": {},
+          "value": {}
+        }
+      }
+    },
+    "S21": {
       "type": "list",
       "member": {
         "shape": "S5"
       }
     },
-    "S2r": {
+    "S3a": {
       "type": "list",
       "member": {
         "type": "structure",
@@ -68155,11 +68297,11 @@ module.exports={
         }
       }
     },
-    "S37": {
+    "S3o": {
       "type": "list",
       "member": {}
     },
-    "S3b": {
+    "S3s": {
       "type": "structure",
       "members": {
         "minSeconds": {
@@ -68170,11 +68312,11 @@ module.exports={
         }
       }
     },
-    "S3c": {
+    "S3t": {
       "type": "list",
       "member": {}
     },
-    "S3d": {
+    "S3u": {
       "type": "structure",
       "members": {
         "beginDate": {
@@ -68185,11 +68327,11 @@ module.exports={
         }
       }
     },
-    "S3f": {
+    "S3w": {
       "type": "list",
       "member": {}
     },
-    "S45": {
+    "S4o": {
       "type": "list",
       "member": {
         "type": "structure",
@@ -68207,6 +68349,11 @@ module.exports={
 },{}],90:[function(require,module,exports){
 module.exports={
   "pagination": {
+    "GetExclusionsPreview": {
+      "input_token": "nextToken",
+      "output_token": "nextToken",
+      "limit_key": "maxResults"
+    },
     "ListAssessmentRunAgents": {
       "input_token": "nextToken",
       "output_token": "nextToken",
@@ -68228,6 +68375,11 @@ module.exports={
       "limit_key": "maxResults"
     },
     "ListEventSubscriptions": {
+      "input_token": "nextToken",
+      "output_token": "nextToken",
+      "limit_key": "maxResults"
+    },
+    "ListExclusions": {
       "input_token": "nextToken",
       "output_token": "nextToken",
       "limit_key": "maxResults"
@@ -110272,7 +110424,7 @@ module.exports={
                   "ExpressionType": {},
                   "Expression": {},
                   "OutputSerialization": {
-                    "shape": "Sbq"
+                    "shape": "Sbr"
                   }
                 }
               },
@@ -110402,7 +110554,7 @@ module.exports={
             "shape": "Sbd"
           },
           "OutputSerialization": {
-            "shape": "Sbq"
+            "shape": "Sbr"
           }
         }
       },
@@ -111570,7 +111722,10 @@ module.exports={
             "QuoteEscapeCharacter": {},
             "RecordDelimiter": {},
             "FieldDelimiter": {},
-            "QuoteCharacter": {}
+            "QuoteCharacter": {},
+            "AllowQuotedRecordDelimiter": {
+              "type": "boolean"
+            }
           }
         },
         "CompressionType": {},
@@ -111582,7 +111737,7 @@ module.exports={
         }
       }
     },
-    "Sbq": {
+    "Sbr": {
       "type": "structure",
       "members": {
         "CSV": {
@@ -129041,7 +129196,7 @@ AWS.util.update(AWS, {
   /**
    * @constant
    */
-  VERSION: '2.263.1',
+  VERSION: '2.265.1',
 
   /**
    * @api private
@@ -148162,7 +148317,7 @@ function v4(options, buf, offset) {
 module.exports = v4;
 
 },{"./lib/bytesToUuid":344,"./lib/rng":345}],348:[function(require,module,exports){
-// AWS SDK for JavaScript v2.263.1
+// AWS SDK for JavaScript v2.265.1
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // License at https://sdk.amazonaws.com/js/BUNDLE_LICENSE.txt
 require('./browser_loader');
