@@ -557,7 +557,8 @@
     "name": "FMS"
   },
   "secretsmanager": {
-    "name": "SecretsManager"
+    "name": "SecretsManager",
+    "cors": true
   },
   "iotanalytics": {
     "name": "IoTAnalytics"
@@ -584,5 +585,8 @@
   },
   "macie": {
     "name": "Macie"
+  },
+  "dlm": {
+    "name": "DLM"
   }
 }

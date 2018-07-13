@@ -1,6 +1,60 @@
 # Changelog for AWS SDK for JavaScript
-<!--LATEST=2.265.1-->
+<!--LATEST=2.275.1-->
 <!--ENTRYINSERT-->
+
+## 2.275.1
+* feature: AppStream: This API update adds support for sharing AppStream images across AWS accounts within the same region.
+* feature: KinesisVideo: Adds support for HLS video playback of Kinesis Video streams using the KinesisVideo client by including "GET_HLS_STREAMING_SESSION_URL" as an additional APIName parameter in the GetDataEndpoint input.
+* feature: KinesisVideoArchivedMedia: Adds support for HLS video playback of Kinesis Video streams by providing the GetHLSStreamingSessionURL function in the KinesisVideoArchivedMedia client.
+
+## 2.274.1
+* feature: AppSync: This release adds support for configuring HTTP  endpoints as data sources for your AWS AppSync GraphQL API.
+* feature: CodeBuild: Update CodeBuild CreateProject API - serviceRole is a required input 
+* feature: DLM: Amazon Data Lifecycle Manager (DLM) for EBS Snapshots provides a simple, automated way to back up data stored on Amazon EBS volumes. You can define backup and retention schedules for EBS snapshots by creating lifecycle policies based on tags. With this feature, you no longer have to rely on custom scripts to create and manage your backups. This feature is now available in the US East (N. Virginia), US West (Oregon), and Europe (Ireland) AWS regions at no additional cost.
+* feature: EFS: Amazon EFS now allows you to instantly provision the throughput required for your applications independent of the amount of data stored in your file system, allowing you to optimize throughput for your applications performance needs. Starting today, you can provision the throughput your applications require quickly with a few simple steps using AWS Console, AWS CLI or AWS API to achieve consistent performance.
+* feature: IAM: SDK release to support IAM delegated administrator feature. The feature lets customers attach permissions boundary to IAM principals. The IAM principals cannot operate exceeding the permission specified in permissions boundary.
+
+## 2.273.1
+* feature: APIGateway: Support for fine grain throttling for API gateway. 
+* feature: CostExplorer: Starting today, you can access custom Reserved Instance (RI) purchase recommendations for your Amazon Redshift, Amazon ElastiCache, and Amazon Elasticsearch reservations via AWS Cost Explorer API, in addition to accessing RI purchase recommendations for your Amazon EC2 and Amazon RDS reservations.
+* feature: S3: S3 Select support for BZIP2 compressed input files
+* feature: SSM: Support Conditional Branching OnFailure for SSM Automation
+
+## 2.272.1
+* feature: AppStream: This API update adds pagination to the DescribeImages API to support future features and enhancements.
+* feature: CodeBuild: API changes to CodeBuild service, support report build status for Github sources
+* feature: EC2: Support CpuOptions field in Launch Template data and allow Launch Template name to contain hyphen.
+* feature: Glue: AWS Glue adds the ability to crawl DynamoDB tables.
+
+## 2.271.1
+* feature: ApplicationAutoScaling: The release adds support for custom resource auto scaling.
+* feature: CostExplorer: AWS Cost Explorer provides you with Reserved Instance (RI) purchase recommendations based on your total cross-account Amazon EC2 and Amazon RDS usage. Starting today, linked accounts can also access custom RI purchase recommendations for specific linked accounts directly via AWS Cost Explorer API.
+* feature: DMS: Added support for DmsTransfer endpoint type and support for re-validate option in table reload API.
+* feature: Lambda: Add support for .NET Core 2.1 to Lambda.
+* feature: TranscribeService: You can now specify an Amazon S3 output bucket to store the transcription of your audio file when you call the StartTranscriptionJob operation. 
+
+## 2.270.1
+* feature: MediaConvert: This release adds support for the following 1) users can specify tags to be attached to queues, presets, and templates during creation of those resources on MediaConvert. 2) users can now view the count of jobs in submitted state and in progressing state on a per queue basis.
+* feature: ServerlessApplicationRepository: Added required fields and documentation updates for AWS Serverless Application Repository.
+
+## 2.269.1
+* bugfix: browser: Fixed an issue with the browser XML parser logic where the incorrect value may be returned if a complex shape (map, structure) had an immediate child and a nested descendant with the same tag name.
+* feature: CORS: The SecretsManager service supports CORS. This change adds the service to the browser version of the SDK by default.
+* feature: Pinpoint: This release of the Amazon Pinpoint SDK adds the ability to create complex segments and validate phone numbers for SMS messages. It also adds the ability to get or delete endpoints based on user IDs, remove attributes from endpoints, and list the defined channels for an app.
+* feature: SageMaker: Amazon SageMaker NotebookInstances supports 'Updating' as a NotebookInstanceStatus.  In addition, DescribeEndpointOutput now includes Docker repository digest of deployed Model images.
+
+## 2.268.1
+* feature: ACM: Adds a "CertificateValidated" waiter to AWS Certificate Manager clients, which polls on a new certificate's validation state.
+* feature: EC2: Added support for customers to tag EC2 Dedicated Hosts
+* feature: Redshift: Feature 1 - On-demand cluster release version - When Amazon Redshift releases a new cluster version, you can choose to upgrade to that version immediately instead of waiting until your next maintenance window. You can also choose to roll back to a previous version. The two new APIs added for managing cluster release version are - ModifyClusterDbRevision, DescribeClusterDbRevisions. Feature 2 - Upgradeable reserved instance - You can now exchange one Reserved Instance for a new Reserved Instance with no changes to the terms of your existing Reserved Instance (term, payment type, or number of nodes). The two new APIs added for managing these upgrades are - AcceptReservedNodeExchange, GetReservedNodeExchangeOfferings. 
+
+## 2.267.1
+* feature: SSM: Execution History and StartAssociationOnce release for State Manager. Users now have the ability to view association execution history with DescribeAssociationExecutions and DescribeAssociationExecutionTargets. Users can also execute an association by calling StartAssociationOnce.
+
+## 2.266.1
+* feature: ElasticBeanstalk: Elastic Beanstalk adds "Suspended" health status to the EnvironmentHealthStatus enum type and updates document.
+* feature: Lambda: Support for SQS as an event source.
+* feature: StorageGateway: AWS Storage Gateway now enables you to use Server Message Block (SMB) protocol  to store and access objects in Amazon Simple Storage Service (S3). 
 
 ## 2.265.1
 * feature: CloudFront: Unpublish delete-service-linked-role API.
