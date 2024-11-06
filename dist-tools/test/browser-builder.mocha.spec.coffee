@@ -88,7 +88,7 @@ describe 'build', ->
         result = helpers.evalCode(code, data)
       cb(err, result)
 
-  it 'always bundles sts and cognitoidentity clients', -> 
+  it 'always bundles sts and cognitoidentity clients', ->
     buildBundle 's3', null, 'window.AWS', (err, AWS) ->
       expect(new AWS.STS().api.apiVersion).to.equal(new helpers.AWS.STS().api.apiVersion)
       expect(new AWS.CognitoIdentity().api.apiVersion).to.equal(new helpers.AWS.CognitoIdentity().api.apiVersion)

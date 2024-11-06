@@ -1132,7 +1132,7 @@
           "output": {
           }
         },
-        "description": "The following example return versions of an object with specific key name prefix. The request limits the number of items returned to two. If there are are more than two object version, S3 returns NextToken in the response. You can specify this token value in your next request to fetch next set of object versions.",
+        "description": "The following example returns versions of an object with specific key name prefix.",
         "id": "to-list-object-versions-1481910996058",
         "title": "To list object versions"
       }
@@ -1567,13 +1567,13 @@
     "PutObject": [
       {
         "input": {
-          "Body": "HappyFace.jpg",
+          "Body": "filetoupload",
           "Bucket": "examplebucket",
-          "Key": "HappyFace.jpg"
+          "Key": "objectkey"
         },
         "output": {
           "ETag": "\"6805f2cfc46c0f04559748bb039d69ae\"",
-          "VersionId": "tpf3zF08nBplQK1XLOefGskR7mGDwcDk"
+          "VersionId": "Bvq0EDKxOcXLJXNo_Lkz37eM3R4pfzyQ"
         },
         "comments": {
           "input": {
@@ -1581,9 +1581,9 @@
           "output": {
           }
         },
-        "description": "The following example uploads an object to a versioning-enabled bucket. The source file is specified using Windows file syntax. S3 returns VersionId of the newly created object.",
-        "id": "to-upload-an-object-1481760101010",
-        "title": "To upload an object"
+        "description": "The following example creates an object. If the bucket is versioning enabled, S3 returns version ID in response.",
+        "id": "to-create-an-object-1483147613675",
+        "title": "To create an object."
       },
       {
         "input": {
@@ -1613,6 +1613,47 @@
         "input": {
           "Body": "HappyFace.jpg",
           "Bucket": "examplebucket",
+          "Key": "HappyFace.jpg"
+        },
+        "output": {
+          "ETag": "\"6805f2cfc46c0f04559748bb039d69ae\"",
+          "VersionId": "tpf3zF08nBplQK1XLOefGskR7mGDwcDk"
+        },
+        "comments": {
+          "input": {
+          },
+          "output": {
+          }
+        },
+        "description": "The following example uploads an object to a versioning-enabled bucket. The source file is specified using Windows file syntax. S3 returns VersionId of the newly created object.",
+        "id": "to-upload-an-object-1481760101010",
+        "title": "To upload an object"
+      },
+      {
+        "input": {
+          "ACL": "authenticated-read",
+          "Body": "filetoupload",
+          "Bucket": "examplebucket",
+          "Key": "exampleobject"
+        },
+        "output": {
+          "ETag": "\"6805f2cfc46c0f04559748bb039d69ae\"",
+          "VersionId": "Kirh.unyZwjQ69YxcQLA8z4F5j3kJJKr"
+        },
+        "comments": {
+          "input": {
+          },
+          "output": {
+          }
+        },
+        "description": "The following example uploads and object. The request specifies optional canned ACL (access control list) to all READ access to authenticated users. If the bucket is versioning enabled, S3 returns version ID in response.",
+        "id": "to-upload-an-object-and-specify-canned-acl-1483397779571",
+        "title": "To upload an object and specify canned ACL."
+      },
+      {
+        "input": {
+          "Body": "HappyFace.jpg",
+          "Bucket": "examplebucket",
           "Key": "HappyFace.jpg",
           "ServerSideEncryption": "AES256",
           "StorageClass": "STANDARD_IA"
@@ -1631,49 +1672,6 @@
         "description": "The following example uploads an object. The request specifies optional request headers to directs S3 to use specific storage class and use server-side encryption.",
         "id": "to-upload-an-object-(specify-optional-headers)",
         "title": "To upload an object (specify optional headers)"
-      },
-      {
-        "input": {
-          "Body": "filetoupload",
-          "Bucket": "examplebucket",
-          "Key": "objectkey"
-        },
-        "output": {
-          "ETag": "\"6805f2cfc46c0f04559748bb039d69ae\"",
-          "VersionId": "Bvq0EDKxOcXLJXNo_Lkz37eM3R4pfzyQ"
-        },
-        "comments": {
-          "input": {
-          },
-          "output": {
-          }
-        },
-        "description": "The following example creates an object. If the bucket is versioning enabled, S3 returns version ID in response.",
-        "id": "to-create-an-object-1483147613675",
-        "title": "To create an object."
-      },
-      {
-        "input": {
-          "Body": "filetoupload",
-          "Bucket": "examplebucket",
-          "Key": "exampleobject",
-          "ServerSideEncryption": "AES256",
-          "Tagging": "key1=value1&key2=value2"
-        },
-        "output": {
-          "ETag": "\"6805f2cfc46c0f04559748bb039d69ae\"",
-          "ServerSideEncryption": "AES256",
-          "VersionId": "Ri.vC6qVlA4dEnjgRV4ZHsHoFIjqEMNt"
-        },
-        "comments": {
-          "input": {
-          },
-          "output": {
-          }
-        },
-        "description": "The following example uploads an object. The request specifies the optional server-side encryption option. The request also specifies optional object tags. If the bucket is versioning enabled, S3 returns version ID in response.",
-        "id": "to-upload-an-object-and-specify-server-side-encryption-and-object-tags-1483398331831",
-        "title": "To upload an object and specify server-side encryption and object tags"
       },
       {
         "input": {
@@ -1698,14 +1696,16 @@
       },
       {
         "input": {
-          "ACL": "authenticated-read",
           "Body": "filetoupload",
           "Bucket": "examplebucket",
-          "Key": "exampleobject"
+          "Key": "exampleobject",
+          "ServerSideEncryption": "AES256",
+          "Tagging": "key1=value1&key2=value2"
         },
         "output": {
           "ETag": "\"6805f2cfc46c0f04559748bb039d69ae\"",
-          "VersionId": "Kirh.unyZwjQ69YxcQLA8z4F5j3kJJKr"
+          "ServerSideEncryption": "AES256",
+          "VersionId": "Ri.vC6qVlA4dEnjgRV4ZHsHoFIjqEMNt"
         },
         "comments": {
           "input": {
@@ -1713,9 +1713,9 @@
           "output": {
           }
         },
-        "description": "The following example uploads and object. The request specifies optional canned ACL (access control list) to all READ access to authenticated users. If the bucket is versioning enabled, S3 returns version ID in response.",
-        "id": "to-upload-an-object-and-specify-canned-acl-1483397779571",
-        "title": "To upload an object and specify canned ACL."
+        "description": "The following example uploads an object. The request specifies the optional server-side encryption option. The request also specifies optional object tags. If the bucket is versioning enabled, S3 returns version ID in response.",
+        "id": "to-upload-an-object-and-specify-server-side-encryption-and-object-tags-1483398331831",
+        "title": "To upload an object and specify server-side encryption and object tags"
       }
     ],
     "PutObjectAcl": [

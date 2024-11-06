@@ -367,7 +367,7 @@ declare class MediaTailor extends Service {
 declare namespace MediaTailor {
   export interface AccessConfiguration {
     /**
-     * The type of authentication used to access content from HttpConfiguration::BaseUrl on your source location. Accepted value: S3_SIGV4.  S3_SIGV4 - AWS Signature Version 4 authentication for Amazon S3 hosted virtual-style access. If your source location base URL is an Amazon S3 bucket, MediaTailor can use AWS Signature Version 4 (SigV4) authentication to access the bucket where your source content is stored. Your MediaTailor source location baseURL must follow the S3 virtual hosted-style request URL format. For example, https://bucket-name.s3.Region.amazonaws.com/key-name. Before you can use S3_SIGV4, you must meet these requirements: • You must allow MediaTailor to access your S3 bucket by granting mediatailor.amazonaws.com principal access in IAM. For information about configuring access in IAM, see Access management in the IAM User Guide. • The mediatailor.amazonaws.com service principal must have permissions to read all top level manifests referenced by the VodSource packaging configurations. • The caller of the API must have s3:GetObject IAM permissions to read all top level manifests referenced by your MediaTailor VodSource packaging configurations.
+     * The type of authentication used to access content from HttpConfiguration::BaseUrl on your source location.  S3_SIGV4 - AWS Signature Version 4 authentication for Amazon S3 hosted virtual-style access. If your source location base URL is an Amazon S3 bucket, MediaTailor can use AWS Signature Version 4 (SigV4) authentication to access the bucket where your source content is stored. Your MediaTailor source location baseURL must follow the S3 virtual hosted-style request URL format. For example, https://bucket-name.s3.Region.amazonaws.com/key-name. Before you can use S3_SIGV4, you must meet these requirements: • You must allow MediaTailor to access your S3 bucket by granting mediatailor.amazonaws.com principal access in IAM. For information about configuring access in IAM, see Access management in the IAM User Guide. • The mediatailor.amazonaws.com service principal must have permissions to read all top level manifests referenced by the VodSource packaging configurations. • The caller of the API must have s3:GetObject IAM permissions to read all top level manifests referenced by your MediaTailor VodSource packaging configurations.  AUTODETECT_SIGV4 - AWS Signature Version 4 authentication for a set of supported services: MediaPackage Version 2 and Amazon S3 hosted virtual-style access. If your source location base URL is a MediaPackage Version 2 endpoint or an Amazon S3 bucket, MediaTailor can use AWS Signature Version 4 (SigV4) authentication to access the resource where your source content is stored. Before you can use AUTODETECT_SIGV4 with a MediaPackage Version 2 endpoint, you must meet these requirements: • You must grant MediaTailor access to your MediaPackage endpoint by granting mediatailor.amazonaws.com principal access in an Origin Access policy on the endpoint. • Your MediaTailor source location base URL must be a MediaPackage V2 endpoint. • The caller of the API must have mediapackagev2:GetObject IAM permissions to read all top level manifests referenced by the MediaTailor source packaging configurations. Before you can use AUTODETECT_SIGV4 with an Amazon S3 bucket, you must meet these requirements: • You must grant MediaTailor access to your S3 bucket by granting mediatailor.amazonaws.com principal access in IAM. For more information about configuring access in IAM, see Access management in the IAM User Guide.. • The mediatailor.amazonaws.com service principal must have permissions to read all top-level manifests referenced by the VodSource packaging configurations. • The caller of the API must have s3:GetObject IAM permissions to read all top level manifests referenced by your MediaTailor VodSource packaging configurations.
      */
     AccessType?: AccessType;
     /**
@@ -375,7 +375,7 @@ declare namespace MediaTailor {
      */
     SecretsManagerAccessTokenConfiguration?: SecretsManagerAccessTokenConfiguration;
   }
-  export type AccessType = "S3_SIGV4"|"SECRETS_MANAGER_ACCESS_TOKEN"|string;
+  export type AccessType = "S3_SIGV4"|"SECRETS_MANAGER_ACCESS_TOKEN"|"AUTODETECT_SIGV4"|string;
   export interface AdBreak {
     /**
      * Defines a list of key/value pairs that MediaTailor generates within the EXT-X-ASSETtag for SCTE35_ENHANCED output.
@@ -388,7 +388,7 @@ declare namespace MediaTailor {
     /**
      * How long (in milliseconds) after the beginning of the program that an ad starts. This value must fall within 100ms of a segment boundary, otherwise the ad break will be skipped.
      */
-    OffsetMillis?: __long;
+    OffsetMillis: __long;
     /**
      * Ad break slate configuration.
      */
@@ -403,6 +403,13 @@ declare namespace MediaTailor {
     TimeSignalMessage?: TimeSignalMessage;
   }
   export type AdBreakMetadataList = KeyValuePair[];
+  export type AdBreakOpportunities = AdBreakOpportunity[];
+  export interface AdBreakOpportunity {
+    /**
+     * The offset in milliseconds from the start of the VOD source at which an ad marker was detected.
+     */
+    OffsetMillis: __long;
+  }
   export interface AdMarkerPassthrough {
     /**
      * Enables ad marker passthrough for your configuration.
@@ -437,6 +444,44 @@ declare namespace MediaTailor {
     ResourceArn: __string;
   }
   export type AlertCategory = "SCHEDULING_ERROR"|"PLAYBACK_WARNING"|"INFO"|string;
+  export interface AlternateMedia {
+    /**
+     * Ad break configuration parameters defined in AlternateMedia.
+     */
+    AdBreaks?: __listOfAdBreak;
+    ClipRange?: ClipRange;
+    /**
+     * The duration of the alternateMedia in milliseconds.
+     */
+    DurationMillis?: __long;
+    /**
+     * The name of the live source for alternateMedia.
+     */
+    LiveSourceName?: __string;
+    /**
+     * The date and time that the alternateMedia is scheduled to start, in epoch milliseconds.
+     */
+    ScheduledStartTimeMillis?: __long;
+    /**
+     * The name of the source location for alternateMedia.
+     */
+    SourceLocationName?: __string;
+    /**
+     * The name of the VOD source for alternateMedia.
+     */
+    VodSourceName?: __string;
+  }
+  export interface AudienceMedia {
+    /**
+     * The list of AlternateMedia defined in AudienceMedia.
+     */
+    AlternateMedia?: __listOfAlternateMedia;
+    /**
+     * The Audience defined in AudienceMedia.
+     */
+    Audience?: __string;
+  }
+  export type Audiences = String[];
   export interface AvailMatchingCriteria {
     /**
      * The dynamic variable(s) that MediaTailor should use as avail matching criteria. MediaTailor only places the prefetched ads into the avail if the avail matches the criteria defined by the dynamic variable. For information about dynamic variables, see Using dynamic ad variables in the MediaTailor User Guide. You can include up to 100 dynamic variables.
@@ -487,6 +532,10 @@ declare namespace MediaTailor {
      */
     Arn: __string;
     /**
+     * The list of audiences defined in channel.
+     */
+    Audiences?: Audiences;
+    /**
      * The name of the channel.
      */
     ChannelName: __string;
@@ -532,7 +581,11 @@ declare namespace MediaTailor {
     /**
      * The end offset of the clip range, in milliseconds, starting from the beginning of the VOD source associated with the program.
      */
-    EndOffsetMillis: __long;
+    EndOffsetMillis?: __long;
+    /**
+     * The start offset of the clip range, in milliseconds. This offset truncates the start at the number of milliseconds into the duration of the VOD source.
+     */
+    StartOffsetMillis?: __long;
   }
   export type ConfigurationAliasesRequest = {[key: string]: __mapOf__string};
   export type ConfigurationAliasesResponse = {[key: string]: __mapOf__string};
@@ -578,6 +631,10 @@ declare namespace MediaTailor {
   }
   export interface CreateChannelRequest {
     /**
+     * The list of audiences defined in channel.
+     */
+    Audiences?: Audiences;
+    /**
      * The name of the channel.
      */
     ChannelName: __string;
@@ -601,12 +658,20 @@ declare namespace MediaTailor {
      * The tier of the channel.
      */
     Tier?: Tier;
+    /**
+     *  The time-shifted viewing configuration you want to associate to the channel. 
+     */
+    TimeShiftConfiguration?: TimeShiftConfiguration;
   }
   export interface CreateChannelResponse {
     /**
      * The Amazon Resource Name (ARN) to assign to the channel.
      */
     Arn?: __string;
+    /**
+     * The list of audiences defined in channel.
+     */
+    Audiences?: Audiences;
     /**
      * The name to assign to the channel.
      */
@@ -643,6 +708,10 @@ declare namespace MediaTailor {
      * The tier of the channel.
      */
     Tier?: __string;
+    /**
+     *  The time-shifted viewing configuration assigned to the channel. 
+     */
+    TimeShiftConfiguration?: TimeShiftConfiguration;
   }
   export interface CreateLiveSourceRequest {
     /**
@@ -746,6 +815,10 @@ declare namespace MediaTailor {
      */
     AdBreaks?: __listOfAdBreak;
     /**
+     * The list of AudienceMedia defined in program.
+     */
+    AudienceMedia?: __listOfAudienceMedia;
+    /**
      * The name of the channel for this Program.
      */
     ChannelName: __string;
@@ -779,6 +852,10 @@ declare namespace MediaTailor {
      * The ARN to assign to the program.
      */
     Arn?: __string;
+    /**
+     * The list of AudienceMedia defined in program.
+     */
+    AudienceMedia?: __listOfAudienceMedia;
     /**
      * The name to assign to the channel for this program.
      */
@@ -1068,6 +1145,10 @@ declare namespace MediaTailor {
      */
     Arn?: __string;
     /**
+     * The list of audiences defined in channel.
+     */
+    Audiences?: Audiences;
+    /**
      * The name of the channel.
      */
     ChannelName?: __string;
@@ -1107,6 +1188,10 @@ declare namespace MediaTailor {
      * The channel's tier.
      */
     Tier?: __string;
+    /**
+     *  The time-shifted viewing configuration for the channel. 
+     */
+    TimeShiftConfiguration?: TimeShiftConfiguration;
   }
   export interface DescribeLiveSourceRequest {
     /**
@@ -1167,6 +1252,10 @@ declare namespace MediaTailor {
      * The ARN of the program.
      */
     Arn?: __string;
+    /**
+     * The list of AudienceMedia defined in program.
+     */
+    AudienceMedia?: __listOfAudienceMedia;
     /**
      * The name of the channel that the program belongs to.
      */
@@ -1260,6 +1349,10 @@ declare namespace MediaTailor {
   }
   export interface DescribeVodSourceResponse {
     /**
+     * The ad break opportunities within the VOD source.
+     */
+    AdBreakOpportunities?: AdBreakOpportunities;
+    /**
      * The ARN of the VOD source.
      */
     Arn?: __string;
@@ -1302,6 +1395,10 @@ declare namespace MediaTailor {
     Policy?: __string;
   }
   export interface GetChannelScheduleRequest {
+    /**
+     * The single audience for GetChannelScheduleRequest.
+     */
+    Audience?: __string;
     /**
      * The name of the channel associated with this Channel Schedule.
      */
@@ -1364,6 +1461,10 @@ declare namespace MediaTailor {
      * The configuration for HLS content.
      */
     HlsConfiguration?: HlsConfiguration;
+    /**
+     * The setting that controls whether players can use stitched or guided ad insertion. The default, STITCHED_ONLY, forces all player sessions to use stitched (server-side) ad insertion. Choosing PLAYER_SELECT allows players to select either stitched or guided ad insertion at session-initialization time. The default for players that do not specify an insertion mode is stitched.
+     */
+    InsertionMode?: InsertionMode;
     /**
      * The configuration for pre-roll ad insertion.
      */
@@ -1486,6 +1587,7 @@ declare namespace MediaTailor {
     Type: Type;
   }
   export type HttpPackageConfigurations = HttpPackageConfiguration[];
+  export type InsertionMode = "STITCHED_ONLY"|"PLAYER_SELECT"|string;
   export type Integer = number;
   export interface KeyValuePair {
     /**
@@ -1765,6 +1867,10 @@ declare namespace MediaTailor {
      */
     HlsConfiguration?: HlsConfiguration;
     /**
+     * The setting that controls whether players can use stitched or guided ad insertion. The default, STITCHED_ONLY, forces all player sessions to use stitched (server-side) ad insertion. Choosing PLAYER_SELECT allows players to select either stitched or guided ad insertion at session-initialization time. The default for players that do not specify an insertion mode is stitched.
+     */
+    InsertionMode?: InsertionMode;
+    /**
      * The configuration for pre-roll ad insertion.
      */
     LivePreRollConfiguration?: LivePreRollConfiguration;
@@ -1906,6 +2012,10 @@ declare namespace MediaTailor {
      */
     DashConfiguration?: DashConfigurationForPut;
     /**
+     * The setting that controls whether players can use stitched or guided ad insertion. The default, STITCHED_ONLY, forces all player sessions to use stitched (server-side) ad insertion. Choosing PLAYER_SELECT allows players to select either stitched or guided ad insertion at session-initialization time. The default for players that do not specify an insertion mode is stitched.
+     */
+    InsertionMode?: InsertionMode;
+    /**
      * The configuration for pre-roll ad insertion.
      */
     LivePreRollConfiguration?: LivePreRollConfiguration;
@@ -1967,6 +2077,10 @@ declare namespace MediaTailor {
      * The configuration for HLS content.
      */
     HlsConfiguration?: HlsConfiguration;
+    /**
+     * The setting that controls whether players can use stitched or guided ad insertion. The default, STITCHED_ONLY, forces all player sessions to use stitched (server-side) ad insertion. Choosing PLAYER_SELECT allows players to select either stitched or guided ad insertion at session-initialization time. The default for players that do not specify an insertion mode is stitched.
+     */
+    InsertionMode?: InsertionMode;
     /**
      * The configuration for pre-roll ad insertion.
      */
@@ -2101,6 +2215,10 @@ declare namespace MediaTailor {
      */
     Arn: __string;
     /**
+     * The list of audiences defined in ScheduleEntry.
+     */
+    Audiences?: Audiences;
+    /**
      * The name of the channel that uses this schedule.
      */
     ChannelName: __string;
@@ -2129,7 +2247,7 @@ declare namespace MediaTailor {
      */
     VodSourceName?: __string;
   }
-  export type ScheduleEntryType = "PROGRAM"|"FILLER_SLATE"|string;
+  export type ScheduleEntryType = "PROGRAM"|"FILLER_SLATE"|"ALTERNATE_MEDIA"|string;
   export interface SecretsManagerAccessTokenConfiguration {
     /**
      * The name of the HTTP header used to supply the access token in requests to the source location.
@@ -2283,6 +2401,12 @@ declare namespace MediaTailor {
     Tags: __mapOf__string;
   }
   export type Tier = "BASIC"|"STANDARD"|string;
+  export interface TimeShiftConfiguration {
+    /**
+     *  The maximum time delay for time-shifted viewing. The minimum allowed maximum time delay is 0 seconds, and the maximum allowed maximum time delay is 21600 seconds (6 hours). 
+     */
+    MaxTimeDelaySeconds: __integer;
+  }
   export interface TimeSignalMessage {
     /**
      * The configurations for the SCTE-35 segmentation_descriptor message(s) sent with the time_signal message.
@@ -2324,6 +2448,10 @@ declare namespace MediaTailor {
   }
   export interface UpdateChannelRequest {
     /**
+     * The list of audiences defined in channel.
+     */
+    Audiences?: Audiences;
+    /**
      * The name of the channel.
      */
     ChannelName: __string;
@@ -2335,12 +2463,20 @@ declare namespace MediaTailor {
      * The channel's output properties.
      */
     Outputs: RequestOutputs;
+    /**
+     *  The time-shifted viewing configuration you want to associate to the channel. 
+     */
+    TimeShiftConfiguration?: TimeShiftConfiguration;
   }
   export interface UpdateChannelResponse {
     /**
      * The Amazon Resource Name (ARN) associated with the channel.
      */
     Arn?: __string;
+    /**
+     * The list of audiences defined in channel.
+     */
+    Audiences?: Audiences;
     /**
      * The name of the channel.
      */
@@ -2377,6 +2513,10 @@ declare namespace MediaTailor {
      * The tier associated with this Channel.
      */
     Tier?: __string;
+    /**
+     *  The time-shifted viewing configuration for the channel. 
+     */
+    TimeShiftConfiguration?: TimeShiftConfiguration;
   }
   export interface UpdateLiveSourceRequest {
     /**
@@ -2428,6 +2568,10 @@ declare namespace MediaTailor {
      */
     AdBreaks?: __listOfAdBreak;
     /**
+     * The list of AudienceMedia defined in program.
+     */
+    AudienceMedia?: __listOfAudienceMedia;
+    /**
      * The name of the channel for this Program.
      */
     ChannelName: __string;
@@ -2449,6 +2593,10 @@ declare namespace MediaTailor {
      * The ARN to assign to the program.
      */
     Arn?: __string;
+    /**
+     * The list of AudienceMedia defined in program.
+     */
+    AudienceMedia?: __listOfAudienceMedia;
     /**
      * The name to assign to the channel for this program.
      */
@@ -2646,6 +2794,8 @@ declare namespace MediaTailor {
   export type __integerMin1Max100 = number;
   export type __listOfAdBreak = AdBreak[];
   export type __listOfAlert = Alert[];
+  export type __listOfAlternateMedia = AlternateMedia[];
+  export type __listOfAudienceMedia = AudienceMedia[];
   export type __listOfAvailMatchingCriteria = AvailMatchingCriteria[];
   export type __listOfChannel = Channel[];
   export type __listOfLiveSource = LiveSource[];

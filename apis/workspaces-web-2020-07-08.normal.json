@@ -148,6 +148,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Associates a trust store with a web portal.</p>",
@@ -806,6 +809,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Disassociates browser settings from a web portal.</p>",
@@ -839,6 +845,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Disassociates IP access settings from a web portal.</p>",
@@ -872,6 +881,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Disassociates network settings from a web portal.</p>",
@@ -905,6 +917,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Disassociates a trust store from a web portal.</p>",
@@ -938,6 +953,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Disassociates user access logging settings from a web portal.</p>",
@@ -971,6 +989,9 @@
         },
         {
           "shape": "ValidationException"
+        },
+        {
+          "shape": "ConflictException"
         }
       ],
       "documentation": "<p>Disassociates user settings from a web portal.</p>",
@@ -1815,6 +1836,9 @@
           "shape": "ThrottlingException"
         },
         {
+          "shape": "ServiceQuotaExceededException"
+        },
+        {
           "shape": "ValidationException"
         },
         {
@@ -2185,6 +2209,10 @@
         "browserSettingsArn"
       ],
       "members": {
+        "additionalEncryptionContext": {
+          "shape": "EncryptionContextMap",
+          "documentation": "<p>The additional encryption context of the browser settings.</p>"
+        },
         "associatedPortalArns": {
           "shape": "ArnList",
           "documentation": "<p>A list of web portal ARNs that this browser settings is associated with.</p>"
@@ -2196,6 +2224,10 @@
         "browserSettingsArn": {
           "shape": "ARN",
           "documentation": "<p>The ARN of the browser settings.</p>"
+        },
+        "customerManagedKey": {
+          "shape": "keyArn",
+          "documentation": "<p>The customer managed key used to encrypt sensitive information in the browser settings.</p>"
         }
       },
       "documentation": "<p>The browser settings resource that can be associated with a web portal. Once associated with a web portal, browser settings control how the browser will behave once a user starts a streaming session for the web portal. </p>"
@@ -2208,6 +2240,9 @@
     },
     "BrowserSettingsSummary": {
       "type": "structure",
+      "required": [
+        "browserSettingsArn"
+      ],
       "members": {
         "browserSettingsArn": {
           "shape": "ARN",
@@ -2316,6 +2351,73 @@
       "max": 512,
       "min": 1
     },
+    "CookieDomain": {
+      "type": "string",
+      "max": 253,
+      "min": 0,
+      "pattern": "^(\\.?)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)*[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$",
+      "sensitive": true
+    },
+    "CookieName": {
+      "type": "string",
+      "max": 4096,
+      "min": 0,
+      "sensitive": true
+    },
+    "CookiePath": {
+      "type": "string",
+      "max": 2000,
+      "min": 0,
+      "pattern": "^/(\\S)*$",
+      "sensitive": true
+    },
+    "CookieSpecification": {
+      "type": "structure",
+      "required": [
+        "domain"
+      ],
+      "members": {
+        "domain": {
+          "shape": "CookieDomain",
+          "documentation": "<p>The domain of the cookie.</p>"
+        },
+        "name": {
+          "shape": "CookieName",
+          "documentation": "<p>The name of the cookie.</p>"
+        },
+        "path": {
+          "shape": "CookiePath",
+          "documentation": "<p>The path of the cookie.</p>"
+        }
+      },
+      "documentation": "<p>Specifies a single cookie or set of cookies in an end user's browser.</p>"
+    },
+    "CookieSpecifications": {
+      "type": "list",
+      "member": {
+        "shape": "CookieSpecification"
+      },
+      "max": 10,
+      "min": 0
+    },
+    "CookieSynchronizationConfiguration": {
+      "type": "structure",
+      "required": [
+        "allowlist"
+      ],
+      "members": {
+        "allowlist": {
+          "shape": "CookieSpecifications",
+          "documentation": "<p>The list of cookie specifications that are allowed to be synchronized to the remote browser.</p>"
+        },
+        "blocklist": {
+          "shape": "CookieSpecifications",
+          "documentation": "<p>The list of cookie specifications that are blocked from being synchronized to the remote browser.</p>"
+        }
+      },
+      "documentation": "<p>The configuration that specifies which cookies should be synchronized from the end user's local browser to the remote browser.</p>",
+      "sensitive": true
+    },
     "CreateBrowserSettingsRequest": {
       "type": "structure",
       "required": [
@@ -2332,7 +2434,7 @@
         },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request.</p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK. </p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request.</p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK. </p>",
           "idempotencyToken": true
         },
         "customerManagedKey": {
@@ -2368,12 +2470,12 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request.</p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request.</p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "identityProviderDetails": {
           "shape": "IdentityProviderDetails",
-          "documentation": "<p>The identity provider details. The following list describes the provider detail keys for each identity provider type. </p> <ul> <li> <p>For Google and Login with Amazon:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For Facebook:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>api_version</code> </p> </li> </ul> </li> <li> <p>For Sign in with Apple:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>team_id</code> </p> </li> <li> <p> <code>key_id</code> </p> </li> <li> <p> <code>private_key</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For OIDC providers:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>attributes_request_method</code> </p> </li> <li> <p> <code>oidc_issuer</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>authorize_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>token_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>attributes_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>jwks_uri</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> </ul> </li> <li> <p>For SAML providers:</p> <ul> <li> <p> <code>MetadataFile</code> OR <code>MetadataURL</code> </p> </li> <li> <p> <code>IDPSignout</code> (boolean) <i>optional</i> </p> </li> </ul> </li> </ul>"
+          "documentation": "<p>The identity provider details. The following list describes the provider detail keys for each identity provider type. </p> <ul> <li> <p>For Google and Login with Amazon:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For Facebook:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>api_version</code> </p> </li> </ul> </li> <li> <p>For Sign in with Apple:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>team_id</code> </p> </li> <li> <p> <code>key_id</code> </p> </li> <li> <p> <code>private_key</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For OIDC providers:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>attributes_request_method</code> </p> </li> <li> <p> <code>oidc_issuer</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>authorize_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>token_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>attributes_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>jwks_uri</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> </ul> </li> <li> <p>For SAML providers:</p> <ul> <li> <p> <code>MetadataFile</code> OR <code>MetadataURL</code> </p> </li> <li> <p> <code>IDPSignout</code> (boolean) <i>optional</i> </p> </li> <li> <p> <code>IDPInit</code> (boolean) <i>optional</i> </p> </li> <li> <p> <code>RequestSigningAlgorithm</code> (string) <i>optional</i> - Only accepts <code>rsa-sha256</code> </p> </li> <li> <p> <code>EncryptedResponses</code> (boolean) <i>optional</i> </p> </li> </ul> </li> </ul>"
         },
         "identityProviderName": {
           "shape": "IdentityProviderName",
@@ -2386,6 +2488,10 @@
         "portalArn": {
           "shape": "ARN",
           "documentation": "<p>The ARN of the web portal.</p>"
+        },
+        "tags": {
+          "shape": "TagList",
+          "documentation": "<p>The tags to add to the identity provider resource. A tag is a key-value pair.</p>"
         }
       }
     },
@@ -2396,7 +2502,7 @@
       ],
       "members": {
         "identityProviderArn": {
-          "shape": "ARN",
+          "shape": "SubresourceARN",
           "documentation": "<p>The ARN of the identity provider.</p>"
         }
       }
@@ -2413,7 +2519,7 @@
         },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "customerManagedKey": {
@@ -2434,7 +2540,7 @@
         },
         "tags": {
           "shape": "TagList",
-          "documentation": "<p>The tags to add to the browser settings resource. A tag is a key-value pair.</p>"
+          "documentation": "<p>The tags to add to the IP access settings resource. A tag is a key-value pair.</p>"
         }
       }
     },
@@ -2460,7 +2566,7 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "securityGroupIds": {
@@ -2502,11 +2608,11 @@
         },
         "authenticationType": {
           "shape": "AuthenticationType",
-          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM_Identity_Center</code> web portals are authenticated through AWS IAM Identity Center (successor to AWS Single Sign-On). They provide additional features, such as IdP-initiated authentication. Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
+          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM Identity Center</code> web portals are authenticated through IAM Identity Center (successor to Single Sign-On). Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
         },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "customerManagedKey": {
@@ -2516,6 +2622,14 @@
         "displayName": {
           "shape": "DisplayName",
           "documentation": "<p>The name of the web portal. This is not visible to users who log into the web portal.</p>"
+        },
+        "instanceType": {
+          "shape": "InstanceType",
+          "documentation": "<p>The type and resources of the underlying instance.</p>"
+        },
+        "maxConcurrentSessions": {
+          "shape": "MaxConcurrentSessions",
+          "documentation": "<p>The maximum number of concurrent sessions for the portal.</p>"
         },
         "tags": {
           "shape": "TagList",
@@ -2552,7 +2666,7 @@
         },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "tags": {
@@ -2581,7 +2695,7 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "kinesisStreamArn": {
@@ -2616,14 +2730,30 @@
         "uploadAllowed"
       ],
       "members": {
+        "additionalEncryptionContext": {
+          "shape": "EncryptionContextMap",
+          "documentation": "<p>The additional encryption context of the user settings.</p>"
+        },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
+        },
+        "cookieSynchronizationConfiguration": {
+          "shape": "CookieSynchronizationConfiguration",
+          "documentation": "<p>The configuration that specifies which cookies should be synchronized from the end user's local browser to the remote browser.</p>"
         },
         "copyAllowed": {
           "shape": "EnabledType",
           "documentation": "<p>Specifies whether the user can copy text from the streaming session to the local device.</p>"
+        },
+        "customerManagedKey": {
+          "shape": "keyArn",
+          "documentation": "<p>The customer managed key used to encrypt sensitive information in the user settings.</p>"
+        },
+        "deepLinkAllowed": {
+          "shape": "EnabledType",
+          "documentation": "<p>Specifies whether the user can use deep links that open automatically when connecting to a session.</p>"
         },
         "disconnectTimeoutInMinutes": {
           "shape": "DisconnectTimeoutInMinutes",
@@ -2692,7 +2822,7 @@
       ],
       "members": {
         "identityProviderArn": {
-          "shape": "ARN",
+          "shape": "SubresourceARN",
           "documentation": "<p>The ARN of the identity provider.</p>",
           "location": "uri",
           "locationName": "identityProviderArn"
@@ -2985,7 +3115,7 @@
       ],
       "members": {
         "identityProviderArn": {
-          "shape": "ARN",
+          "shape": "SubresourceARN",
           "documentation": "<p>The ARN of the identity provider.</p>",
           "location": "uri",
           "locationName": "identityProviderArn"
@@ -3123,6 +3253,9 @@
     },
     "GetTrustStoreCertificateResponse": {
       "type": "structure",
+      "required": [
+        "trustStoreArn"
+      ],
       "members": {
         "certificate": {
           "shape": "Certificate",
@@ -3210,12 +3343,12 @@
       ],
       "members": {
         "identityProviderArn": {
-          "shape": "ARN",
+          "shape": "SubresourceARN",
           "documentation": "<p>The ARN of the identity provider.</p>"
         },
         "identityProviderDetails": {
           "shape": "IdentityProviderDetails",
-          "documentation": "<p>The identity provider details. The following list describes the provider detail keys for each identity provider type. </p> <ul> <li> <p>For Google and Login with Amazon:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For Facebook:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>api_version</code> </p> </li> </ul> </li> <li> <p>For Sign in with Apple:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>team_id</code> </p> </li> <li> <p> <code>key_id</code> </p> </li> <li> <p> <code>private_key</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For OIDC providers:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>attributes_request_method</code> </p> </li> <li> <p> <code>oidc_issuer</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>authorize_url</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> <li> <p> <code>token_url</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> <li> <p> <code>attributes_url</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> <li> <p> <code>jwks_uri</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> </ul> </li> <li> <p>For SAML providers:</p> <ul> <li> <p> <code>MetadataFile</code> OR <code>MetadataURL</code> </p> </li> <li> <p> <code>IDPSignout</code> <i>optional</i> </p> </li> </ul> </li> </ul>"
+          "documentation": "<p>The identity provider details. The following list describes the provider detail keys for each identity provider type. </p> <ul> <li> <p>For Google and Login with Amazon:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For Facebook:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>api_version</code> </p> </li> </ul> </li> <li> <p>For Sign in with Apple:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>team_id</code> </p> </li> <li> <p> <code>key_id</code> </p> </li> <li> <p> <code>private_key</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For OIDC providers:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>attributes_request_method</code> </p> </li> <li> <p> <code>oidc_issuer</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>authorize_url</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> <li> <p> <code>token_url</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> <li> <p> <code>attributes_url</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> <li> <p> <code>jwks_uri</code> <i>if not available from discovery URL specified by oidc_issuer key</i> </p> </li> </ul> </li> <li> <p>For SAML providers:</p> <ul> <li> <p> <code>MetadataFile</code> OR <code>MetadataURL</code> </p> </li> <li> <p> <code>IDPSignout</code> (boolean) <i>optional</i> </p> </li> <li> <p> <code>IDPInit</code> (boolean) <i>optional</i> </p> </li> <li> <p> <code>RequestSigningAlgorithm</code> (string) <i>optional</i> - Only accepts <code>rsa-sha256</code> </p> </li> <li> <p> <code>EncryptedResponses</code> (boolean) <i>optional</i> </p> </li> </ul> </li> </ul>"
         },
         "identityProviderName": {
           "shape": "IdentityProviderName",
@@ -3253,9 +3386,12 @@
     },
     "IdentityProviderSummary": {
       "type": "structure",
+      "required": [
+        "identityProviderArn"
+      ],
       "members": {
         "identityProviderArn": {
-          "shape": "ARN",
+          "shape": "SubresourceARN",
           "documentation": "<p>The ARN of the identity provider.</p>"
         },
         "identityProviderName": {
@@ -3286,12 +3422,24 @@
       "max": 60,
       "min": 0
     },
+    "InstanceType": {
+      "type": "string",
+      "enum": [
+        "standard.regular",
+        "standard.large",
+        "standard.xlarge"
+      ]
+    },
     "IpAccessSettings": {
       "type": "structure",
       "required": [
         "ipAccessSettingsArn"
       ],
       "members": {
+        "additionalEncryptionContext": {
+          "shape": "EncryptionContextMap",
+          "documentation": "<p>The additional encryption context of the IP access settings.</p>"
+        },
         "associatedPortalArns": {
           "shape": "ArnList",
           "documentation": "<p>A list of web portal ARNs that this IP access settings resource is associated with.</p>"
@@ -3299,6 +3447,10 @@
         "creationDate": {
           "shape": "Timestamp",
           "documentation": "<p>The creation date timestamp of the IP access settings.</p>"
+        },
+        "customerManagedKey": {
+          "shape": "keyArn",
+          "documentation": "<p>The customer managed key used to encrypt sensitive information in the IP access settings.</p>"
         },
         "description": {
           "shape": "Description",
@@ -3327,6 +3479,9 @@
     },
     "IpAccessSettingsSummary": {
       "type": "structure",
+      "required": [
+        "ipAccessSettingsArn"
+      ],
       "members": {
         "creationDate": {
           "shape": "Timestamp",
@@ -3596,6 +3751,9 @@
     },
     "ListTrustStoreCertificatesResponse": {
       "type": "structure",
+      "required": [
+        "trustStoreArn"
+      ],
       "members": {
         "certificateList": {
           "shape": "CertificateSummaryList",
@@ -3701,6 +3859,12 @@
         }
       }
     },
+    "MaxConcurrentSessions": {
+      "type": "integer",
+      "box": true,
+      "max": 5000,
+      "min": 1
+    },
     "MaxResults": {
       "type": "integer",
       "box": true,
@@ -3743,6 +3907,9 @@
     },
     "NetworkSettingsSummary": {
       "type": "structure",
+      "required": [
+        "networkSettingsArn"
+      ],
       "members": {
         "networkSettingsArn": {
           "shape": "ARN",
@@ -3763,10 +3930,17 @@
     },
     "Portal": {
       "type": "structure",
+      "required": [
+        "portalArn"
+      ],
       "members": {
+        "additionalEncryptionContext": {
+          "shape": "EncryptionContextMap",
+          "documentation": "<p>The additional encryption context of the portal.</p>"
+        },
         "authenticationType": {
           "shape": "AuthenticationType",
-          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM_Identity_Center</code> web portals are authenticated through AWS IAM Identity Center (successor to AWS Single Sign-On). They provide additional features, such as IdP-initiated authentication. Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
+          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM Identity Center</code> web portals are authenticated through IAM Identity Center (successor to Single Sign-On). Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
         },
         "browserSettingsArn": {
           "shape": "ARN",
@@ -3780,13 +3954,25 @@
           "shape": "Timestamp",
           "documentation": "<p>The creation date of the web portal.</p>"
         },
+        "customerManagedKey": {
+          "shape": "keyArn",
+          "documentation": "<p>The customer managed key used to encrypt sensitive information in the portal.</p>"
+        },
         "displayName": {
           "shape": "DisplayName",
           "documentation": "<p>The name of the web portal.</p>"
         },
+        "instanceType": {
+          "shape": "InstanceType",
+          "documentation": "<p>The type and resources of the underlying instance.</p>"
+        },
         "ipAccessSettingsArn": {
           "shape": "ARN",
           "documentation": "<p>The ARN of the IP access settings.</p>"
+        },
+        "maxConcurrentSessions": {
+          "shape": "MaxConcurrentSessions",
+          "documentation": "<p>The maximum number of concurrent sessions for the portal.</p>"
         },
         "networkSettingsArn": {
           "shape": "ARN",
@@ -3849,10 +4035,13 @@
     },
     "PortalSummary": {
       "type": "structure",
+      "required": [
+        "portalArn"
+      ],
       "members": {
         "authenticationType": {
           "shape": "AuthenticationType",
-          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM_Identity_Center</code> web portals are authenticated through AWS IAM Identity Center (successor to AWS Single Sign-On). They provide additional features, such as IdP-initiated authentication. Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
+          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM Identity Center</code> web portals are authenticated through IAM Identity Center (successor to Single Sign-On). Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
         },
         "browserSettingsArn": {
           "shape": "ARN",
@@ -3870,9 +4059,17 @@
           "shape": "DisplayName",
           "documentation": "<p>The name of the web portal.</p>"
         },
+        "instanceType": {
+          "shape": "InstanceType",
+          "documentation": "<p>The type and resources of the underlying instance.</p>"
+        },
         "ipAccessSettingsArn": {
           "shape": "ARN",
           "documentation": "<p>The ARN of the IP access settings.</p>"
+        },
+        "maxConcurrentSessions": {
+          "shape": "MaxConcurrentSessions",
+          "documentation": "<p>The maximum number of concurrent sessions for the portal.</p>"
         },
         "networkSettingsArn": {
           "shape": "ARN",
@@ -3961,6 +4158,12 @@
       "max": 3,
       "min": 2
     },
+    "SubresourceARN": {
+      "type": "string",
+      "max": 2048,
+      "min": 20,
+      "pattern": "^arn:[\\w+=\\/,.@-]+:[a-zA-Z0-9\\-]+:[a-zA-Z0-9\\-]*:[a-zA-Z0-9]{1,12}:[a-zA-Z]+(\\/[a-fA-F0-9\\-]{36}){2,}$"
+    },
     "Tag": {
       "type": "structure",
       "required": [
@@ -4012,7 +4215,7 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token returns the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "resourceArn": {
@@ -4043,6 +4246,9 @@
     },
     "TrustStore": {
       "type": "structure",
+      "required": [
+        "trustStoreArn"
+      ],
       "members": {
         "associatedPortalArns": {
           "shape": "ArnList",
@@ -4114,7 +4320,7 @@
         },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         }
       }
@@ -4139,18 +4345,18 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "identityProviderArn": {
-          "shape": "ARN",
+          "shape": "SubresourceARN",
           "documentation": "<p>The ARN of the identity provider.</p>",
           "location": "uri",
           "locationName": "identityProviderArn"
         },
         "identityProviderDetails": {
           "shape": "IdentityProviderDetails",
-          "documentation": "<p>The details of the identity provider. The following list describes the provider detail keys for each identity provider type. </p> <ul> <li> <p>For Google and Login with Amazon:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For Facebook:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>api_version</code> </p> </li> </ul> </li> <li> <p>For Sign in with Apple:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>team_id</code> </p> </li> <li> <p> <code>key_id</code> </p> </li> <li> <p> <code>private_key</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For OIDC providers:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>attributes_request_method</code> </p> </li> <li> <p> <code>oidc_issuer</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>authorize_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>token_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>attributes_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>jwks_uri</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> </ul> </li> <li> <p>For SAML providers:</p> <ul> <li> <p> <code>MetadataFile</code> OR <code>MetadataURL</code> </p> </li> <li> <p> <code>IDPSignout</code> (boolean) <i>optional</i> </p> </li> </ul> </li> </ul>"
+          "documentation": "<p>The details of the identity provider. The following list describes the provider detail keys for each identity provider type. </p> <ul> <li> <p>For Google and Login with Amazon:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For Facebook:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>api_version</code> </p> </li> </ul> </li> <li> <p>For Sign in with Apple:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>team_id</code> </p> </li> <li> <p> <code>key_id</code> </p> </li> <li> <p> <code>private_key</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> </ul> </li> <li> <p>For OIDC providers:</p> <ul> <li> <p> <code>client_id</code> </p> </li> <li> <p> <code>client_secret</code> </p> </li> <li> <p> <code>attributes_request_method</code> </p> </li> <li> <p> <code>oidc_issuer</code> </p> </li> <li> <p> <code>authorize_scopes</code> </p> </li> <li> <p> <code>authorize_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>token_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>attributes_url</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> <li> <p> <code>jwks_uri</code> <i>if not available from discovery URL specified by <code>oidc_issuer</code> key</i> </p> </li> </ul> </li> <li> <p>For SAML providers:</p> <ul> <li> <p> <code>MetadataFile</code> OR <code>MetadataURL</code> </p> </li> <li> <p> <code>IDPSignout</code> (boolean) <i>optional</i> </p> </li> <li> <p> <code>IDPInit</code> (boolean) <i>optional</i> </p> </li> <li> <p> <code>RequestSigningAlgorithm</code> (string) <i>optional</i> - Only accepts <code>rsa-sha256</code> </p> </li> <li> <p> <code>EncryptedResponses</code> (boolean) <i>optional</i> </p> </li> </ul> </li> </ul>"
         },
         "identityProviderName": {
           "shape": "IdentityProviderName",
@@ -4182,7 +4388,7 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "description": {
@@ -4225,7 +4431,7 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "networkSettingsArn": {
@@ -4268,11 +4474,19 @@
       "members": {
         "authenticationType": {
           "shape": "AuthenticationType",
-          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM_Identity_Center</code> web portals are authenticated through AWS IAM Identity Center (successor to AWS Single Sign-On). They provide additional features, such as IdP-initiated authentication. Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
+          "documentation": "<p>The type of authentication integration points used when signing into the web portal. Defaults to <code>Standard</code>.</p> <p> <code>Standard</code> web portals are authenticated directly through your identity provider. You need to call <code>CreateIdentityProvider</code> to integrate your identity provider with your web portal. User and group access to your web portal is controlled through your identity provider.</p> <p> <code>IAM Identity Center</code> web portals are authenticated through IAM Identity Center (successor to Single Sign-On). Identity sources (including external identity provider integration), plus user and group access to your web portal, can be configured in the IAM Identity Center.</p>"
         },
         "displayName": {
           "shape": "DisplayName",
           "documentation": "<p>The name of the web portal. This is not visible to users who log into the web portal.</p>"
+        },
+        "instanceType": {
+          "shape": "InstanceType",
+          "documentation": "<p>The type and resources of the underlying instance.</p>"
+        },
+        "maxConcurrentSessions": {
+          "shape": "MaxConcurrentSessions",
+          "documentation": "<p>The maximum number of concurrent sessions for the portal.</p>"
         },
         "portalArn": {
           "shape": "ARN",
@@ -4307,7 +4521,7 @@
         },
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "trustStoreArn": {
@@ -4338,7 +4552,7 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
         },
         "kinesisStreamArn": {
@@ -4373,12 +4587,20 @@
       "members": {
         "clientToken": {
           "shape": "ClientToken",
-          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the AWS SDK.</p>",
+          "documentation": "<p>A unique, case-sensitive identifier that you provide to ensure the idempotency of the request. Idempotency ensures that an API request completes only once. With an idempotent request, if the original request completes successfully, subsequent retries with the same client token return the result from the original successful request. </p> <p>If you do not specify a client token, one is automatically generated by the Amazon Web Services SDK.</p>",
           "idempotencyToken": true
+        },
+        "cookieSynchronizationConfiguration": {
+          "shape": "CookieSynchronizationConfiguration",
+          "documentation": "<p>The configuration that specifies which cookies should be synchronized from the end user's local browser to the remote browser.</p> <p>If the allowlist and blocklist are empty, the configuration becomes null.</p>"
         },
         "copyAllowed": {
           "shape": "EnabledType",
           "documentation": "<p>Specifies whether the user can copy text from the streaming session to the local device.</p>"
+        },
+        "deepLinkAllowed": {
+          "shape": "EnabledType",
+          "documentation": "<p>Specifies whether the user can use deep links that open automatically when connecting to a session.</p>"
         },
         "disconnectTimeoutInMinutes": {
           "shape": "DisconnectTimeoutInMinutes",
@@ -4453,6 +4675,9 @@
     },
     "UserAccessLoggingSettingsSummary": {
       "type": "structure",
+      "required": [
+        "userAccessLoggingSettingsArn"
+      ],
       "members": {
         "kinesisStreamArn": {
           "shape": "KinesisStreamArn",
@@ -4471,13 +4696,29 @@
         "userSettingsArn"
       ],
       "members": {
+        "additionalEncryptionContext": {
+          "shape": "EncryptionContextMap",
+          "documentation": "<p>The additional encryption context of the user settings.</p>"
+        },
         "associatedPortalArns": {
           "shape": "ArnList",
           "documentation": "<p>A list of web portal ARNs that this user settings is associated with.</p>"
         },
+        "cookieSynchronizationConfiguration": {
+          "shape": "CookieSynchronizationConfiguration",
+          "documentation": "<p>The configuration that specifies which cookies should be synchronized from the end user's local browser to the remote browser.</p>"
+        },
         "copyAllowed": {
           "shape": "EnabledType",
           "documentation": "<p>Specifies whether the user can copy text from the streaming session to the local device.</p>"
+        },
+        "customerManagedKey": {
+          "shape": "keyArn",
+          "documentation": "<p>The customer managed key used to encrypt sensitive information in the user settings.</p>"
+        },
+        "deepLinkAllowed": {
+          "shape": "EnabledType",
+          "documentation": "<p>Specifies whether the user can use deep links that open automatically when connecting to a session.</p>"
         },
         "disconnectTimeoutInMinutes": {
           "shape": "DisconnectTimeoutInMinutes",
@@ -4518,10 +4759,21 @@
     },
     "UserSettingsSummary": {
       "type": "structure",
+      "required": [
+        "userSettingsArn"
+      ],
       "members": {
+        "cookieSynchronizationConfiguration": {
+          "shape": "CookieSynchronizationConfiguration",
+          "documentation": "<p>The configuration that specifies which cookies should be synchronized from the end user's local browser to the remote browser.</p>"
+        },
         "copyAllowed": {
           "shape": "EnabledType",
           "documentation": "<p>Specifies whether the user can copy text from the streaming session to the local device.</p>"
+        },
+        "deepLinkAllowed": {
+          "shape": "EnabledType",
+          "documentation": "<p>Specifies whether the user can use deep links that open automatically when connecting to a session.</p>"
         },
         "disconnectTimeoutInMinutes": {
           "shape": "DisconnectTimeoutInMinutes",
@@ -4567,5 +4819,5 @@
       "pattern": "^arn:[\\w+=\\/,.@-]+:kms:[a-zA-Z0-9\\-]*:[a-zA-Z0-9]{1,12}:key\\/[a-zA-Z0-9-]+$"
     }
   },
-  "documentation": "<p>WorkSpaces Web is a low cost, fully managed WorkSpace built specifically to facilitate secure, web-based workloads. WorkSpaces Web makes it easy for customers to safely provide their employees with access to internal websites and SaaS web applications without the administrative burden of appliances or specialized client software. WorkSpaces Web provides simple policy tools tailored for user interactions, while offloading common tasks like capacity management, scaling, and maintaining browser images.</p>"
+  "documentation": "<p>Amazon WorkSpaces Secure Browser is a low cost, fully managed WorkSpace built specifically to facilitate secure, web-based workloads. WorkSpaces Secure Browser makes it easy for customers to safely provide their employees with access to internal websites and SaaS web applications without the administrative burden of appliances or specialized client software. WorkSpaces Secure Browser provides simple policy tools tailored for user interactions, while offloading common tasks like capacity management, scaling, and maintaining browser images.</p>"
 }

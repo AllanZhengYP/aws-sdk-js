@@ -381,6 +381,7 @@
           if (!hasProp.call(allServices, className)) continue;
           ctor = allServices[className];
           serviceIdentifier = className.toLowerCase();
+
           obsoleteVersions = metadata[serviceIdentifier].versions || [];
           results.push((function() {
             var j, len, results1;

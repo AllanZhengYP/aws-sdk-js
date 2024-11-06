@@ -1,6 +1,7 @@
 const helpers = require('./helpers');
 const AWS = helpers.AWS;
 const MockService = helpers.MockService;
+var getEndpointSuffix = require('../lib/region_config').getEndpointSuffix;
 
 describe('region_config.js', function() {
   it('sets endpoint configuration option for default regions', function() {
@@ -14,6 +15,25 @@ describe('region_config.js', function() {
       var service = new svcClass;
       expect(service.endpoint.host).to.equal(service.serviceIdentifier + '.amazonaws.com');
       expect(service.isGlobalEndpoint).to.equal(true);
+    });
+  });
+
+  [AWS.Route53].forEach(function(svcClass) {
+    [
+      'us-isof-south-1',
+      'eu-isoe-west-1',
+      'us-gov-west-1',
+      'cn-northwest-1',
+      'cn-north-1'
+    ].forEach(function(region) {
+      it('uses a global partition endpoint for ' + svcClass.serviceIdentifier, function() {
+        var service = new svcClass({
+          region: region
+        });
+        expect(service.endpoint.host).to.contain(service.serviceIdentifier + '.');
+        expect(service.endpoint.host).not.to.contain(region);
+        expect(service.isGlobalEndpoint).to.equal(true);
+      });
     });
   });
 
@@ -133,6 +153,14 @@ describe('region_config.js', function() {
     });
     expect(service.isGlobalEndpoint).to.equal(false);
     expect(service.endpoint.host).to.equal('sts.us-gov-west-1.amazonaws.com');
+  });
+
+  it('resolves the endpoint suffix for eu-isoe-west-1', function() {
+    expect(getEndpointSuffix('eu-isoe-west-1')).to.equal('cloud.adc-e.uk');
+  });
+
+  it('resolves the endpoint suffix for us-isof-south-1', function() {
+    expect(getEndpointSuffix('us-isof-south-1')).to.equal('csp.hci.ic.gov');
   });
 });
 

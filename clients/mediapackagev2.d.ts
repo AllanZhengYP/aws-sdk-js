@@ -205,6 +205,7 @@ declare class MediaPackageV2 extends Service {
   updateOriginEndpoint(callback?: (err: AWSError, data: MediaPackageV2.Types.UpdateOriginEndpointResponse) => void): Request<MediaPackageV2.Types.UpdateOriginEndpointResponse, AWSError>;
 }
 declare namespace MediaPackageV2 {
+  export type AdMarkerDash = "BINARY"|"XML"|string;
   export type AdMarkerHls = "DATERANGE"|string;
   export type Boolean = boolean;
   export interface ChannelGroupListConfiguration {
@@ -227,7 +228,7 @@ declare namespace MediaPackageV2 {
     /**
      * Any descriptive information that you want to add to the channel group for future identification purposes.
      */
-    Description?: String;
+    Description?: ResourceDescription;
   }
   export type ChannelGroupsList = ChannelGroupListConfiguration[];
   export type ChannelList = ChannelListConfiguration[];
@@ -255,7 +256,11 @@ declare namespace MediaPackageV2 {
     /**
      * Any descriptive information that you want to add to the channel for future identification purposes.
      */
-    Description?: String;
+    Description?: ResourceDescription;
+    /**
+     * The input type will be an immutable field which will be used to define whether the channel will allow CMAF ingest or HLS ingest. If unprovided, it will default to HLS to preserve current behavior. The allowed values are:    HLS - The HLS streaming specification (which defines M3U8 manifests and TS segments).    CMAF - The DASH-IF CMAF Ingest specification (which defines CMAF segments with optional DASH manifests).  
+     */
+    InputType?: InputType;
   }
   export type CmafEncryptionMethod = "CENC"|"CBCS"|string;
   export type ContainerType = "TS"|"CMAF"|string;
@@ -299,9 +304,13 @@ declare namespace MediaPackageV2 {
      */
     ModifiedAt: Timestamp;
     /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
+    /**
      * The description for your channel group.
      */
-    Description?: String;
+    Description?: ResourceDescription;
     /**
      * The comma-separated list of tag key:value pairs assigned to the channel group.
      */
@@ -320,6 +329,10 @@ declare namespace MediaPackageV2 {
      * A unique, case-sensitive token that you provide to ensure the idempotency of the request.
      */
     ClientToken?: IdempotencyToken;
+    /**
+     * The input type will be an immutable field which will be used to define whether the channel will allow CMAF ingest or HLS ingest. If unprovided, it will default to HLS to preserve current behavior. The allowed values are:    HLS - The HLS streaming specification (which defines M3U8 manifests and TS segments).    CMAF - The DASH-IF CMAF Ingest specification (which defines CMAF segments with optional DASH manifests).  
+     */
+    InputType?: InputType;
     /**
      * Enter any descriptive text that helps you to identify the channel.
      */
@@ -353,13 +366,69 @@ declare namespace MediaPackageV2 {
     /**
      * The description for your channel.
      */
-    Description?: String;
+    Description?: ResourceDescription;
     IngestEndpoints?: IngestEndpointList;
+    /**
+     * The input type will be an immutable field which will be used to define whether the channel will allow CMAF ingest or HLS ingest. If unprovided, it will default to HLS to preserve current behavior. The allowed values are:    HLS - The HLS streaming specification (which defines M3U8 manifests and TS segments).    CMAF - The DASH-IF CMAF Ingest specification (which defines CMAF segments with optional DASH manifests).  
+     */
+    InputType?: InputType;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
     /**
      * The comma-separated list of tag key:value pairs assigned to the channel.
      */
     Tags?: TagMap;
   }
+  export interface CreateDashManifestConfiguration {
+    /**
+     * A short string that's appended to the endpoint URL. The child manifest name creates a unique path to this endpoint.
+     */
+    ManifestName: ManifestName;
+    /**
+     * The total duration (in seconds) of the manifest's content.
+     */
+    ManifestWindowSeconds?: CreateDashManifestConfigurationManifestWindowSecondsInteger;
+    FilterConfiguration?: FilterConfiguration;
+    /**
+     * Minimum amount of time (in seconds) that the player should wait before requesting updates to the manifest.
+     */
+    MinUpdatePeriodSeconds?: CreateDashManifestConfigurationMinUpdatePeriodSecondsInteger;
+    /**
+     * Minimum amount of content (in seconds) that a player must keep available in the buffer.
+     */
+    MinBufferTimeSeconds?: CreateDashManifestConfigurationMinBufferTimeSecondsInteger;
+    /**
+     * The amount of time (in seconds) that the player should be from the end of the manifest.
+     */
+    SuggestedPresentationDelaySeconds?: CreateDashManifestConfigurationSuggestedPresentationDelaySecondsInteger;
+    /**
+     * Determines the type of variable used in the media URL of the SegmentTemplate tag in the manifest. Also specifies if segment timeline information is included in SegmentTimeline or SegmentTemplate. Value description:    NUMBER_WITH_TIMELINE - The $Number$ variable is used in the media URL. The value of this variable is the sequential number of the segment. A full SegmentTimeline object is presented in each SegmentTemplate.  
+     */
+    SegmentTemplateFormat?: DashSegmentTemplateFormat;
+    /**
+     * A list of triggers that controls when AWS Elemental MediaPackage separates the MPEG-DASH manifest into multiple periods. Type ADS to indicate that AWS Elemental MediaPackage must create periods in the output manifest that correspond to SCTE-35 ad markers in the input source. Leave this value empty to indicate that the manifest is contained all in one period. For more information about periods in the DASH manifest, see Multi-period DASH in AWS Elemental MediaPackage.
+     */
+    PeriodTriggers?: DashPeriodTriggers;
+    /**
+     * The SCTE configuration.
+     */
+    ScteDash?: ScteDash;
+    /**
+     * Determines how the DASH manifest signals the DRM content.
+     */
+    DrmSignaling?: DashDrmSignaling;
+    /**
+     * Determines the type of UTC timing included in the DASH Media Presentation Description (MPD).
+     */
+    UtcTiming?: DashUtcTiming;
+  }
+  export type CreateDashManifestConfigurationManifestWindowSecondsInteger = number;
+  export type CreateDashManifestConfigurationMinBufferTimeSecondsInteger = number;
+  export type CreateDashManifestConfigurationMinUpdatePeriodSecondsInteger = number;
+  export type CreateDashManifestConfigurationSuggestedPresentationDelaySecondsInteger = number;
+  export type CreateDashManifests = CreateDashManifestConfiguration[];
   export interface CreateHlsManifestConfiguration {
     /**
      * A short short string that's appended to the endpoint URL. The manifest name creates a unique path to this endpoint. If you don't enter a value, MediaPackage uses the default manifest name, index. MediaPackage automatically inserts the format extension, such as .m3u8. You can't use the same manifest name if you use HLS manifest and low-latency HLS manifest. The manifestName on the HLSManifest object overrides the manifestName you provided on the originEndpoint object.
@@ -378,6 +447,7 @@ declare namespace MediaPackageV2 {
      * Inserts EXT-X-PROGRAM-DATE-TIME tags in the output manifest at the interval that you specify. If you don't enter an interval, EXT-X-PROGRAM-DATE-TIME tags aren't included in the manifest. The tags sync the stream to the wall clock so that viewers can seek to a specific time in the playback timeline on the player. ID3Timed metadata messages generate every 5 seconds whenever the content is ingested. Irrespective of this parameter, if any ID3Timed metadata is in the HLS input, it is passed through to the HLS output.
      */
     ProgramDateTimeIntervalSeconds?: CreateHlsManifestConfigurationProgramDateTimeIntervalSecondsInteger;
+    FilterConfiguration?: FilterConfiguration;
   }
   export type CreateHlsManifestConfigurationManifestWindowSecondsInteger = number;
   export type CreateHlsManifestConfigurationProgramDateTimeIntervalSecondsInteger = number;
@@ -400,6 +470,7 @@ declare namespace MediaPackageV2 {
      * Inserts EXT-X-PROGRAM-DATE-TIME tags in the output manifest at the interval that you specify. If you don't enter an interval, EXT-X-PROGRAM-DATE-TIME tags aren't included in the manifest. The tags sync the stream to the wall clock so that viewers can seek to a specific time in the playback timeline on the player. ID3Timed metadata messages generate every 5 seconds whenever the content is ingested. Irrespective of this parameter, if any ID3Timed metadata is in the HLS input, it is passed through to the HLS output.
      */
     ProgramDateTimeIntervalSeconds?: CreateLowLatencyHlsManifestConfigurationProgramDateTimeIntervalSecondsInteger;
+    FilterConfiguration?: FilterConfiguration;
   }
   export type CreateLowLatencyHlsManifestConfigurationManifestWindowSecondsInteger = number;
   export type CreateLowLatencyHlsManifestConfigurationProgramDateTimeIntervalSecondsInteger = number;
@@ -445,6 +516,14 @@ declare namespace MediaPackageV2 {
      * A low-latency HLS manifest configuration.
      */
     LowLatencyHlsManifests?: CreateLowLatencyHlsManifests;
+    /**
+     * A DASH manifest configuration.
+     */
+    DashManifests?: CreateDashManifests;
+    /**
+     * The failover settings for the endpoint.
+     */
+    ForceEndpointErrorConfiguration?: ForceEndpointErrorConfiguration;
     /**
      * A comma-separated list of tag key:value pairs that you define. For example:  "Key1": "Value1",   "Key2": "Value2" 
      */
@@ -501,10 +580,38 @@ declare namespace MediaPackageV2 {
      */
     LowLatencyHlsManifests?: GetLowLatencyHlsManifests;
     /**
+     * A DASH manifest configuration.
+     */
+    DashManifests?: GetDashManifests;
+    /**
+     * The failover settings for the endpoint.
+     */
+    ForceEndpointErrorConfiguration?: ForceEndpointErrorConfiguration;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
+    /**
      * The comma-separated list of tag key:value pairs assigned to the origin endpoint.
      */
     Tags?: TagMap;
   }
+  export type DashDrmSignaling = "INDIVIDUAL"|"REFERENCED"|string;
+  export type DashPeriodTrigger = "AVAILS"|"DRM_KEY_ROTATION"|"SOURCE_CHANGES"|"SOURCE_DISRUPTIONS"|"NONE"|string;
+  export type DashPeriodTriggers = DashPeriodTrigger[];
+  export type DashSegmentTemplateFormat = "NUMBER_WITH_TIMELINE"|string;
+  export interface DashUtcTiming {
+    /**
+     * The UTC timing mode.
+     */
+    TimingMode?: DashUtcTimingMode;
+    /**
+     * The the method that the player uses to synchronize to coordinated universal time (UTC) wall clock time.
+     */
+    TimingSource?: DashUtcTimingTimingSourceString;
+  }
+  export type DashUtcTimingMode = "HTTP_HEAD"|"HTTP_ISO"|"HTTP_XSDATE"|"UTC_DIRECT"|string;
+  export type DashUtcTimingTimingSourceString = string;
   export interface DeleteChannelGroupRequest {
     /**
      * The name that describes the channel group. The name is the primary identifier for the channel group, and must be unique for your account in the AWS Region.
@@ -569,7 +676,7 @@ declare namespace MediaPackageV2 {
   }
   export interface DeleteOriginEndpointResponse {
   }
-  export type DrmSystem = "CLEAR_KEY_AES_128"|"FAIRPLAY"|"PLAYREADY"|"WIDEVINE"|string;
+  export type DrmSystem = "CLEAR_KEY_AES_128"|"FAIRPLAY"|"PLAYREADY"|"WIDEVINE"|"IRDETO"|string;
   export interface Encryption {
     /**
      * A 128-bit, 16-byte hex value represented by a 32-character string, used in conjunction with the key for encrypting content. If you don't specify a value, then MediaPackage creates the constant initialization vector (IV).
@@ -610,6 +717,35 @@ declare namespace MediaPackageV2 {
      */
     CmafEncryptionMethod?: CmafEncryptionMethod;
   }
+  export type EndpointErrorCondition = "STALE_MANIFEST"|"INCOMPLETE_MANIFEST"|"MISSING_DRM_KEY"|"SLATE_INPUT"|string;
+  export type EndpointErrorConditions = EndpointErrorCondition[];
+  export type EntityTag = string;
+  export interface FilterConfiguration {
+    /**
+     * Optionally specify one or more manifest filters for all of your manifest egress requests. When you include a manifest filter, note that you cannot use an identical manifest filter query parameter for this manifest's endpoint URL.
+     */
+    ManifestFilter?: FilterConfigurationManifestFilterString;
+    /**
+     * Optionally specify the start time for all of your manifest egress requests. When you include start time, note that you cannot use start time query parameters for this manifest's endpoint URL.
+     */
+    Start?: Timestamp;
+    /**
+     * Optionally specify the end time for all of your manifest egress requests. When you include end time, note that you cannot use end time query parameters for this manifest's endpoint URL.
+     */
+    End?: Timestamp;
+    /**
+     * Optionally specify the time delay for all of your manifest egress requests. Enter a value that is smaller than your endpoint's startover window. When you include time delay, note that you cannot use time delay query parameters for this manifest's endpoint URL.
+     */
+    TimeDelaySeconds?: FilterConfigurationTimeDelaySecondsInteger;
+  }
+  export type FilterConfigurationManifestFilterString = string;
+  export type FilterConfigurationTimeDelaySecondsInteger = number;
+  export interface ForceEndpointErrorConfiguration {
+    /**
+     * The failover conditions for the endpoint. The options are:    STALE_MANIFEST - The manifest stalled and there are no new segments or parts.    INCOMPLETE_MANIFEST - There is a gap in the manifest.    MISSING_DRM_KEY - Key rotation is enabled but we're unable to fetch the key for the current key period.    SLATE_INPUT - The segments which contain slate content are considered to be missing content.  
+     */
+    EndpointErrorConditions?: EndpointErrorConditions;
+  }
   export interface GetChannelGroupRequest {
     /**
      * The name that describes the channel group. The name is the primary identifier for the channel group, and must be unique for your account in the AWS Region.
@@ -640,7 +776,11 @@ declare namespace MediaPackageV2 {
     /**
      * The description for your channel group.
      */
-    Description?: String;
+    Description?: ResourceDescription;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
     /**
      * The comma-separated list of tag key:value pairs assigned to the channel group.
      */
@@ -668,7 +808,7 @@ declare namespace MediaPackageV2 {
     /**
      * The policy assigned to the channel.
      */
-    Policy: String;
+    Policy: PolicyText;
   }
   export interface GetChannelRequest {
     /**
@@ -704,13 +844,69 @@ declare namespace MediaPackageV2 {
     /**
      * The description for your channel.
      */
-    Description?: String;
+    Description?: ResourceDescription;
     IngestEndpoints?: IngestEndpointList;
+    /**
+     * The input type will be an immutable field which will be used to define whether the channel will allow CMAF ingest or HLS ingest. If unprovided, it will default to HLS to preserve current behavior. The allowed values are:    HLS - The HLS streaming specification (which defines M3U8 manifests and TS segments).    CMAF - The DASH-IF CMAF Ingest specification (which defines CMAF segments with optional DASH manifests).  
+     */
+    InputType?: InputType;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
     /**
      * The comma-separated list of tag key:value pairs assigned to the channel.
      */
     Tags?: TagMap;
   }
+  export interface GetDashManifestConfiguration {
+    /**
+     * A short string that's appended to the endpoint URL. The manifest name creates a unique path to this endpoint. If you don't enter a value, MediaPackage uses the default manifest name, index. 
+     */
+    ManifestName: ResourceName;
+    /**
+     * The egress domain URL for stream delivery from MediaPackage.
+     */
+    Url: String;
+    /**
+     * The total duration (in seconds) of the manifest's content.
+     */
+    ManifestWindowSeconds?: Integer;
+    FilterConfiguration?: FilterConfiguration;
+    /**
+     * Minimum amount of time (in seconds) that the player should wait before requesting updates to the manifest.
+     */
+    MinUpdatePeriodSeconds?: Integer;
+    /**
+     * Minimum amount of content (in seconds) that a player must keep available in the buffer.
+     */
+    MinBufferTimeSeconds?: Integer;
+    /**
+     * The amount of time (in seconds) that the player should be from the end of the manifest.
+     */
+    SuggestedPresentationDelaySeconds?: Integer;
+    /**
+     * Determines the type of variable used in the media URL of the SegmentTemplate tag in the manifest. Also specifies if segment timeline information is included in SegmentTimeline or SegmentTemplate. Value description:    NUMBER_WITH_TIMELINE - The $Number$ variable is used in the media URL. The value of this variable is the sequential number of the segment. A full SegmentTimeline object is presented in each SegmentTemplate.  
+     */
+    SegmentTemplateFormat?: DashSegmentTemplateFormat;
+    /**
+     * A list of triggers that controls when AWS Elemental MediaPackage separates the MPEG-DASH manifest into multiple periods. Leave this value empty to indicate that the manifest is contained all in one period. For more information about periods in the DASH manifest, see Multi-period DASH in AWS Elemental MediaPackage.
+     */
+    PeriodTriggers?: DashPeriodTriggers;
+    /**
+     * The SCTE configuration.
+     */
+    ScteDash?: ScteDash;
+    /**
+     * Determines how the DASH manifest signals the DRM content.
+     */
+    DrmSignaling?: DashDrmSignaling;
+    /**
+     * Determines the type of UTC timing included in the DASH Media Presentation Description (MPD).
+     */
+    UtcTiming?: DashUtcTiming;
+  }
+  export type GetDashManifests = GetDashManifestConfiguration[];
   export interface GetHlsManifestConfiguration {
     /**
      * A short short string that's appended to the endpoint URL. The manifest name creates a unique path to this endpoint. If you don't enter a value, MediaPackage uses the default manifest name, index. MediaPackage automatically inserts the format extension, such as .m3u8. You can't use the same manifest name if you use HLS manifest and low-latency HLS manifest. The manifestName on the HLSManifest object overrides the manifestName you provided on the originEndpoint object.
@@ -733,6 +929,7 @@ declare namespace MediaPackageV2 {
      */
     ProgramDateTimeIntervalSeconds?: Integer;
     ScteHls?: ScteHls;
+    FilterConfiguration?: FilterConfiguration;
   }
   export type GetHlsManifests = GetHlsManifestConfiguration[];
   export interface GetLowLatencyHlsManifestConfiguration {
@@ -757,6 +954,7 @@ declare namespace MediaPackageV2 {
      */
     ProgramDateTimeIntervalSeconds?: Integer;
     ScteHls?: ScteHls;
+    FilterConfiguration?: FilterConfiguration;
   }
   export type GetLowLatencyHlsManifests = GetLowLatencyHlsManifestConfiguration[];
   export interface GetOriginEndpointPolicyRequest {
@@ -777,19 +975,19 @@ declare namespace MediaPackageV2 {
     /**
      * The name that describes the channel group. The name is the primary identifier for the channel group, and must be unique for your account in the AWS Region.
      */
-    ChannelGroupName: String;
+    ChannelGroupName: ResourceName;
     /**
      * The name that describes the channel. The name is the primary identifier for the channel, and must be unique for your account in the AWS Region and channel group.
      */
-    ChannelName: String;
+    ChannelName: ResourceName;
     /**
      * The name that describes the origin endpoint. The name is the primary identifier for the origin endpoint, and and must be unique for your account in the AWS Region and channel.
      */
-    OriginEndpointName: String;
+    OriginEndpointName: ResourceName;
     /**
      * The policy assigned to the origin endpoint.
      */
-    Policy: String;
+    Policy: PolicyText;
   }
   export interface GetOriginEndpointRequest {
     /**
@@ -852,6 +1050,18 @@ declare namespace MediaPackageV2 {
      */
     LowLatencyHlsManifests?: GetLowLatencyHlsManifests;
     /**
+     * A DASH manifest configuration.
+     */
+    DashManifests?: GetDashManifests;
+    /**
+     * The failover settings for the endpoint.
+     */
+    ForceEndpointErrorConfiguration?: ForceEndpointErrorConfiguration;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
+    /**
      * The comma-separated list of tag key:value pairs assigned to the origin endpoint.
      */
     Tags?: TagMap;
@@ -868,6 +1078,7 @@ declare namespace MediaPackageV2 {
     Url?: String;
   }
   export type IngestEndpointList = IngestEndpoint[];
+  export type InputType = "HLS"|"CMAF"|string;
   export type Integer = number;
   export interface ListChannelGroupsRequest {
     /**
@@ -913,6 +1124,17 @@ declare namespace MediaPackageV2 {
      */
     NextToken?: String;
   }
+  export interface ListDashManifestConfiguration {
+    /**
+     * A short string that's appended to the endpoint URL. The manifest name creates a unique path to this endpoint. If you don't enter a value, MediaPackage uses the default manifest name, index. 
+     */
+    ManifestName: ResourceName;
+    /**
+     * The egress domain URL for stream delivery from MediaPackage.
+     */
+    Url?: String;
+  }
+  export type ListDashManifests = ListDashManifestConfiguration[];
   export interface ListHlsManifestConfiguration {
     /**
      * A short short string that's appended to the endpoint URL. The manifest name creates a unique path to this endpoint. If you don't enter a value, MediaPackage uses the default manifest name, index. MediaPackage automatically inserts the format extension, such as .m3u8. You can't use the same manifest name if you use HLS manifest and low-latency HLS manifest. The manifestName on the HLSManifest object overrides the manifestName you provided on the originEndpoint object.
@@ -1026,6 +1248,14 @@ declare namespace MediaPackageV2 {
      * A low-latency HLS manifest configuration.
      */
     LowLatencyHlsManifests?: ListLowLatencyHlsManifests;
+    /**
+     * A DASH manifest configuration.
+     */
+    DashManifests?: ListDashManifests;
+    /**
+     * The failover settings for the endpoint.
+     */
+    ForceEndpointErrorConfiguration?: ForceEndpointErrorConfiguration;
   }
   export type OriginEndpointsList = OriginEndpointListConfiguration[];
   export type PolicyText = string;
@@ -1074,6 +1304,12 @@ declare namespace MediaPackageV2 {
      * The SCTE-35 message types that you want to be treated as ad markers in the output.
      */
     ScteFilter?: ScteFilterList;
+  }
+  export interface ScteDash {
+    /**
+     * Choose how ad markers are included in the packaged content. If you include ad markers in the content stream in your upstream encoders, then you need to inform MediaPackage what to do with the ad markers in the output. Value description:    Binary - The SCTE-35 marker is expressed as a hex-string (Base64 string) rather than full XML.    XML - The SCTE marker is expressed fully in XML.  
+     */
+    AdMarkerDash?: AdMarkerDash;
   }
   export type ScteFilter = "SPLICE_INSERT"|"BREAK"|"PROVIDER_ADVERTISEMENT"|"DISTRIBUTOR_ADVERTISEMENT"|"PROVIDER_PLACEMENT_OPPORTUNITY"|"DISTRIBUTOR_PLACEMENT_OPPORTUNITY"|"PROVIDER_OVERLAY_PLACEMENT_OPPORTUNITY"|"DISTRIBUTOR_OVERLAY_PLACEMENT_OPPORTUNITY"|"PROGRAM"|string;
   export type ScteFilterList = ScteFilter[];
@@ -1172,6 +1408,10 @@ declare namespace MediaPackageV2 {
      */
     ChannelGroupName: ResourceName;
     /**
+     * The expected current Entity Tag (ETag) for the resource. If the specified ETag does not match the resource's current entity tag, the update request will be rejected.
+     */
+    ETag?: EntityTag;
+    /**
      * Any descriptive information that you want to add to the channel group for future identification purposes.
      */
     Description?: ResourceDescription;
@@ -1200,7 +1440,11 @@ declare namespace MediaPackageV2 {
     /**
      * The description for your channel group.
      */
-    Description?: String;
+    Description?: ResourceDescription;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
     /**
      * The comma-separated list of tag key:value pairs assigned to the channel group.
      */
@@ -1215,6 +1459,10 @@ declare namespace MediaPackageV2 {
      * The name that describes the channel. The name is the primary identifier for the channel, and must be unique for your account in the AWS Region and channel group. 
      */
     ChannelName: ResourceName;
+    /**
+     * The expected current Entity Tag (ETag) for the resource. If the specified ETag does not match the resource's current entity tag, the update request will be rejected.
+     */
+    ETag?: EntityTag;
     /**
      * Any descriptive information that you want to add to the channel for future identification purposes.
      */
@@ -1244,8 +1492,16 @@ declare namespace MediaPackageV2 {
     /**
      * The description for your channel.
      */
-    Description?: String;
+    Description?: ResourceDescription;
     IngestEndpoints?: IngestEndpointList;
+    /**
+     * The input type will be an immutable field which will be used to define whether the channel will allow CMAF ingest or HLS ingest. If unprovided, it will default to HLS to preserve current behavior. The allowed values are:    HLS - The HLS streaming specification (which defines M3U8 manifests and TS segments).    CMAF - The DASH-IF CMAF Ingest specification (which defines CMAF segments with optional DASH manifests).  
+     */
+    InputType?: InputType;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
     /**
      * The comma-separated list of tag key:value pairs assigned to the channel.
      */
@@ -1288,6 +1544,18 @@ declare namespace MediaPackageV2 {
      * A low-latency HLS manifest configuration.
      */
     LowLatencyHlsManifests?: CreateLowLatencyHlsManifests;
+    /**
+     * A DASH manifest configuration.
+     */
+    DashManifests?: CreateDashManifests;
+    /**
+     * The failover settings for the endpoint.
+     */
+    ForceEndpointErrorConfiguration?: ForceEndpointErrorConfiguration;
+    /**
+     * The expected current Entity Tag (ETag) for the resource. If the specified ETag does not match the resource's current entity tag, the update request will be rejected.
+     */
+    ETag?: EntityTag;
   }
   export type UpdateOriginEndpointRequestStartoverWindowSecondsInteger = number;
   export interface UpdateOriginEndpointResponse {
@@ -1340,9 +1608,21 @@ declare namespace MediaPackageV2 {
      */
     LowLatencyHlsManifests?: GetLowLatencyHlsManifests;
     /**
+     * The failover settings for the endpoint.
+     */
+    ForceEndpointErrorConfiguration?: ForceEndpointErrorConfiguration;
+    /**
+     * The current Entity Tag (ETag) associated with this resource. The entity tag can be used to safely make concurrent updates to the resource.
+     */
+    ETag?: EntityTag;
+    /**
      * The comma-separated list of tag key:value pairs assigned to the origin endpoint.
      */
     Tags?: TagMap;
+    /**
+     * A DASH manifest configuration.
+     */
+    DashManifests?: GetDashManifests;
   }
   /**
    * A string in YYYY-MM-DD format that represents the latest possible API version that can be used in this service. Specify 'latest' to use the latest possible version.

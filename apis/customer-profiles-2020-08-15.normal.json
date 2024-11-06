@@ -5,12 +5,18 @@
     "endpointPrefix": "profile",
     "jsonVersion": "1.1",
     "protocol": "rest-json",
+    "protocols": [
+      "rest-json"
+    ],
     "serviceAbbreviation": "Customer Profiles",
     "serviceFullName": "Amazon Connect Customer Profiles",
     "serviceId": "Customer Profiles",
     "signatureVersion": "v4",
     "signingName": "profile",
-    "uid": "customer-profiles-2020-08-15"
+    "uid": "customer-profiles-2020-08-15",
+    "auth": [
+      "aws.auth#sigv4"
+    ]
   },
   "operations": {
     "AddProfileKey": {
@@ -104,7 +110,7 @@
           "shape": "InternalServerException"
         }
       ],
-      "documentation": "<p>Creates a domain, which is a container for all customer data, such as customer profile attributes, object types, profile keys, and encryption keys. You can create multiple domains, and each domain can have multiple third-party integrations.</p> <p>Each Amazon Connect instance can be associated with only one domain. Multiple Amazon Connect instances can be associated with one domain.</p> <p>Use this API or <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_UpdateDomain.html\">UpdateDomain</a> to enable <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_GetMatches.html\">identity resolution</a>: set <code>Matching</code> to true.</p> <p>To prevent cross-service impersonation when you call this API, see <a href=\"https://docs.aws.amazon.com/connect/latest/adminguide/cross-service-confused-deputy-prevention.html\">Cross-service confused deputy prevention</a> for sample policies that you should apply. </p>"
+      "documentation": "<p>Creates a domain, which is a container for all customer data, such as customer profile attributes, object types, profile keys, and encryption keys. You can create multiple domains, and each domain can have multiple third-party integrations.</p> <p>Each Amazon Connect instance can be associated with only one domain. Multiple Amazon Connect instances can be associated with one domain.</p> <p>Use this API or <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_UpdateDomain.html\">UpdateDomain</a> to enable <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_GetMatches.html\">identity resolution</a>: set <code>Matching</code> to true.</p> <p>To prevent cross-service impersonation when you call this API, see <a href=\"https://docs.aws.amazon.com/connect/latest/adminguide/cross-service-confused-deputy-prevention.html\">Cross-service confused deputy prevention</a> for sample policies that you should apply. </p> <note> <p>It is not possible to associate a Customer Profiles domain with an Amazon Connect Instance directly from the API. If you would like to create a domain and associate a Customer Profiles domain, use the Amazon Connect admin website. For more information, see <a href=\"https://docs.aws.amazon.com/connect/latest/adminguide/enable-customer-profiles.html#enable-customer-profiles-step1\">Enable Customer Profiles</a>.</p> <p>Each Amazon Connect instance can be associated with only one domain. Multiple Amazon Connect instances can be associated with one domain.</p> </note>"
     },
     "CreateEventStream": {
       "name": "CreateEventStream",
@@ -478,6 +484,37 @@
         }
       ],
       "documentation": "<p>Deletes the specified workflow and all its corresponding resources. This is an async process.</p>"
+    },
+    "DetectProfileObjectType": {
+      "name": "DetectProfileObjectType",
+      "http": {
+        "method": "POST",
+        "requestUri": "/domains/{DomainName}/detect/object-types"
+      },
+      "input": {
+        "shape": "DetectProfileObjectTypeRequest"
+      },
+      "output": {
+        "shape": "DetectProfileObjectTypeResponse"
+      },
+      "errors": [
+        {
+          "shape": "BadRequestException"
+        },
+        {
+          "shape": "ResourceNotFoundException"
+        },
+        {
+          "shape": "AccessDeniedException"
+        },
+        {
+          "shape": "ThrottlingException"
+        },
+        {
+          "shape": "InternalServerException"
+        }
+      ],
+      "documentation": "<p>The process of detecting profile object type mapping by using given objects.</p>"
     },
     "GetAutoMergingPreview": {
       "name": "GetAutoMergingPreview",
@@ -1686,7 +1723,8 @@
           "documentation": "<p>The postal code of a customer address.</p>"
         }
       },
-      "documentation": "<p>A generic address associated with the customer that is not mailing, shipping, or billing.</p>"
+      "documentation": "<p>A generic address associated with the customer that is not mailing, shipping, or billing.</p>",
+      "sensitive": true
     },
     "AddressList": {
       "type": "list",
@@ -1821,7 +1859,8 @@
           "documentation": "<p>Mathematical expression that is performed on attribute items provided in the attribute list. Each element in the expression should follow the structure of \\\"{ObjectTypeName.AttributeName}\\\".</p>"
         }
       },
-      "documentation": "<p>Mathematical expression and a list of attribute items specified in that expression.</p>"
+      "documentation": "<p>Mathematical expression and a list of attribute items specified in that expression.</p>",
+      "sensitive": true
     },
     "AttributeItem": {
       "type": "structure",
@@ -1892,7 +1931,8 @@
       },
       "value": {
         "shape": "string1To255"
-      }
+      },
+      "sensitive": true
     },
     "AutoMerging": {
       "type": "structure",
@@ -1958,7 +1998,8 @@
       "type": "list",
       "member": {
         "shape": "ListCalculatedAttributeDefinitionItem"
-      }
+      },
+      "sensitive": true
     },
     "CalculatedAttributesForProfileList": {
       "type": "list",
@@ -1982,7 +2023,8 @@
           "documentation": "<p>The threshold for the calculated attribute.</p>"
         }
       },
-      "documentation": "<p>The conditions including range, object count, and threshold for the calculated attribute.</p>"
+      "documentation": "<p>The conditions including range, object count, and threshold for the calculated attribute.</p>",
+      "sensitive": true
     },
     "ConflictResolution": {
       "type": "structure",
@@ -2078,7 +2120,7 @@
           "documentation": "<p>The display name of the calculated attribute.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The description of the calculated attribute.</p>"
         },
         "AttributeDetails": {
@@ -2111,7 +2153,7 @@
           "documentation": "<p>The display name of the calculated attribute.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The description of the calculated attribute.</p>"
         },
         "AttributeDetails": {
@@ -2340,11 +2382,11 @@
           "locationName": "DomainName"
         },
         "AccountNumber": {
-          "shape": "string1To255",
-          "documentation": "<p>A unique account number that you have given to the customer.</p>"
+          "shape": "sensitiveString1To255",
+          "documentation": "<p>An account number that you have given to the customer.</p>"
         },
         "AdditionalInformation": {
-          "shape": "string1To1000",
+          "shape": "sensitiveString1To1000",
           "documentation": "<p>Any additional information relevant to the customer’s profile.</p>"
         },
         "PartyType": {
@@ -2352,23 +2394,23 @@
           "documentation": "<p>The type of profile used to describe the customer.</p>"
         },
         "BusinessName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The name of the customer’s business.</p>"
         },
         "FirstName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s first name.</p>"
         },
         "MiddleName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s middle name.</p>"
         },
         "LastName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s last name.</p>"
         },
         "BirthDate": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s birth date. </p>"
         },
         "Gender": {
@@ -2376,31 +2418,31 @@
           "documentation": "<p>The gender with which the customer identifies. </p>"
         },
         "PhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s phone number, which has not been specified as a mobile, home, or business number. </p>"
         },
         "MobilePhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s mobile phone number.</p>"
         },
         "HomePhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s home phone number.</p>"
         },
         "BusinessPhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s business phone number.</p>"
         },
         "EmailAddress": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s email address, which has not been specified as a personal or business address. </p>"
         },
         "PersonalEmailAddress": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s personal email address.</p>"
         },
         "BusinessEmailAddress": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s business email address.</p>"
         },
         "Address": {
@@ -2424,11 +2466,11 @@
           "documentation": "<p>A key value pair of attributes of a customer profile.</p>"
         },
         "PartyTypeString": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>An alternative to <code>PartyType</code> which accepts any string as input.</p>"
         },
         "GenderString": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>An alternative to <code>Gender</code> which accepts any string as input.</p>"
         }
       }
@@ -2756,6 +2798,58 @@
       },
       "documentation": "<p>Summary information about the Kinesis data stream</p>"
     },
+    "DetectProfileObjectTypeRequest": {
+      "type": "structure",
+      "required": [
+        "Objects",
+        "DomainName"
+      ],
+      "members": {
+        "Objects": {
+          "shape": "Objects",
+          "documentation": "<p>A string that is serialized from a JSON object.</p>"
+        },
+        "DomainName": {
+          "shape": "name",
+          "documentation": "<p>The unique name of the domain.</p>",
+          "location": "uri",
+          "locationName": "DomainName"
+        }
+      }
+    },
+    "DetectProfileObjectTypeResponse": {
+      "type": "structure",
+      "members": {
+        "DetectedProfileObjectTypes": {
+          "shape": "DetectedProfileObjectTypes",
+          "documentation": "<p>Detected <code>ProfileObjectType</code> mappings from given objects. A maximum of one mapping is supported.</p>"
+        }
+      }
+    },
+    "DetectedProfileObjectType": {
+      "type": "structure",
+      "members": {
+        "SourceLastUpdatedTimestampFormat": {
+          "shape": "string1To255",
+          "documentation": "<p>The format of <code>sourceLastUpdatedTimestamp</code> that was detected in fields.</p>"
+        },
+        "Fields": {
+          "shape": "FieldMap",
+          "documentation": "<p>A map of the name and the <code>ObjectType</code> field.</p>"
+        },
+        "Keys": {
+          "shape": "KeyMap",
+          "documentation": "<p>A list of unique keys that can be used to map data to a profile.</p>"
+        }
+      },
+      "documentation": "<p>Contains <code>ProfileObjectType</code> mapping information from the model.</p>"
+    },
+    "DetectedProfileObjectTypes": {
+      "type": "list",
+      "member": {
+        "shape": "DetectedProfileObjectType"
+      }
+    },
     "DomainList": {
       "type": "list",
       "member": {
@@ -2923,7 +3017,8 @@
       },
       "value": {
         "shape": "ObjectTypeField"
-      }
+      },
+      "sensitive": true
     },
     "FieldNameList": {
       "type": "list",
@@ -3056,7 +3151,8 @@
           "documentation": "<p>The trigger settings that determine how and when the flow runs.</p>"
         }
       },
-      "documentation": "<p>The configurations that control how Customer Profiles retrieves data from the source, Amazon AppFlow. Customer Profiles uses this information to create an AppFlow flow on behalf of customers.</p>"
+      "documentation": "<p>The configurations that control how Customer Profiles retrieves data from the source, Amazon AppFlow. Customer Profiles uses this information to create an AppFlow flow on behalf of customers.</p>",
+      "sensitive": true
     },
     "FlowDescription": {
       "type": "string",
@@ -3089,7 +3185,8 @@
         "MALE",
         "FEMALE",
         "UNSPECIFIED"
-      ]
+      ],
+      "sensitive": true
     },
     "GetAutoMergingPreviewRequest": {
       "type": "structure",
@@ -3176,7 +3273,7 @@
           "documentation": "<p>The display name of the calculated attribute.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The description of the calculated attribute.</p>"
         },
         "CreatedAt": {
@@ -3595,7 +3692,7 @@
           "documentation": "<p>The name of the profile object type.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The description of the profile object type.</p>"
         },
         "TemplateId": {
@@ -3617,6 +3714,14 @@
         "SourceLastUpdatedTimestampFormat": {
           "shape": "string1To255",
           "documentation": "<p>The format of your <code>sourceLastUpdatedTimestamp</code> that was previously set up.</p>"
+        },
+        "MaxAvailableProfileObjectCount": {
+          "shape": "minSize0",
+          "documentation": "<p>The amount of provisioned profile object max count available.</p>"
+        },
+        "MaxProfileObjectCount": {
+          "shape": "minSize1",
+          "documentation": "<p>The amount of profile object max count assigned to the object type.</p>"
         },
         "Fields": {
           "shape": "FieldMap",
@@ -4012,7 +4117,8 @@
       },
       "value": {
         "shape": "ObjectTypeKeyList"
-      }
+      },
+      "sensitive": true
     },
     "KmsArn": {
       "type": "string",
@@ -4075,7 +4181,7 @@
           "documentation": "<p>The display name of the calculated attribute.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The threshold for the calculated attribute.</p>"
         },
         "CreatedAt": {
@@ -4450,6 +4556,14 @@
         "LastUpdatedAt": {
           "shape": "timestamp",
           "documentation": "<p>The timestamp of when the domain was most recently edited.</p>"
+        },
+        "MaxProfileObjectCount": {
+          "shape": "minSize1",
+          "documentation": "<p>The amount of profile object max count assigned to the object type.</p>"
+        },
+        "MaxAvailableProfileObjectCount": {
+          "shape": "minSize0",
+          "documentation": "<p>The amount of provisioned profile object max count available.</p>"
         },
         "Tags": {
           "shape": "TagMap",
@@ -5056,6 +5170,15 @@
         "shape": "typeName"
       }
     },
+    "Objects": {
+      "type": "list",
+      "member": {
+        "shape": "stringifiedJson"
+      },
+      "max": 5,
+      "min": 1,
+      "sensitive": true
+    },
     "Operator": {
       "type": "string",
       "enum": [
@@ -5091,7 +5214,8 @@
         "INDIVIDUAL",
         "BUSINESS",
         "OTHER"
-      ]
+      ],
+      "sensitive": true
     },
     "PhoneNumberList": {
       "type": "list",
@@ -5109,11 +5233,11 @@
           "documentation": "<p>The unique identifier of a customer profile.</p>"
         },
         "AccountNumber": {
-          "shape": "string1To255",
-          "documentation": "<p>A unique account number that you have given to the customer.</p>"
+          "shape": "sensitiveString1To255",
+          "documentation": "<p>An account number that you have given to the customer.</p>"
         },
         "AdditionalInformation": {
-          "shape": "string1To1000",
+          "shape": "sensitiveString1To1000",
           "documentation": "<p>Any additional information relevant to the customer’s profile.</p>"
         },
         "PartyType": {
@@ -5121,23 +5245,23 @@
           "documentation": "<p>The type of profile used to describe the customer.</p>"
         },
         "BusinessName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The name of the customer’s business.</p>"
         },
         "FirstName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s first name.</p>"
         },
         "MiddleName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s middle name.</p>"
         },
         "LastName": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s last name.</p>"
         },
         "BirthDate": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s birth date. </p>"
         },
         "Gender": {
@@ -5145,31 +5269,31 @@
           "documentation": "<p>The gender with which the customer identifies. </p>"
         },
         "PhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer's phone number, which has not been specified as a mobile, home, or business number.</p>"
         },
         "MobilePhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s mobile phone number.</p>"
         },
         "HomePhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s home phone number.</p>"
         },
         "BusinessPhoneNumber": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s home phone number.</p>"
         },
         "EmailAddress": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s email address, which has not been specified as a personal or business address. </p>"
         },
         "PersonalEmailAddress": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s personal email address.</p>"
         },
         "BusinessEmailAddress": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>The customer’s business email address.</p>"
         },
         "Address": {
@@ -5197,11 +5321,11 @@
           "documentation": "<p>A list of items used to find a profile returned in a <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_SearchProfiles.html\">SearchProfiles</a> response. An item is a key-value(s) pair that matches an attribute in the profile.</p> <p>If the optional <code>AdditionalSearchKeys</code> parameter was included in the <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_SearchProfiles.html\">SearchProfiles</a> request, the <code>FoundByItems</code> list should be interpreted based on the <code>LogicalOperator</code> used in the request:</p> <ul> <li> <p> <code>AND</code> - The profile included in the response matched all of the search keys specified in the request. The <code>FoundByItems</code> will include all of the key-value(s) pairs that were specified in the request (as this is a requirement of <code>AND</code> search logic).</p> </li> <li> <p> <code>OR</code> - The profile included in the response matched at least one of the search keys specified in the request. The <code>FoundByItems</code> will include each of the key-value(s) pairs that the profile was found by.</p> </li> </ul> <p>The <code>OR</code> relationship is the default behavior if the <code>LogicalOperator</code> parameter is not included in the <a href=\"https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_SearchProfiles.html\">SearchProfiles</a> request.</p>"
         },
         "PartyTypeString": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>An alternative to PartyType which accepts any string as input.</p>"
         },
         "GenderString": {
-          "shape": "string1To255",
+          "shape": "sensitiveString1To255",
           "documentation": "<p>An alternative to Gender which accepts any string as input.</p>"
         }
       },
@@ -5237,7 +5361,8 @@
       "type": "list",
       "member": {
         "shape": "ListProfileObjectTypeItem"
-      }
+      },
+      "sensitive": true
     },
     "ProfileObjectTypeTemplateList": {
       "type": "list",
@@ -5385,7 +5510,7 @@
           "locationName": "ObjectTypeName"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>Description of the profile object type.</p>"
         },
         "TemplateId": {
@@ -5407,6 +5532,10 @@
         "SourceLastUpdatedTimestampFormat": {
           "shape": "string1To255",
           "documentation": "<p>The format of your <code>sourceLastUpdatedTimestamp</code> that was previously set up. </p>"
+        },
+        "MaxProfileObjectCount": {
+          "shape": "minSize1",
+          "documentation": "<p>The amount of profile object max count assigned to the object type</p>"
         },
         "Fields": {
           "shape": "FieldMap",
@@ -5434,7 +5563,7 @@
           "documentation": "<p>The name of the profile object type.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>Description of the profile object type.</p>"
         },
         "TemplateId": {
@@ -5456,6 +5585,14 @@
         "SourceLastUpdatedTimestampFormat": {
           "shape": "string1To255",
           "documentation": "<p>The format of your <code>sourceLastUpdatedTimestamp</code> that was previously set up in fields that were parsed using <a href=\"https://docs.oracle.com/javase/10/docs/api/java/text/SimpleDateFormat.html\">SimpleDateFormat</a>. If you have <code>sourceLastUpdatedTimestamp</code> in your field, you must set up <code>sourceLastUpdatedTimestampFormat</code>.</p>"
+        },
+        "MaxProfileObjectCount": {
+          "shape": "minSize1",
+          "documentation": "<p>The amount of profile object max count assigned to the object type.</p>"
+        },
+        "MaxAvailableProfileObjectCount": {
+          "shape": "minSize0",
+          "documentation": "<p>The amount of provisioned profile object max count available.</p>"
         },
         "Fields": {
           "shape": "FieldMap",
@@ -5948,7 +6085,8 @@
         "MAXIMUM",
         "AVERAGE",
         "MAX_OCCURRENCE"
-      ]
+      ],
+      "sensitive": true
     },
     "Status": {
       "type": "string",
@@ -6209,7 +6347,8 @@
           "documentation": "<p>The postal code of a customer address.</p>"
         }
       },
-      "documentation": "<p>Updates associated with the address properties of a customer profile.</p>"
+      "documentation": "<p>Updates associated with the address properties of a customer profile.</p>",
+      "sensitive": true
     },
     "UpdateAttributes": {
       "type": "map",
@@ -6218,7 +6357,8 @@
       },
       "value": {
         "shape": "string0To255"
-      }
+      },
+      "sensitive": true
     },
     "UpdateCalculatedAttributeDefinitionRequest": {
       "type": "structure",
@@ -6244,7 +6384,7 @@
           "documentation": "<p>The display name of the calculated attribute.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The description of the calculated attribute.</p>"
         },
         "Conditions": {
@@ -6265,7 +6405,7 @@
           "documentation": "<p>The display name of the calculated attribute.</p>"
         },
         "Description": {
-          "shape": "text",
+          "shape": "sensitiveText",
           "documentation": "<p>The description of the calculated attribute.</p>"
         },
         "CreatedAt": {
@@ -6396,35 +6536,35 @@
           "documentation": "<p>The unique identifier of a customer profile.</p>"
         },
         "AdditionalInformation": {
-          "shape": "string0To1000",
+          "shape": "sensitiveString0To1000",
           "documentation": "<p>Any additional information relevant to the customer’s profile.</p>"
         },
         "AccountNumber": {
-          "shape": "string0To255",
-          "documentation": "<p>A unique account number that you have given to the customer.</p>"
+          "shape": "sensitiveString0To255",
+          "documentation": "<p>An account number that you have given to the customer.</p>"
         },
         "PartyType": {
           "shape": "PartyType",
           "documentation": "<p>The type of profile used to describe the customer.</p>"
         },
         "BusinessName": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The name of the customer’s business.</p>"
         },
         "FirstName": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s first name.</p>"
         },
         "MiddleName": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s middle name.</p>"
         },
         "LastName": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s last name.</p>"
         },
         "BirthDate": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s birth date. </p>"
         },
         "Gender": {
@@ -6432,31 +6572,31 @@
           "documentation": "<p>The gender with which the customer identifies. </p>"
         },
         "PhoneNumber": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s phone number, which has not been specified as a mobile, home, or business number. </p>"
         },
         "MobilePhoneNumber": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s mobile phone number.</p>"
         },
         "HomePhoneNumber": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s home phone number.</p>"
         },
         "BusinessPhoneNumber": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s business phone number.</p>"
         },
         "EmailAddress": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s email address, which has not been specified as a personal or business address. </p>"
         },
         "PersonalEmailAddress": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s personal email address.</p>"
         },
         "BusinessEmailAddress": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>The customer’s business email address.</p>"
         },
         "Address": {
@@ -6480,11 +6620,11 @@
           "documentation": "<p>A key value pair of attributes of a customer profile.</p>"
         },
         "PartyTypeString": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>An alternative to <code>PartyType</code> which accepts any string as input.</p>"
         },
         "GenderString": {
-          "shape": "string0To255",
+          "shape": "sensitiveString0To255",
           "documentation": "<p>An alternative to <code>Gender</code> which accepts any string as input.</p>"
         }
       }
@@ -6649,6 +6789,14 @@
     "message": {
       "type": "string"
     },
+    "minSize0": {
+      "type": "integer",
+      "min": 0
+    },
+    "minSize1": {
+      "type": "integer",
+      "min": 1
+    },
     "optionalBoolean": {
       "type": "boolean"
     },
@@ -6676,14 +6824,39 @@
       "min": 1,
       "pattern": ".*"
     },
+    "sensitiveString0To1000": {
+      "type": "string",
+      "max": 1000,
+      "min": 0,
+      "sensitive": true
+    },
+    "sensitiveString0To255": {
+      "type": "string",
+      "max": 255,
+      "min": 0,
+      "sensitive": true
+    },
+    "sensitiveString1To1000": {
+      "type": "string",
+      "max": 1000,
+      "min": 1,
+      "sensitive": true
+    },
+    "sensitiveString1To255": {
+      "type": "string",
+      "max": 255,
+      "min": 1,
+      "sensitive": true
+    },
+    "sensitiveText": {
+      "type": "string",
+      "max": 1000,
+      "min": 1,
+      "sensitive": true
+    },
     "sqsQueueUrl": {
       "type": "string",
       "max": 255,
-      "min": 0
-    },
-    "string0To1000": {
-      "type": "string",
-      "max": 1000,
       "min": 0
     },
     "string0To255": {
@@ -6709,7 +6882,8 @@
     "stringifiedJson": {
       "type": "string",
       "max": 256000,
-      "min": 1
+      "min": 1,
+      "sensitive": true
     },
     "text": {
       "type": "string",
@@ -6735,5 +6909,5 @@
       "pattern": "[a-f0-9]{32}"
     }
   },
-  "documentation": "<fullname>Amazon Connect Customer Profiles</fullname> <p>Amazon Connect Customer Profiles is a unified customer profile for your contact center that has pre-built connectors powered by AppFlow that make it easy to combine customer information from third party applications, such as Salesforce (CRM), ServiceNow (ITSM), and your enterprise resource planning (ERP), with contact history from your Amazon Connect contact center. If you're new to Amazon Connect, you might find it helpful to review the <a href=\"https://docs.aws.amazon.com/connect/latest/adminguide/\">Amazon Connect Administrator Guide</a>.</p>"
+  "documentation": "<fullname>Amazon Connect Customer Profiles</fullname> <p>Amazon Connect Customer Profiles is a unified customer profile for your contact center that has pre-built connectors powered by AppFlow that make it easy to combine customer information from third party applications, such as Salesforce (CRM), ServiceNow (ITSM), and your enterprise resource planning (ERP), with contact history from your Amazon Connect contact center. </p> <p>For more information about the Amazon Connect Customer Profiles feature, see <a href=\"https://docs.aws.amazon.com/connect/latest/adminguide/customer-profiles.html\">Use Customer Profiles</a> in the <i>Amazon Connect Administrator's Guide</i>. </p>"
 }

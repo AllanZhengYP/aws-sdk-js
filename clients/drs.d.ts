@@ -60,6 +60,14 @@ declare class Drs extends Service {
    */
   deleteJob(callback?: (err: AWSError, data: Drs.Types.DeleteJobResponse) => void): Request<Drs.Types.DeleteJobResponse, AWSError>;
   /**
+   * Deletes a resource launch action.
+   */
+  deleteLaunchAction(params: Drs.Types.DeleteLaunchActionRequest, callback?: (err: AWSError, data: Drs.Types.DeleteLaunchActionResponse) => void): Request<Drs.Types.DeleteLaunchActionResponse, AWSError>;
+  /**
+   * Deletes a resource launch action.
+   */
+  deleteLaunchAction(callback?: (err: AWSError, data: Drs.Types.DeleteLaunchActionResponse) => void): Request<Drs.Types.DeleteLaunchActionResponse, AWSError>;
+  /**
    * Deletes a single Launch Configuration Template by ID.
    */
   deleteLaunchConfigurationTemplate(params: Drs.Types.DeleteLaunchConfigurationTemplateRequest, callback?: (err: AWSError, data: Drs.Types.DeleteLaunchConfigurationTemplateResponse) => void): Request<Drs.Types.DeleteLaunchConfigurationTemplateResponse, AWSError>;
@@ -228,6 +236,14 @@ declare class Drs extends Service {
    */
   listExtensibleSourceServers(callback?: (err: AWSError, data: Drs.Types.ListExtensibleSourceServersResponse) => void): Request<Drs.Types.ListExtensibleSourceServersResponse, AWSError>;
   /**
+   * Lists resource launch actions.
+   */
+  listLaunchActions(params: Drs.Types.ListLaunchActionsRequest, callback?: (err: AWSError, data: Drs.Types.ListLaunchActionsResponse) => void): Request<Drs.Types.ListLaunchActionsResponse, AWSError>;
+  /**
+   * Lists resource launch actions.
+   */
+  listLaunchActions(callback?: (err: AWSError, data: Drs.Types.ListLaunchActionsResponse) => void): Request<Drs.Types.ListLaunchActionsResponse, AWSError>;
+  /**
    * Returns an array of staging accounts for existing extended source servers.
    */
   listStagingAccounts(params: Drs.Types.ListStagingAccountsRequest, callback?: (err: AWSError, data: Drs.Types.ListStagingAccountsResponse) => void): Request<Drs.Types.ListStagingAccountsResponse, AWSError>;
@@ -243,6 +259,14 @@ declare class Drs extends Service {
    * List all tags for your Elastic Disaster Recovery resources.
    */
   listTagsForResource(callback?: (err: AWSError, data: Drs.Types.ListTagsForResourceResponse) => void): Request<Drs.Types.ListTagsForResourceResponse, AWSError>;
+  /**
+   * Puts a resource launch action.
+   */
+  putLaunchAction(params: Drs.Types.PutLaunchActionRequest, callback?: (err: AWSError, data: Drs.Types.PutLaunchActionResponse) => void): Request<Drs.Types.PutLaunchActionResponse, AWSError>;
+  /**
+   * Puts a resource launch action.
+   */
+  putLaunchAction(callback?: (err: AWSError, data: Drs.Types.PutLaunchActionResponse) => void): Request<Drs.Types.PutLaunchActionResponse, AWSError>;
   /**
    * WARNING: RetryDataReplication is deprecated. Causes the data replication initiation sequence to begin immediately upon next Handshake for the specified Source Server ID, regardless of when the previous initiation started. This command will work only if the Source Server is stalled or is in a DISCONNECTED or STOPPED state. 
    */
@@ -399,6 +423,7 @@ declare namespace Drs {
   export type AccountID = string;
   export type AccountIDs = AccountID[];
   export type Accounts = Account[];
+  export type AgentVersion = string;
   export interface AssociateSourceNetworkStackRequest {
     /**
      * CloudFormation template to associate with a Source Network.
@@ -449,6 +474,10 @@ declare namespace Drs {
      */
     volumeToConversionMap?: VolumeToConversionMap;
     /**
+     * A mapping between the volumes being converted and the product codes associated with them
+     */
+    volumeToProductCodes?: VolumeToProductCodes;
+    /**
      * A mapping between the volumes and their sizes
      */
     volumeToVolumeSize?: VolumeToSizeMap;
@@ -488,9 +517,17 @@ declare namespace Drs {
      */
     launchDisposition?: LaunchDisposition;
     /**
+     * DRS will set the 'launch into instance ID' of any source server when performing a drill, recovery or failback to the previous region or availability zone, using the instance ID of the source instance.
+     */
+    launchIntoSourceInstance?: Boolean;
+    /**
      * Licensing.
      */
     licensing?: Licensing;
+    /**
+     * Whether we want to activate post-launch actions.
+     */
+    postLaunchEnabled?: Boolean;
     /**
      * Request to associate tags during creation of a Launch Configuration Template.
      */
@@ -632,6 +669,10 @@ declare namespace Drs {
      * AWS Availability zone into which data is being replicated.
      */
     stagingAvailabilityZone?: AwsAvailabilityZone;
+    /**
+     * The ARN of the staging Outpost
+     */
+    stagingOutpostArn?: OutpostARN;
   }
   export interface DataReplicationInfoReplicatedDisk {
     /**
@@ -654,6 +695,10 @@ declare namespace Drs {
      * The total amount of data to be replicated in bytes.
      */
     totalStorageBytes?: PositiveInteger;
+    /**
+     * The status of the volume.
+     */
+    volumeStatus?: VolumeStatus;
   }
   export type DataReplicationInfoReplicatedDisks = DataReplicationInfoReplicatedDisk[];
   export interface DataReplicationInitiation {
@@ -691,6 +736,12 @@ declare namespace Drs {
     jobID: JobID;
   }
   export interface DeleteJobResponse {
+  }
+  export interface DeleteLaunchActionRequest {
+    actionId: LaunchActionId;
+    resourceId: LaunchActionResourceId;
+  }
+  export interface DeleteLaunchActionResponse {
   }
   export interface DeleteLaunchConfigurationTemplateRequest {
     /**
@@ -1047,6 +1098,7 @@ declare namespace Drs {
   export type FailbackLaunchType = "RECOVERY"|"DRILL"|string;
   export type FailbackReplicationError = "AGENT_NOT_SEEN"|"FAILBACK_CLIENT_NOT_SEEN"|"NOT_CONVERGING"|"UNSTABLE_NETWORK"|"FAILED_TO_ESTABLISH_RECOVERY_INSTANCE_COMMUNICATION"|"FAILED_TO_DOWNLOAD_REPLICATION_SOFTWARE_TO_FAILBACK_CLIENT"|"FAILED_TO_CONFIGURE_REPLICATION_SOFTWARE"|"FAILED_TO_PAIR_AGENT_WITH_REPLICATION_SOFTWARE"|"FAILED_TO_ESTABLISH_AGENT_REPLICATOR_SOFTWARE_COMMUNICATION"|"FAILED_GETTING_REPLICATION_STATE"|"SNAPSHOTS_FAILURE"|"FAILED_TO_CREATE_SECURITY_GROUP"|"FAILED_TO_LAUNCH_REPLICATION_SERVER"|"FAILED_TO_BOOT_REPLICATION_SERVER"|"FAILED_TO_AUTHENTICATE_WITH_SERVICE"|"FAILED_TO_DOWNLOAD_REPLICATION_SOFTWARE"|"FAILED_TO_CREATE_STAGING_DISKS"|"FAILED_TO_ATTACH_STAGING_DISKS"|"FAILED_TO_PAIR_REPLICATION_SERVER_WITH_AGENT"|"FAILED_TO_CONNECT_AGENT_TO_REPLICATION_SERVER"|"FAILED_TO_START_DATA_TRANSFER"|string;
   export type FailbackState = "FAILBACK_NOT_STARTED"|"FAILBACK_IN_PROGRESS"|"FAILBACK_READY_FOR_LAUNCH"|"FAILBACK_COMPLETED"|"FAILBACK_ERROR"|"FAILBACK_NOT_READY_FOR_LAUNCH"|"FAILBACK_LAUNCH_STATE_NOT_AVAILABLE"|string;
+  export type FailureReason = string;
   export interface GetFailbackReplicationConfigurationRequest {
     /**
      * The ID of the Recovery Instance whose failback replication configuration should be returned.
@@ -1200,6 +1252,92 @@ declare namespace Drs {
   export type LargeBoundedString = string;
   export type LastLaunchResult = "NOT_STARTED"|"PENDING"|"SUCCEEDED"|"FAILED"|string;
   export type LastLaunchType = "RECOVERY"|"DRILL"|string;
+  export interface LaunchAction {
+    /**
+     * Launch action code.
+     */
+    actionCode?: SsmDocumentName;
+    actionId?: LaunchActionId;
+    actionVersion?: LaunchActionVersion;
+    /**
+     * Whether the launch action is active.
+     */
+    active?: Boolean;
+    category?: LaunchActionCategory;
+    description?: LaunchActionDescription;
+    name?: LaunchActionName;
+    /**
+     * Whether the launch will not be marked as failed if this action fails.
+     */
+    optional?: Boolean;
+    order?: LaunchActionOrder;
+    parameters?: LaunchActionParameters;
+    /**
+     * Launch action type.
+     */
+    type?: LaunchActionType;
+  }
+  export type LaunchActionCategory = "MONITORING"|"VALIDATION"|"CONFIGURATION"|"SECURITY"|"OTHER"|string;
+  export type LaunchActionDescription = string;
+  export type LaunchActionId = string;
+  export type LaunchActionIds = LaunchActionId[];
+  export type LaunchActionName = string;
+  export type LaunchActionOrder = number;
+  export interface LaunchActionParameter {
+    /**
+     * Type.
+     */
+    type?: LaunchActionParameterType;
+    /**
+     * Value.
+     */
+    value?: LaunchActionParameterValue;
+  }
+  export type LaunchActionParameterName = string;
+  export type LaunchActionParameterType = "SSM_STORE"|"DYNAMIC"|string;
+  export type LaunchActionParameterValue = string;
+  export type LaunchActionParameters = {[key: string]: LaunchActionParameter};
+  export type LaunchActionResourceId = string;
+  export interface LaunchActionRun {
+    /**
+     * Action.
+     */
+    action?: LaunchAction;
+    /**
+     * Failure reason.
+     */
+    failureReason?: FailureReason;
+    /**
+     * Run Id.
+     */
+    runId?: LaunchActionRunId;
+    /**
+     * Run status.
+     */
+    status?: LaunchActionRunStatus;
+  }
+  export type LaunchActionRunId = string;
+  export type LaunchActionRunStatus = "IN_PROGRESS"|"SUCCEEDED"|"FAILED"|string;
+  export type LaunchActionRuns = LaunchActionRun[];
+  export type LaunchActionType = "SSM_AUTOMATION"|"SSM_COMMAND"|string;
+  export type LaunchActionVersion = string;
+  export type LaunchActions = LaunchAction[];
+  export interface LaunchActionsRequestFilters {
+    /**
+     * Launch actions Ids.
+     */
+    actionIds?: LaunchActionIds;
+  }
+  export interface LaunchActionsStatus {
+    /**
+     * List of post launch action status.
+     */
+    runs?: LaunchActionRuns;
+    /**
+     * Time where the AWS Systems Manager was detected as running on the launched instance.
+     */
+    ssmAgentDiscoveryDatetime?: ISO8601DatetimeString;
+  }
   export interface LaunchConfiguration {
     /**
      * Whether we should copy the Private IP of the Source Server to the Recovery Instance.
@@ -1218,6 +1356,10 @@ declare namespace Drs {
      */
     launchDisposition?: LaunchDisposition;
     /**
+     * Launch into existing instance properties.
+     */
+    launchIntoInstanceProperties?: LaunchIntoInstanceProperties;
+    /**
      * The licensing configuration to be used for this launch configuration.
      */
     licensing?: Licensing;
@@ -1225,6 +1367,10 @@ declare namespace Drs {
      * The name of the launch configuration.
      */
     name?: SmallBoundedString;
+    /**
+     * Whether we want to activate post-launch actions for the Source Server.
+     */
+    postLaunchEnabled?: Boolean;
     /**
      * The ID of the Source Server for this launch configuration.
      */
@@ -1260,9 +1406,17 @@ declare namespace Drs {
      */
     launchDisposition?: LaunchDisposition;
     /**
+     * DRS will set the 'launch into instance ID' of any source server when performing a drill, recovery or failback to the previous region or availability zone, using the instance ID of the source instance.
+     */
+    launchIntoSourceInstance?: Boolean;
+    /**
      * Licensing.
      */
     licensing?: Licensing;
+    /**
+     * Post-launch actions activated.
+     */
+    postLaunchEnabled?: Boolean;
     /**
      * Tags of the Launch Configuration Template.
      */
@@ -1276,6 +1430,12 @@ declare namespace Drs {
   export type LaunchConfigurationTemplateIDs = LaunchConfigurationTemplateID[];
   export type LaunchConfigurationTemplates = LaunchConfigurationTemplate[];
   export type LaunchDisposition = "STOPPED"|"STARTED"|string;
+  export interface LaunchIntoInstanceProperties {
+    /**
+     * Optionally holds EC2 instance ID of an instance to launch into, instead of launching a new instance during drill, recovery or failback.
+     */
+    launchIntoEC2InstanceID?: EC2InstanceID;
+  }
   export type LaunchStatus = "PENDING"|"IN_PROGRESS"|"LAUNCHED"|"FAILED"|"TERMINATED"|string;
   export interface Licensing {
     /**
@@ -1353,6 +1513,31 @@ declare namespace Drs {
      */
     nextToken?: PaginationToken;
   }
+  export interface ListLaunchActionsRequest {
+    /**
+     * Filters to apply when listing resource launch actions.
+     */
+    filters?: LaunchActionsRequestFilters;
+    /**
+     * Maximum amount of items to return when listing resource launch actions.
+     */
+    maxResults?: MaxResultsType;
+    /**
+     * Next token to use when listing resource launch actions.
+     */
+    nextToken?: PaginationToken;
+    resourceId: LaunchActionResourceId;
+  }
+  export interface ListLaunchActionsResponse {
+    /**
+     * List of resource launch actions.
+     */
+    items?: LaunchActions;
+    /**
+     * Next token returned when listing resource launch actions.
+     */
+    nextToken?: PaginationToken;
+  }
   export interface ListStagingAccountsRequest {
     /**
      * The maximum number of staging Accounts to retrieve.
@@ -1410,6 +1595,7 @@ declare namespace Drs {
     fullString?: BoundedString;
   }
   export type OriginEnvironment = "ON_PREMISES"|"AWS"|string;
+  export type OutpostARN = string;
   export type PITPolicy = PITPolicyRule[];
   export interface PITPolicyRule {
     /**
@@ -1454,6 +1640,10 @@ declare namespace Drs {
   export type ParticipatingResources = ParticipatingResource[];
   export interface ParticipatingServer {
     /**
+     * The post-launch action runs of a participating server.
+     */
+    launchActionsStatus?: LaunchActionsStatus;
+    /**
      * The launch status of a participating server.
      */
     launchStatus?: LaunchStatus;
@@ -1468,7 +1658,72 @@ declare namespace Drs {
   }
   export type ParticipatingServers = ParticipatingServer[];
   export type PositiveInteger = number;
+  export interface ProductCode {
+    /**
+     * Id of a product code associated with a volume.
+     */
+    productCodeId?: ProductCodeId;
+    /**
+     * Mode of a product code associated with a volume.
+     */
+    productCodeMode?: ProductCodeMode;
+  }
+  export type ProductCodeId = string;
+  export type ProductCodeMode = "ENABLED"|"DISABLED"|string;
+  export type ProductCodes = ProductCode[];
+  export interface PutLaunchActionRequest {
+    /**
+     * Launch action code.
+     */
+    actionCode: SsmDocumentName;
+    actionId: LaunchActionId;
+    actionVersion: LaunchActionVersion;
+    /**
+     * Whether the launch action is active.
+     */
+    active: Boolean;
+    category: LaunchActionCategory;
+    description: LaunchActionDescription;
+    name: LaunchActionName;
+    /**
+     * Whether the launch will not be marked as failed if this action fails.
+     */
+    optional: Boolean;
+    order: LaunchActionOrder;
+    parameters?: LaunchActionParameters;
+    resourceId: LaunchActionResourceId;
+  }
+  export interface PutLaunchActionResponse {
+    /**
+     * Launch action code.
+     */
+    actionCode?: SsmDocumentName;
+    actionId?: LaunchActionId;
+    actionVersion?: LaunchActionVersion;
+    /**
+     * Whether the launch action is active.
+     */
+    active?: Boolean;
+    category?: LaunchActionCategory;
+    description?: LaunchActionDescription;
+    name?: LaunchActionName;
+    /**
+     * Whether the launch will not be marked as failed if this action fails.
+     */
+    optional?: Boolean;
+    order?: LaunchActionOrder;
+    parameters?: LaunchActionParameters;
+    resourceId?: LaunchActionResourceId;
+    /**
+     * Launch action type.
+     */
+    type?: LaunchActionType;
+  }
   export interface RecoveryInstance {
+    /**
+     * The version of the DRS agent installed on the recovery instance
+     */
+    agentVersion?: AgentVersion;
     /**
      * The ARN of the Recovery Instance.
      */
@@ -1518,6 +1773,10 @@ declare namespace Drs {
      */
     recoveryInstanceProperties?: RecoveryInstanceProperties;
     /**
+     * The ARN of the source Outpost
+     */
+    sourceOutpostArn?: OutpostARN;
+    /**
      * The Source Server ID that this Recovery Instance is associated with.
      */
     sourceServerID?: SourceServerID;
@@ -1565,6 +1824,10 @@ declare namespace Drs {
      * AWS Availability zone into which data is being replicated.
      */
     stagingAvailabilityZone?: AwsAvailabilityZone;
+    /**
+     * The ARN of the staging Outpost
+     */
+    stagingOutpostArn?: OutpostARN;
   }
   export interface RecoveryInstanceDataReplicationInfoReplicatedDisk {
     /**
@@ -1954,6 +2217,10 @@ declare namespace Drs {
      * AWS Region for an EC2-originated Source Server.
      */
     originRegion?: AwsRegion;
+    /**
+     * The ARN of the source Outpost
+     */
+    sourceOutpostArn?: OutpostARN;
   }
   export interface SourceNetwork {
     /**
@@ -2061,6 +2328,10 @@ declare namespace Drs {
   }
   export interface SourceServer {
     /**
+     * The version of the DRS agent installed on the source server
+     */
+    agentVersion?: AgentVersion;
+    /**
      * The ARN of the Source Server.
      */
     arn?: ARN;
@@ -2117,6 +2388,7 @@ declare namespace Drs {
   export type SourceServerID = string;
   export type SourceServerIDs = SourceServerID[];
   export type SourceServersList = SourceServer[];
+  export type SsmDocumentName = string;
   export interface StagingArea {
     /**
      * Shows an error message that occurred when DRS tried to access the staging source server. In this case StagingArea$status will have value EXTENSION_ERROR
@@ -2355,6 +2627,10 @@ declare namespace Drs {
      */
     launchDisposition?: LaunchDisposition;
     /**
+     * Launch into existing instance properties.
+     */
+    launchIntoInstanceProperties?: LaunchIntoInstanceProperties;
+    /**
      * The licensing configuration to be used for this launch configuration.
      */
     licensing?: Licensing;
@@ -2362,6 +2638,10 @@ declare namespace Drs {
      * The name of the launch configuration.
      */
     name?: SmallBoundedString;
+    /**
+     * Whether we want to enable post-launch actions for the Source Server.
+     */
+    postLaunchEnabled?: Boolean;
     /**
      * The ID of the Source Server that we want to retrieve a Launch Configuration for.
      */
@@ -2393,9 +2673,17 @@ declare namespace Drs {
      */
     launchDisposition?: LaunchDisposition;
     /**
+     * DRS will set the 'launch into instance ID' of any source server when performing a drill, recovery or failback to the previous region or availability zone, using the instance ID of the source instance.
+     */
+    launchIntoSourceInstance?: Boolean;
+    /**
      * Licensing.
      */
     licensing?: Licensing;
+    /**
+     * Whether we want to activate post-launch actions.
+     */
+    postLaunchEnabled?: Boolean;
     /**
      * Target instance type right-sizing method.
      */
@@ -2543,7 +2831,9 @@ declare namespace Drs {
      */
     useDedicatedReplicationServer?: Boolean;
   }
+  export type VolumeStatus = "REGULAR"|"CONTAINS_MARKETPLACE_PRODUCT_CODES"|"MISSING_VOLUME_ATTRIBUTES"|"MISSING_VOLUME_ATTRIBUTES_AND_PRECHECK_UNAVAILABLE"|"PENDING"|string;
   export type VolumeToConversionMap = {[key: string]: ConversionMap};
+  export type VolumeToProductCodes = {[key: string]: ProductCodes};
   export type VolumeToSizeMap = {[key: string]: PositiveInteger};
   export type VpcID = string;
   /**

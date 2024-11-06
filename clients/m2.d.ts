@@ -168,6 +168,14 @@ declare class M2 extends Service {
    */
   listBatchJobExecutions(callback?: (err: AWSError, data: M2.Types.ListBatchJobExecutionsResponse) => void): Request<M2.Types.ListBatchJobExecutionsResponse, AWSError>;
   /**
+   * Lists all the job steps for JCL files to restart a batch job. This is only applicable for Micro Focus engine with versions 8.0.6 and above.
+   */
+  listBatchJobRestartPoints(params: M2.Types.ListBatchJobRestartPointsRequest, callback?: (err: AWSError, data: M2.Types.ListBatchJobRestartPointsResponse) => void): Request<M2.Types.ListBatchJobRestartPointsResponse, AWSError>;
+  /**
+   * Lists all the job steps for JCL files to restart a batch job. This is only applicable for Micro Focus engine with versions 8.0.6 and above.
+   */
+  listBatchJobRestartPoints(callback?: (err: AWSError, data: M2.Types.ListBatchJobRestartPointsResponse) => void): Request<M2.Types.ListBatchJobRestartPointsResponse, AWSError>;
+  /**
    * Lists the data set imports for the specified application.
    */
   listDataSetImportHistory(params: M2.Types.ListDataSetImportHistoryRequest, callback?: (err: AWSError, data: M2.Types.ListDataSetImportHistoryResponse) => void): Request<M2.Types.ListDataSetImportHistoryResponse, AWSError>;
@@ -382,7 +390,7 @@ declare namespace M2 {
     scriptBatchJobDefinition?: ScriptBatchJobDefinition;
   }
   export type BatchJobDefinitions = BatchJobDefinition[];
-  export type BatchJobExecutionStatus = "Submitting"|"Holding"|"Dispatching"|"Running"|"Cancelling"|"Cancelled"|"Succeeded"|"Failed"|"Succeeded With Warning"|string;
+  export type BatchJobExecutionStatus = "Submitting"|"Holding"|"Dispatching"|"Running"|"Cancelling"|"Cancelled"|"Succeeded"|"Failed"|"Purged"|"Succeeded With Warning"|string;
   export interface BatchJobExecutionSummary {
     /**
      * The unique identifier of the application that hosts this batch job.
@@ -432,11 +440,20 @@ declare namespace M2 {
      */
     fileBatchJobIdentifier?: FileBatchJobIdentifier;
     /**
+     * Specifies the required information for restart, including execution ID and jobsteprestartmarker.
+     */
+    restartBatchJobIdentifier?: RestartBatchJobIdentifier;
+    /**
+     * Specifies an Amazon S3 location that identifies the batch jobs that you want to run. Use this identifier to run ad hoc batch jobs.
+     */
+    s3BatchJobIdentifier?: S3BatchJobIdentifier;
+    /**
      * A batch job identifier in which the batch job to run is identified by the script name.
      */
     scriptBatchJobIdentifier?: ScriptBatchJobIdentifier;
   }
   export type BatchJobParametersMap = {[key: string]: BatchParamValue};
+  export type BatchJobStepList = JobStep[];
   export type BatchJobType = "VSE"|"JES2"|"JES3"|string;
   export type BatchParamKey = string;
   export type BatchParamValue = string;
@@ -580,7 +597,7 @@ declare namespace M2 {
      */
     name: EntityName;
     /**
-     * Configures the maintenance window you want for the runtime environment. If you do not provide a value, a random system-generated value will be assigned.
+     * Configures the maintenance window that you want for the runtime environment. The maintenance window must have the format ddd:hh24:mi-ddd:hh24:mi and must be less than 24 hours. The following two examples are valid maintenance windows: sun:23:45-mon:00:15 or sat:01:00-sat:03:00.  If you do not provide a value, a random system-generated value will be assigned.
      */
     preferredMaintenanceWindow?: String50;
     /**
@@ -681,6 +698,10 @@ declare namespace M2 {
      */
     status: DataSetTaskLifecycle;
     /**
+     * If dataset import failed, the failure reason will show here.
+     */
+    statusReason?: String;
+    /**
      * A summary of the data set import task.
      */
     summary: DataSetImportSummary;
@@ -716,7 +737,7 @@ declare namespace M2 {
      */
     lastUpdatedTime?: Timestamp;
   }
-  export type DataSetTaskLifecycle = "Creating"|"Running"|"Completed"|string;
+  export type DataSetTaskLifecycle = "Creating"|"Running"|"Completed"|"Failed"|string;
   export type DataSetsSummaryList = DataSetSummary[];
   export interface DatasetDetailOrgAttributes {
     /**
@@ -806,7 +827,7 @@ declare namespace M2 {
      */
     statusReason?: String;
   }
-  export type DeploymentLifecycle = "Deploying"|"Succeeded"|"Failed"|string;
+  export type DeploymentLifecycle = "Deploying"|"Succeeded"|"Failed"|"Updating Deployment"|string;
   export type DeploymentList = DeploymentSummary[];
   export interface DeploymentSummary {
     /**
@@ -1120,6 +1141,10 @@ declare namespace M2 {
      */
     jobName?: String100;
     /**
+     * The restart steps information for the most recent restart operation.
+     */
+    jobStepRestartMarker?: JobStepRestartMarker;
+    /**
      * The type of job.
      */
     jobType?: BatchJobType;
@@ -1171,6 +1196,10 @@ declare namespace M2 {
      * The type of data set. The only supported value is VSAM.
      */
     dataSetOrg?: DatasetDetailOrgAttributes;
+    /**
+     * File size of the dataset.
+     */
+    fileSize?: Long;
     /**
      * The last time the data set was referenced.
      */
@@ -1260,7 +1289,7 @@ declare namespace M2 {
   }
   export interface GetEnvironmentResponse {
     /**
-     * The number of instances included in the runtime environment. A standalone runtime environment has a maxiumum of one instance. Currently, a high availability runtime environment has a maximum of two instances. 
+     * The number of instances included in the runtime environment. A standalone runtime environment has a maximum of one instance. Currently, a high availability runtime environment has a maximum of two instances. 
      */
     actualCapacity?: CapacityValue;
     /**
@@ -1312,7 +1341,7 @@ declare namespace M2 {
      */
     pendingMaintenance?: PendingMaintenance;
     /**
-     * Configures the maintenance window you want for the runtime environment. If you do not provide a value, a random system-generated value will be assigned.
+     * The maintenance window for the runtime environment. If you don't provide a value for the maintenance window, the service assigns a random value.
      */
     preferredMaintenanceWindow?: String50;
     /**
@@ -1363,6 +1392,60 @@ declare namespace M2 {
   export type Identifier = string;
   export type IdentifierList = Identifier[];
   export type Integer = number;
+  export interface JobIdentifier {
+    /**
+     * The name of the file that contains the batch job definition.
+     */
+    fileName?: String;
+    /**
+     * The name of the script that contains the batch job definition.
+     */
+    scriptName?: String;
+  }
+  export interface JobStep {
+    /**
+     * The name of a procedure step.
+     */
+    procStepName?: String;
+    /**
+     * The number of a procedure step.
+     */
+    procStepNumber?: Integer;
+    /**
+     * The condition code of a step.
+     */
+    stepCondCode?: String;
+    /**
+     * The name of a step.
+     */
+    stepName?: String;
+    /**
+     * The number of a step.
+     */
+    stepNumber?: Integer;
+    /**
+     * Specifies if a step can be restarted or not.
+     */
+    stepRestartable?: Boolean;
+  }
+  export interface JobStepRestartMarker {
+    /**
+     * The procedure step name that a job was restarted from.
+     */
+    fromProcStep?: String;
+    /**
+     * The step name that a batch job restart was from.
+     */
+    fromStep: String;
+    /**
+     * The procedure step name that a batch job was restarted to.
+     */
+    toProcStep?: String;
+    /**
+     * The step name that a job was restarted to.
+     */
+    toStep?: String;
+  }
   export interface ListApplicationVersionsRequest {
     /**
      * The unique identifier of the application.
@@ -1487,6 +1570,22 @@ declare namespace M2 {
      */
     nextToken?: NextToken;
   }
+  export interface ListBatchJobRestartPointsRequest {
+    /**
+     * The unique identifier of the application.
+     */
+    applicationId: Identifier;
+    /**
+     * The unique identifier of each batch job execution.
+     */
+    executionId: Identifier;
+  }
+  export interface ListBatchJobRestartPointsResponse {
+    /**
+     * Returns all the batch job steps and related information for a batch job that previously ran.
+     */
+    batchJobSteps?: BatchJobStepList;
+  }
   export interface ListDataSetImportHistoryRequest {
     /**
      * The unique identifier of the application.
@@ -1520,6 +1619,10 @@ declare namespace M2 {
      * The maximum number of objects to return.
      */
     maxResults?: MaxResults;
+    /**
+     * Filter dataset name matching the specified pattern. Can use * and % as wild cards.
+     */
+    nameFilter?: String200;
     /**
      * A pagination token returned from a previous call to this operation. This specifies the next item to return. To return to the beginning of the list, exclude this parameter.
      */
@@ -1639,6 +1742,7 @@ declare namespace M2 {
      */
     logType: String20;
   }
+  export type Long = number;
   export interface MaintenanceSchedule {
     /**
      * The time the scheduled maintenance is to end.
@@ -1729,6 +1833,30 @@ declare namespace M2 {
      * The minimum record length of a record.
      */
     min: Integer;
+  }
+  export interface RestartBatchJobIdentifier {
+    /**
+     * The executionId from the StartBatchJob response when the job ran for the first time.
+     */
+    executionId: Identifier;
+    /**
+     * The restart step information for the most recent restart operation.
+     */
+    jobStepRestartMarker: JobStepRestartMarker;
+  }
+  export interface S3BatchJobIdentifier {
+    /**
+     * The Amazon S3 bucket that contains the batch job definitions.
+     */
+    bucket: String;
+    /**
+     * Identifies the batch job definition. This identifier can also point to any batch job definition that already exists in the application or to one of the batch job definitions within the directory that is specified in keyPrefix.
+     */
+    identifier: JobIdentifier;
+    /**
+     * The key prefix that specifies the path to the folder in the S3 bucket that has the batch job definitions.
+     */
+    keyPrefix?: String;
   }
   export interface ScriptBatchJobDefinition {
     /**
@@ -1873,11 +2001,15 @@ declare namespace M2 {
      */
     environmentId: Identifier;
     /**
+     * Forces the updates on the environment. This option is needed if the applications in the environment are not stopped or if there are ongoing application-related activities in the environment. If you use this option, be aware that it could lead to data corruption in the applications, and that you might need to perform repair and recovery procedures for the applications. This option is not needed if the attribute being updated is preferredMaintenanceWindow.
+     */
+    forceUpdate?: Boolean;
+    /**
      * The instance type for the runtime environment to update.
      */
     instanceType?: String20;
     /**
-     * Configures the maintenance window you want for the runtime environment. If you do not provide a value, a random system-generated value will be assigned.
+     * Configures the maintenance window that you want for the runtime environment. The maintenance window must have the format ddd:hh24:mi-ddd:hh24:mi and must be less than 24 hours. The following two examples are valid maintenance windows: sun:23:45-mon:00:15 or sat:01:00-sat:03:00.  If you do not provide a value, a random system-generated value will be assigned.
      */
     preferredMaintenanceWindow?: String;
   }

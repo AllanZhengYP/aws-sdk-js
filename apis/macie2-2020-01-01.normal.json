@@ -8,7 +8,10 @@
     "protocol": "rest-json",
     "jsonVersion": "1.1",
     "uid": "macie2-2020-01-01",
-    "signatureVersion": "v4"
+    "signatureVersion": "v4",
+    "auth": [
+      "aws.auth#sigv4"
+    ]
   },
   "operations": {
     "AcceptInvitation": {
@@ -102,6 +105,44 @@
         }
       ],
       "documentation": "<p>Retrieves information about one or more custom data identifiers.</p>"
+    },
+    "BatchUpdateAutomatedDiscoveryAccounts": {
+      "name": "BatchUpdateAutomatedDiscoveryAccounts",
+      "http": {
+        "method": "PATCH",
+        "requestUri": "/automated-discovery/accounts",
+        "responseCode": 200
+      },
+      "input": {
+        "shape": "BatchUpdateAutomatedDiscoveryAccountsRequest"
+      },
+      "output": {
+        "shape": "BatchUpdateAutomatedDiscoveryAccountsResponse",
+        "documentation": "<p>The request succeeded. However, the update might have failed for one or more accounts.</p>"
+      },
+      "errors": [
+        {
+          "shape": "ThrottlingException",
+          "documentation": "<p>The request failed because you sent too many requests during a certain amount of time.</p>"
+        },
+        {
+          "shape": "ValidationException",
+          "documentation": "<p>The request failed because the input doesn't satisfy the constraints specified by the service.</p>"
+        },
+        {
+          "shape": "InternalServerException",
+          "documentation": "<p>The request failed due to an unknown internal server error, exception, or failure.</p>"
+        },
+        {
+          "shape": "ConflictException",
+          "documentation": "<p>The request failed because it conflicts with the current state of the specified resource.</p>"
+        },
+        {
+          "shape": "AccessDeniedException",
+          "documentation": "<p>The request was denied because you don't have sufficient access to the specified resource.</p>"
+        }
+      ],
+      "documentation": "<p>Changes the status of automated sensitive data discovery for one or more accounts.</p>"
     },
     "CreateAllowList": {
       "name": "CreateAllowList",
@@ -1266,7 +1307,7 @@
           "documentation": "<p>The request was denied because you don't have sufficient access to the specified resource.</p>"
         }
       ],
-      "documentation": "<p>Retrieves the configuration settings and status of automated sensitive data discovery for an account.</p>"
+      "documentation": "<p>Retrieves the configuration settings and status of automated sensitive data discovery for an organization or standalone account.</p>"
     },
     "GetBucketStatistics": {
       "name": "GetBucketStatistics",
@@ -2128,6 +2169,44 @@
       ],
       "documentation": "<p>Retrieves a subset of information about all the allow lists for an account.</p>"
     },
+    "ListAutomatedDiscoveryAccounts": {
+      "name": "ListAutomatedDiscoveryAccounts",
+      "http": {
+        "method": "GET",
+        "requestUri": "/automated-discovery/accounts",
+        "responseCode": 200
+      },
+      "input": {
+        "shape": "ListAutomatedDiscoveryAccountsRequest"
+      },
+      "output": {
+        "shape": "ListAutomatedDiscoveryAccountsResponse",
+        "documentation": "<p>The request succeeded.</p>"
+      },
+      "errors": [
+        {
+          "shape": "ResourceNotFoundException",
+          "documentation": "<p>The request failed because the specified resource wasn't found.</p>"
+        },
+        {
+          "shape": "ThrottlingException",
+          "documentation": "<p>The request failed because you sent too many requests during a certain amount of time.</p>"
+        },
+        {
+          "shape": "ValidationException",
+          "documentation": "<p>The request failed because the input doesn't satisfy the constraints specified by the service.</p>"
+        },
+        {
+          "shape": "InternalServerException",
+          "documentation": "<p>The request failed due to an unknown internal server error, exception, or failure.</p>"
+        },
+        {
+          "shape": "AccessDeniedException",
+          "documentation": "<p>The request was denied because you don't have sufficient access to the specified resource.</p>"
+        }
+      ],
+      "documentation": "<p>Retrieves the status of automated sensitive data discovery for one or more accounts.</p>"
+    },
     "ListClassificationJobs": {
       "name": "ListClassificationJobs",
       "http": {
@@ -2390,7 +2469,7 @@
           "documentation": "<p>The request failed because it conflicts with the current state of the specified resource.</p>"
         }
       ],
-      "documentation": "<p>Retrieves information about the Amazon Macie membership invitations that were received by an account.</p>"
+      "documentation": "<p>Retrieves information about Amazon Macie membership invitations that were received by an account.</p>"
     },
     "ListManagedDataIdentifiers": {
       "name": "ListManagedDataIdentifiers",
@@ -2537,7 +2616,7 @@
           "documentation": "<p>The request was denied because you don't have sufficient access to the specified resource.</p>"
         }
       ],
-      "documentation": "<p>Retrieves information about objects that were selected from an S3 bucket for automated sensitive data discovery.</p>"
+      "documentation": "<p>Retrieves information about objects that Amazon Macie selected from an S3 bucket for automated sensitive data discovery.</p>"
     },
     "ListResourceProfileDetections": {
       "name": "ListResourceProfileDetections",
@@ -2680,7 +2759,7 @@
           "documentation": "<p>The request failed because it conflicts with the current state of the specified resource.</p>"
         }
       ],
-      "documentation": "<p>Creates or updates the configuration settings for storing data classification results.</p>"
+      "documentation": "<p>Adds or updates the configuration settings for storing data classification results.</p>"
     },
     "PutFindingsPublicationConfiguration": {
       "name": "PutFindingsPublicationConfiguration",
@@ -2835,7 +2914,7 @@
           "documentation": "<p>The request failed because it conflicts with the current state of the specified resource.</p>"
         }
       ],
-      "documentation": "<p>Tests a custom data identifier.</p>"
+      "documentation": "<p>Tests criteria for a custom data identifier.</p>"
     },
     "UntagResource": {
       "name": "UntagResource",
@@ -2904,7 +2983,7 @@
       },
       "output": {
         "shape": "UpdateAutomatedDiscoveryConfigurationResponse",
-        "documentation": "<p>The request succeeded. The status of the automated sensitive data discovery configuration for the account was updated and there isn't any content to include in the body of the response (No Content).</p>"
+        "documentation": "<p>The request succeeded. The status was updated and there isn't any content to include in the body of the response (No Content).</p>"
       },
       "errors": [
         {
@@ -2924,7 +3003,7 @@
           "documentation": "<p>The request was denied because you don't have sufficient access to the specified resource.</p>"
         }
       ],
-      "documentation": "<p>Enables or disables automated sensitive data discovery for an account.</p>"
+      "documentation": "<p>Changes the configuration settings and status of automated sensitive data discovery for an organization or standalone account.</p>"
     },
     "UpdateClassificationJob": {
       "name": "UpdateClassificationJob",
@@ -3600,9 +3679,90 @@
       },
       "documentation": "<p>Provides information about an identity that performed an action on an affected resource by using temporary security credentials. The credentials were obtained using the AssumeRole operation of the Security Token Service (STS) API.</p>"
     },
+    "AutoEnableMode": {
+      "type": "string",
+      "documentation": "<p>Specifies whether to automatically enable automated sensitive data discovery for accounts that are part of an organization in Amazon Macie. Valid values are:</p>",
+      "enum": [
+        "ALL",
+        "NEW",
+        "NONE"
+      ]
+    },
+    "AutomatedDiscoveryAccount": {
+      "type": "structure",
+      "members": {
+        "accountId": {
+          "shape": "__string",
+          "locationName": "accountId",
+          "documentation": "<p>The Amazon Web Services account ID for the account.</p>"
+        },
+        "status": {
+          "shape": "AutomatedDiscoveryAccountStatus",
+          "locationName": "status",
+          "documentation": "<p>The current status of automated sensitive data discovery for the account. Possible values are: ENABLED, perform automated sensitive data discovery activities for the account; and, DISABLED, don't perform automated sensitive data discovery activities for the account.</p>"
+        }
+      },
+      "documentation": "<p>Provides information about the status of automated sensitive data discovery for an Amazon Macie account.</p>"
+    },
+    "AutomatedDiscoveryAccountStatus": {
+      "type": "string",
+      "documentation": "<p>The status of automated sensitive data discovery for an Amazon Macie account. Valid values are:</p>",
+      "enum": [
+        "ENABLED",
+        "DISABLED"
+      ]
+    },
+    "AutomatedDiscoveryAccountUpdate": {
+      "type": "structure",
+      "members": {
+        "accountId": {
+          "shape": "__string",
+          "locationName": "accountId",
+          "documentation": "<p>The Amazon Web Services account ID for the account.</p>"
+        },
+        "status": {
+          "shape": "AutomatedDiscoveryAccountStatus",
+          "locationName": "status",
+          "documentation": "<p>The new status of automated sensitive data discovery for the account. Valid values are: ENABLED, perform automated sensitive data discovery activities for the account; and, DISABLED, don't perform automated sensitive data discovery activities for the account.</p>"
+        }
+      },
+      "documentation": "<p>Changes the status of automated sensitive data discovery for an Amazon Macie account.</p>"
+    },
+    "AutomatedDiscoveryAccountUpdateError": {
+      "type": "structure",
+      "members": {
+        "accountId": {
+          "shape": "__string",
+          "locationName": "accountId",
+          "documentation": "<p>The Amazon Web Services account ID for the account that the request applied to.</p>"
+        },
+        "errorCode": {
+          "shape": "AutomatedDiscoveryAccountUpdateErrorCode",
+          "locationName": "errorCode",
+          "documentation": "<p>The error code for the error that caused the request to fail for the account (accountId). Possible values are: ACCOUNT_NOT_FOUND, the account doesn’t exist or you're not the Amazon Macie administrator for the account; and, ACCOUNT_PAUSED, Macie isn’t enabled for the account in the current Amazon Web Services Region.</p>"
+        }
+      },
+      "documentation": "<p>Provides information about a request that failed to change the status of automated sensitive data discovery for an Amazon Macie account.</p>"
+    },
+    "AutomatedDiscoveryAccountUpdateErrorCode": {
+      "type": "string",
+      "documentation": "<p>The error code that indicates why a request failed to change the status of automated sensitive data discovery for an Amazon Macie account. Possible values are:</p>",
+      "enum": [
+        "ACCOUNT_PAUSED",
+        "ACCOUNT_NOT_FOUND"
+      ]
+    },
+    "AutomatedDiscoveryMonitoringStatus": {
+      "type": "string",
+      "documentation": "<p>Specifies whether automated sensitive data discovery is currently configured to analyze objects in an S3 bucket. Possible values are:</p>",
+      "enum": [
+        "MONITORED",
+        "NOT_MONITORED"
+      ]
+    },
     "AutomatedDiscoveryStatus": {
       "type": "string",
-      "documentation": "<p>The status of the automated sensitive data discovery configuration for an Amazon Macie account. Valid values are:</p>",
+      "documentation": "<p>The status of the automated sensitive data discovery configuration for an organization in Amazon Macie or a standalone Macie account. Valid values are:</p>",
       "enum": [
         "ENABLED",
         "DISABLED"
@@ -3704,6 +3864,26 @@
         }
       }
     },
+    "BatchUpdateAutomatedDiscoveryAccountsRequest": {
+      "type": "structure",
+      "members": {
+        "accounts": {
+          "shape": "__listOfAutomatedDiscoveryAccountUpdate",
+          "locationName": "accounts",
+          "documentation": "<p>An array of objects, one for each account to change the status of automated sensitive data discovery for. Each object specifies the Amazon Web Services account ID for an account and a new status for that account.</p>"
+        }
+      }
+    },
+    "BatchUpdateAutomatedDiscoveryAccountsResponse": {
+      "type": "structure",
+      "members": {
+        "errors": {
+          "shape": "__listOfAutomatedDiscoveryAccountUpdateError",
+          "locationName": "errors",
+          "documentation": "<p>An array of objects, one for each account whose status wasn’t changed. Each object identifies the account and explains why the status of automated sensitive data discovery wasn’t changed for the account. This value is null if the request succeeded for all specified accounts.</p>"
+        }
+      }
+    },
     "BlockPublicAccess": {
       "type": "structure",
       "members": {
@@ -3762,7 +3942,7 @@
         "kmsManaged": {
           "shape": "__long",
           "locationName": "kmsManaged",
-          "documentation": " <p>The total number of buckets whose default encryption settings are configured to encrypt new objects with an Amazon Web Services managed KMS key or a customer managed KMS key. By default, these buckets encrypt new objects automatically using SSE-KMS encryption.</p>"
+          "documentation": "<p>The total number of buckets whose default encryption settings are configured to encrypt new objects with an KMS key, either an Amazon Web Services managed key or a customer managed key. By default, these buckets encrypt new objects automatically using DSSE-KMS or SSE-KMS encryption.</p>"
         },
         "s3Managed": {
           "shape": "__long",
@@ -3914,6 +4094,11 @@
           "locationName": "allowsUnencryptedObjectUploads",
           "documentation": "<p>Specifies whether the bucket policy for the bucket requires server-side encryption of objects when objects are added to the bucket. Possible values are:</p> <ul><li><p>FALSE - The bucket policy requires server-side encryption of new objects. PutObject requests must include a valid server-side encryption header.</p></li> <li><p>TRUE - The bucket doesn't have a bucket policy or it has a bucket policy that doesn't require server-side encryption of new objects. If a bucket policy exists, it doesn't require PutObject requests to include a valid server-side encryption header.</p></li> <li><p>UNKNOWN - Amazon Macie can't determine whether the bucket policy requires server-side encryption of new objects.</p></li></ul> <p>Valid server-side encryption headers are: x-amz-server-side-encryption with a value of AES256 or aws:kms, and x-amz-server-side-encryption-customer-algorithm with a value of AES256.</p>"
         },
+        "automatedDiscoveryMonitoringStatus": {
+          "shape": "AutomatedDiscoveryMonitoringStatus",
+          "locationName": "automatedDiscoveryMonitoringStatus",
+          "documentation": "<p>Specifies whether automated sensitive data discovery is currently configured to analyze objects in the bucket. Possible values are: MONITORED, the bucket is included in analyses; and, NOT_MONITORED, the bucket is excluded from analyses. If automated sensitive data discovery is disabled for your account, this value is NOT_MONITORED.</p>"
+        },
         "bucketArn": {
           "shape": "__string",
           "locationName": "bucketArn",
@@ -3952,12 +4137,12 @@
         "jobDetails": {
           "shape": "JobDetails",
           "locationName": "jobDetails",
-          "documentation": "<p>Specifies whether any one-time or recurring classification jobs are configured to analyze data in the bucket, and, if so, the details of the job that ran most recently.</p>"
+          "documentation": "<p>Specifies whether any one-time or recurring classification jobs are configured to analyze objects in the bucket, and, if so, the details of the job that ran most recently.</p>"
         },
         "lastAutomatedDiscoveryTime": {
           "shape": "__timestampIso8601",
           "locationName": "lastAutomatedDiscoveryTime",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when Amazon Macie most recently analyzed data in the bucket while performing automated sensitive data discovery for your account. This value is null if automated sensitive data discovery is currently disabled for your account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when Amazon Macie most recently analyzed objects in the bucket while performing automated sensitive data discovery. This value is null if automated sensitive data discovery is disabled for your account.</p>"
         },
         "lastUpdated": {
           "shape": "__timestampIso8601",
@@ -3992,7 +4177,7 @@
         "sensitivityScore": {
           "shape": "__integer",
           "locationName": "sensitivityScore",
-          "documentation": "<p>The sensitivity score for the bucket, ranging from -1 (classification error) to 100 (sensitive). This value is null if automated sensitive data discovery is currently disabled for your account.</p>"
+          "documentation": "<p>The sensitivity score for the bucket, ranging from -1 (classification error) to 100 (sensitive).</p><p>If automated sensitive data discovery has never been enabled for your account or it’s been disabled for your organization or your standalone account for more than 30 days, possible values are: 1, the bucket is empty; or, 50, the bucket stores objects but it’s been excluded from recent analyses.</p>"
         },
         "serverSideEncryption": {
           "shape": "BucketServerSideEncryption",
@@ -4039,7 +4224,7 @@
     },
     "BucketMetadataErrorCode": {
       "type": "string",
-      "documentation": "<p>The error code for an error that prevented Amazon Macie from retrieving and processing metadata from Amazon S3 for an S3 bucket and the bucket's objects.</p>",
+      "documentation": "<p>The error code for an error that prevented Amazon Macie from retrieving and processing information about an S3 bucket and the bucket's objects.</p>",
       "enum": [
         "ACCESS_DENIED"
       ]
@@ -4103,7 +4288,7 @@
         "type": {
           "shape": "Type",
           "locationName": "type",
-          "documentation": "<p>The server-side encryption algorithm that's used by default to encrypt objects that are added to the bucket. Possible values are:</p> <ul><li><p>AES256 - New objects are encrypted with an Amazon S3 managed key. They use SSE-S3 encryption.</p></li> <li><p>aws:kms - New objects are encrypted with an KMS key (kmsMasterKeyId), either an Amazon Web Services managed key or a customer managed key. They use SSE-KMS encryption.</p></li> <li><p>NONE - The bucket's default encryption settings don't specify server-side encryption behavior for new objects.</p></li></ul>"
+          "documentation": "<p>The server-side encryption algorithm that's used by default to encrypt objects that are added to the bucket. Possible values are:</p> <ul><li><p>AES256 - New objects use SSE-S3 encryption. They're encrypted with an Amazon S3 managed key.</p></li> <li><p>aws:kms - New objects use SSE-KMS encryption. They're encrypted with an KMS key (kmsMasterKeyId), either an Amazon Web Services managed key or a customer managed key.</p></li> <li><p>aws:kms:dsse - New objects use DSSE-KMS encryption. They're encrypted with an KMS key (kmsMasterKeyId), either an Amazon Web Services managed key or a customer managed key.</p></li> <li><p>NONE - The bucket's default encryption settings don't specify server-side encryption behavior for new objects.</p></li></ul>"
         }
       },
       "documentation": "<p>Provides information about the default server-side encryption settings for an S3 bucket. For detailed information about these settings, see <a href=\"https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-encryption.html\">Setting default server-side encryption behavior for Amazon S3 buckets</a> in the <i>Amazon Simple Storage Service User Guide</i>.</p>"
@@ -4223,7 +4408,7 @@
           "documentation": "<p>The S3 bucket to store data classification results in, and the encryption settings to use when storing results in that bucket.</p>"
         }
       },
-      "documentation": "<p>Specifies where to store data classification results, and the encryption settings to use when storing results in that location. The location must be an S3 bucket.</p>"
+      "documentation": "<p>Specifies where to store data classification results, and the encryption settings to use when storing results in that location. The location must be an S3 general purpose bucket.</p>"
     },
     "ClassificationResult": {
       "type": "structure",
@@ -4395,7 +4580,7 @@
         "jobType": {
           "shape": "JobType",
           "locationName": "jobType",
-          "documentation": "<p>The schedule for running the job. Valid values are:</p> <ul><li><p>ONE_TIME - Run the job only once. If you specify this value, don't specify a value for the scheduleFrequency property.</p></li> <li><p>SCHEDULED - Run the job on a daily, weekly, or monthly basis. If you specify this value, use the scheduleFrequency property to define the recurrence pattern for the job.</p></li></ul>"
+          "documentation": "<p>The schedule for running the job. Valid values are:</p> <ul><li><p>ONE_TIME - Run the job only once. If you specify this value, don't specify a value for the scheduleFrequency property.</p></li> <li><p>SCHEDULED - Run the job on a daily, weekly, or monthly basis. If you specify this value, use the scheduleFrequency property to specify the recurrence pattern for the job.</p></li></ul>"
         },
         "managedDataIdentifierIds": {
           "shape": "__listOf__string",
@@ -4405,7 +4590,7 @@
         "managedDataIdentifierSelector": {
           "shape": "ManagedDataIdentifierSelector",
           "locationName": "managedDataIdentifierSelector",
-          "documentation": "<p>The selection type to apply when determining which managed data identifiers the job uses to analyze data. Valid values are:</p> <ul><li><p>ALL (default) - Use all managed data identifiers. If you specify this value, don't specify any values for the managedDataIdentifierIds property.</p></li> <li><p>EXCLUDE - Use all managed data identifiers except the ones specified by the managedDataIdentifierIds property.</p></li> <li><p>INCLUDE - Use only the managed data identifiers specified by the managedDataIdentifierIds property.</p></li> <li><p>NONE - Don't use any managed data identifiers. If you specify this value, specify at least one custom data identifier for the job (customDataIdentifierIds) and don't specify any values for the managedDataIdentifierIds property.</p></li> <li><p>RECOMMENDED - Use only the set of managed data identifiers that Amazon Web Services recommends for jobs. If you specify this value, don't specify any values for the managedDataIdentifierIds property.</p></li></ul> <p>If you don't specify a value for this property, the job uses all managed data identifiers.</p> <p>If the job is a recurring job and you don't specify a value for this property or you specify ALL or EXCLUDE, each job run automatically uses new managed data identifiers that are released. If you specify RECOMMENDED for a recurring job, each job run automatically uses all the managed data identifiers that are in the recommended set when the job starts to run.</p> <p>For information about individual managed data identifiers or to determine which ones are in the recommended set, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> and <a href=\"https://docs.aws.amazon.com/macie/latest/user/discovery-jobs-mdis-recommended.html\">Recommended managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
+          "documentation": "<p>The selection type to apply when determining which managed data identifiers the job uses to analyze data. Valid values are:</p> <ul><li><p>ALL - Use all managed data identifiers. If you specify this value, don't specify any values for the managedDataIdentifierIds property.</p></li> <li><p>EXCLUDE - Use all managed data identifiers except the ones specified by the managedDataIdentifierIds property.</p></li> <li><p>INCLUDE - Use only the managed data identifiers specified by the managedDataIdentifierIds property.</p></li> <li><p>NONE - Don't use any managed data identifiers. If you specify this value, specify at least one value for the customDataIdentifierIds property and don't specify any values for the managedDataIdentifierIds property.</p></li> <li><p>RECOMMENDED (default) - Use the recommended set of managed data identifiers. If you specify this value, don't specify any values for the managedDataIdentifierIds property.</p></li></ul> <p>If you don't specify a value for this property, the job uses the recommended set of managed data identifiers.</p> <p>If the job is a recurring job and you specify ALL or EXCLUDE, each job run automatically uses new managed data identifiers that are released. If you don't specify a value for this property or you specify RECOMMENDED for a recurring job, each job run automatically uses all the managed data identifiers that are in the recommended set when the run starts.</p> <p>To learn about individual managed data identifiers or determine which ones are in the recommended set, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> or <a href=\"https://docs.aws.amazon.com/macie/latest/user/discovery-jobs-mdis-recommended.html\">Recommended managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
         },
         "name": {
           "shape": "__string",
@@ -5067,7 +5252,7 @@
         "allowListIds": {
           "shape": "__listOf__string",
           "locationName": "allowListIds",
-          "documentation": "<p>An array of unique identifiers, one for each allow list that the job uses when it analyzes data.</p>"
+          "documentation": "<p>An array of unique identifiers, one for each allow list that the job is configured to use when it analyzes data.</p>"
         },
         "clientToken": {
           "shape": "__string",
@@ -5083,7 +5268,7 @@
         "customDataIdentifierIds": {
           "shape": "__listOf__string",
           "locationName": "customDataIdentifierIds",
-          "documentation": "<p>An array of unique identifiers, one for each custom data identifier that the job uses when it analyzes data. This value is null if the job uses only managed data identifiers to analyze data.</p>"
+          "documentation": "<p>An array of unique identifiers, one for each custom data identifier that the job is configured to use when it analyzes data. This value is null if the job is configured to use only managed data identifiers to analyze data.</p>"
         },
         "description": {
           "shape": "__string",
@@ -5133,7 +5318,7 @@
         "managedDataIdentifierSelector": {
           "shape": "ManagedDataIdentifierSelector",
           "locationName": "managedDataIdentifierSelector",
-          "documentation": "<p>The selection type that determines which managed data identifiers the job uses when it analyzes data. Possible values are:</p> <ul><li><p>ALL (default) - Use all managed data identifiers.</p></li> <li><p>EXCLUDE - Use all managed data identifiers except the ones specified by the managedDataIdentifierIds property.</p></li> <li><p>INCLUDE - Use only the managed data identifiers specified by the managedDataIdentifierIds property.</p></li> <li><p>NONE - Don't use any managed data identifiers. Use only custom data identifiers (customDataIdentifierIds).</p></li> <li><p>RECOMMENDED - Use only the set of managed data identifiers that Amazon Web Services recommends for jobs.</p></li></ul> <p>If this value is null, the job uses all managed data identifiers.</p> <p>If the job is a recurring job and this value is null, ALL, or EXCLUDE, each job run automatically uses new managed data identifiers that are released after the job was created or the preceding run ended. If this value is RECOMMENDED for a recurring job, each job run uses all the managed data identifiers that are in the recommended set when the run starts.</p> <p>For information about individual managed data identifiers or to determine which ones are in the recommended set, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> and <a href=\"https://docs.aws.amazon.com/macie/latest/user/discovery-jobs-mdis-recommended.html\">Recommended managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
+          "documentation": "<p>The selection type that determines which managed data identifiers the job uses when it analyzes data. Possible values are:</p> <ul><li><p>ALL - Use all managed data identifiers.</p></li> <li><p>EXCLUDE - Use all managed data identifiers except the ones specified by the managedDataIdentifierIds property.</p></li> <li><p>INCLUDE - Use only the managed data identifiers specified by the managedDataIdentifierIds property.</p></li> <li><p>NONE - Don't use any managed data identifiers. Use only custom data identifiers (customDataIdentifierIds).</p></li> <li><p>RECOMMENDED (default) - Use the recommended set of managed data identifiers.</p></li></ul> <p>If this value is null, the job uses the recommended set of managed data identifiers.</p> <p>If the job is a recurring job and this value is ALL or EXCLUDE, each job run automatically uses new managed data identifiers that are released. If this value is null or RECOMMENDED for a recurring job, each job run uses all the managed data identifiers that are in the recommended set when the run starts.</p> <p>To learn about individual managed data identifiers or determine which ones are in the recommended set, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> or <a href=\"https://docs.aws.amazon.com/macie/latest/user/discovery-jobs-mdis-recommended.html\">Recommended managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
         },
         "name": {
           "shape": "__string",
@@ -5163,7 +5348,7 @@
         "tags": {
           "shape": "TagMap",
           "locationName": "tags",
-          "documentation": "<p>A map of key-value pairs that specifies which tags (keys and values) are associated with the classification job.</p>"
+          "documentation": "<p>A map of key-value pairs that specifies which tags (keys and values) are associated with the job.</p>"
         },
         "userPausedDetails": {
           "shape": "UserPausedDetails",
@@ -5197,7 +5382,7 @@
         "value": {
           "shape": "__stringMin1Max128",
           "locationName": "value",
-          "documentation": "<p>An occurrence of the specified type of sensitive data. Each occurrence can contain 1-128 characters.</p>"
+          "documentation": "<p>An occurrence of the specified type of sensitive data. Each occurrence contains 1-128 characters.</p>"
         }
       },
       "documentation": "<p>Specifies 1-10 occurrences of a specific type of sensitive data reported by a finding.</p>",
@@ -5239,7 +5424,7 @@
           "documentation": "<p>The type of data identifier that detected the sensitive data. Possible values are: CUSTOM, for a custom data identifier; and, MANAGED, for a managed data identifier.</p>"
         }
       },
-      "documentation": "<p>Provides information about a type of sensitive data that Amazon Macie found in an S3 bucket while performing automated sensitive data discovery for the bucket. The information also specifies the custom data identifier or managed data identifier that detected the data. This information is available only if automated sensitive data discovery is currently enabled for your account.</p>"
+      "documentation": "<p>Provides information about a type of sensitive data that Amazon Macie found in an S3 bucket while performing automated sensitive data discovery for an account. The information also specifies the custom or managed data identifier that detected the data. This information is available only if automated sensitive data discovery has been enabled for the account.</p>"
     },
     "DisableMacieRequest": {
       "type": "structure",
@@ -5375,7 +5560,8 @@
         "NONE",
         "AES256",
         "aws:kms",
-        "UNKNOWN"
+        "UNKNOWN",
+        "aws:kms:dsse"
       ]
     },
     "ErrorCode": {
@@ -5547,12 +5733,12 @@
         "ipAddressDetails": {
           "shape": "IpAddressDetails",
           "locationName": "ipAddressDetails",
-          "documentation": "<p>The IP address of the device that the entity used to perform the action on the affected resource. This object also provides information such as the owner and geographic location for the IP address.</p>"
+          "documentation": "<p>The IP address and related details about the device that the entity used to perform the action on the affected resource. The details can include information such as the owner and geographic location of the IP address.</p>"
         },
         "userIdentity": {
           "shape": "UserIdentity",
           "locationName": "userIdentity",
-          "documentation": "<p>The type and other characteristics of the entity that performed the action on the affected resource.</p>"
+          "documentation": "<p>The type and other characteristics of the entity that performed the action on the affected resource. This value is null if the action was performed by an anonymous (unauthenticated) entity.</p>"
         }
       },
       "documentation": "<p>Provides information about an entity that performed an action that produced a policy finding for a resource.</p>"
@@ -5750,35 +5936,40 @@
     "GetAutomatedDiscoveryConfigurationResponse": {
       "type": "structure",
       "members": {
+        "autoEnableOrganizationMembers": {
+          "shape": "AutoEnableMode",
+          "locationName": "autoEnableOrganizationMembers",
+          "documentation": "<p>Specifies whether automated sensitive data discovery is enabled automatically for accounts in the organization. Possible values are: ALL, enable it for all existing accounts and new member accounts; NEW, enable it only for new member accounts; and, NONE, don't enable it for any accounts.</p>"
+        },
         "classificationScopeId": {
           "shape": "ClassificationScopeId",
           "locationName": "classificationScopeId",
-          "documentation": "<p>The unique identifier for the classification scope that's used when performing automated sensitive data discovery for the account. The classification scope specifies S3 buckets to exclude from automated sensitive data discovery.</p>"
+          "documentation": "<p>The unique identifier for the classification scope that's used when performing automated sensitive data discovery. The classification scope specifies S3 buckets to exclude from analyses.</p>"
         },
         "disabledAt": {
           "shape": "Timestamp",
           "locationName": "disabledAt",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when automated sensitive data discovery was most recently disabled for the account. This value is null if automated sensitive data discovery wasn't enabled and subsequently disabled for the account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when automated sensitive data discovery was most recently disabled. This value is null if automated sensitive data discovery is currently enabled.</p>"
         },
         "firstEnabledAt": {
           "shape": "Timestamp",
           "locationName": "firstEnabledAt",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when automated sensitive data discovery was initially enabled for the account. This value is null if automated sensitive data discovery has never been enabled for the account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when automated sensitive data discovery was initially enabled. This value is null if automated sensitive data discovery has never been enabled.</p>"
         },
         "lastUpdatedAt": {
           "shape": "Timestamp",
           "locationName": "lastUpdatedAt",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when automated sensitive data discovery was most recently enabled or disabled for the account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when the configuration settings or status of automated sensitive data discovery was most recently changed.</p>"
         },
         "sensitivityInspectionTemplateId": {
           "shape": "SensitivityInspectionTemplateId",
           "locationName": "sensitivityInspectionTemplateId",
-          "documentation": "<p>The unique identifier for the sensitivity inspection template that's used when performing automated sensitive data discovery for the account. The template specifies which allow lists, custom data identifiers, and managed data identifiers to use when analyzing data.</p>"
+          "documentation": "<p>The unique identifier for the sensitivity inspection template that's used when performing automated sensitive data discovery. The template specifies which allow lists, custom data identifiers, and managed data identifiers to use when analyzing data.</p>"
         },
         "status": {
           "shape": "AutomatedDiscoveryStatus",
           "locationName": "status",
-          "documentation": "<p>The current status of the automated sensitive data discovery configuration for the account. Possible values are: ENABLED, use the specified settings to perform automated sensitive data discovery activities for the account; and, DISABLED, don't perform automated sensitive data discovery activities for the account.</p>"
+          "documentation": "<p>The current status of automated sensitive data discovery for the organization or account. Possible values are: ENABLED, use the specified settings to perform automated sensitive data discovery activities; and, DISABLED, don't perform automated sensitive data discovery activities.</p>"
         }
       }
     },
@@ -6177,7 +6368,7 @@
         "updatedAt": {
           "shape": "__timestampIso8601",
           "locationName": "updatedAt",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, of the most recent change to the status of the Amazon Macie account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, of the most recent change to the status or configuration settings for the Amazon Macie account.</p>"
         }
       }
     },
@@ -6308,7 +6499,12 @@
         "configuration": {
           "shape": "RevealConfiguration",
           "locationName": "configuration",
-          "documentation": "<p>The current configuration settings and the status of the configuration for the account.</p>"
+          "documentation": "<p>The KMS key that's used to encrypt the sensitive data, and the status of the configuration for the Amazon Macie account.</p>"
+        },
+        "retrievalConfiguration": {
+          "shape": "RetrievalConfiguration",
+          "locationName": "retrievalConfiguration",
+          "documentation": "<p>The access method and settings that are used to retrieve the sensitive data.</p>"
         }
       }
     },
@@ -6337,7 +6533,7 @@
         "reasons": {
           "shape": "__listOfUnavailabilityReasonCode",
           "locationName": "reasons",
-          "documentation": "<p>Specifies why occurrences of sensitive data can't be retrieved for the finding. Possible values are:</p> <ul><li><p>INVALID_CLASSIFICATION_RESULT - Amazon Macie can't verify the location of the sensitive data to retrieve. There isn't a corresponding sensitive data discovery result for the finding. Or the sensitive data discovery result specified by the classificationDetails.detailedResultsLocation field of the finding isn't available, is malformed or corrupted, or uses an unsupported storage format.</p></li> <li><p>OBJECT_EXCEEDS_SIZE_QUOTA - The storage size of the affected S3 object exceeds the size quota for retrieving occurrences of sensitive data.</p></li> <li><p>OBJECT_UNAVAILABLE - The affected S3 object isn't available. The object might have been renamed, moved, or deleted. Or the object was changed after Macie created the finding.</p></li> <li><p>UNSUPPORTED_FINDING_TYPE - The specified finding isn't a sensitive data finding.</p></li> <li><p>UNSUPPORTED_OBJECT_TYPE - The affected S3 object uses a file or storage format that Macie doesn't support for retrieving occurrences of sensitive data.</p></li></ul> <p>This value is null if sensitive data can be retrieved for the finding.</p>"
+          "documentation": "<p>Specifies why occurrences of sensitive data can't be retrieved for the finding. Possible values are:</p> <ul><li><p>ACCOUNT_NOT_IN_ORGANIZATION - The affected account isn't currently part of your organization. Or the account is part of your organization but Macie isn't currently enabled for the account. You're not allowed to access the affected S3 object by using Macie.</p></li> <li><p>INVALID_CLASSIFICATION_RESULT - There isn't a corresponding sensitive data discovery result for the finding. Or the corresponding sensitive data discovery result isn't available in the current Amazon Web Services Region, is malformed or corrupted, or uses an unsupported storage format. Macie can't verify the location of the sensitive data to retrieve.</p></li> <li><p>INVALID_RESULT_SIGNATURE - The corresponding sensitive data discovery result is stored in an S3 object that wasn't signed by Macie. Macie can't verify the integrity and authenticity of the sensitive data discovery result. Therefore, Macie can't verify the location of the sensitive data to retrieve.</p></li> <li><p>MEMBER_ROLE_TOO_PERMISSIVE - The trust or permissions policy for the IAM role in the affected member account doesn't meet Macie requirements for restricting access to the role. Or the role's trust policy doesn't specify the correct external ID for your organization. Macie can't assume the role to retrieve the sensitive data.</p></li> <li><p>MISSING_GET_MEMBER_PERMISSION - You're not allowed to retrieve information about the association between your account and the affected account. Macie can't determine whether you’re allowed to access the affected S3 object as the delegated Macie administrator for the affected account.</p></li> <li><p>OBJECT_EXCEEDS_SIZE_QUOTA - The storage size of the affected S3 object exceeds the size quota for retrieving occurrences of sensitive data from this type of file.</p></li> <li><p>OBJECT_UNAVAILABLE - The affected S3 object isn't available. The object was renamed, moved, deleted, or changed after Macie created the finding. Or the object is encrypted with an KMS key that's currently disabled.</p></li> <li><p>RESULT_NOT_SIGNED - The corresponding sensitive data discovery result is stored in an S3 object that hasn't been signed. Macie can't verify the integrity and authenticity of the sensitive data discovery result. Therefore, Macie can't verify the location of the sensitive data to retrieve.</p></li> <li><p>ROLE_TOO_PERMISSIVE - Your account is configured to retrieve occurrences of sensitive data by using an IAM role whose trust or permissions policy doesn't meet Macie requirements for restricting access to the role. Macie can’t assume the role to retrieve the sensitive data.</p></li> <li><p>UNSUPPORTED_FINDING_TYPE - The specified finding isn't a sensitive data finding.</p></li> <li><p>UNSUPPORTED_OBJECT_TYPE - The affected S3 object uses a file or storage format that Macie doesn't support for retrieving occurrences of sensitive data.</p></li></ul> <p>This value is null if sensitive data can be retrieved for the finding.</p>"
         }
       }
     },
@@ -6400,12 +6596,12 @@
         "excludes": {
           "shape": "SensitivityInspectionTemplateExcludes",
           "locationName": "excludes",
-          "documentation": " <p>The managed data identifiers that are explicitly excluded (not used) when analyzing data.</p>"
+          "documentation": " <p>The managed data identifiers that are explicitly excluded (not used) when performing automated sensitive data discovery.</p>"
         },
         "includes": {
           "shape": "SensitivityInspectionTemplateIncludes",
           "locationName": "includes",
-          "documentation": "<p>The allow lists, custom data identifiers, and managed data identifiers that are included (used) when analyzing data.</p>"
+          "documentation": "<p>The allow lists, custom data identifiers, and managed data identifiers that are explicitly included (used) when performing automated sensitive data discovery.</p>"
         },
         "name": {
           "shape": "__string",
@@ -6708,17 +6904,17 @@
         "isDefinedInJob": {
           "shape": "IsDefinedInJob",
           "locationName": "isDefinedInJob",
-          "documentation": "<p>Specifies whether any one-time or recurring jobs are configured to analyze data in the bucket. Possible values are:</p> <ul><li><p>TRUE - The bucket is explicitly included in the bucket definition (S3BucketDefinitionForJob) for one or more jobs and at least one of those jobs has a status other than CANCELLED. Or the bucket matched the bucket criteria (S3BucketCriteriaForJob) for at least one job that previously ran.</p></li> <li><p>FALSE - The bucket isn't explicitly included in the bucket definition (S3BucketDefinitionForJob) for any jobs, all the jobs that explicitly include the bucket in their bucket definitions have a status of CANCELLED, or the bucket didn't match the bucket criteria (S3BucketCriteriaForJob) for any jobs that previously ran.</p></li> <li><p>UNKNOWN - An exception occurred when Amazon Macie attempted to retrieve job data for the bucket.</p></li></ul>"
+          "documentation": "<p>Specifies whether any one-time or recurring jobs are configured to analyze objects in the bucket. Possible values are:</p> <ul><li><p>TRUE - The bucket is explicitly included in the bucket definition (S3BucketDefinitionForJob) for one or more jobs and at least one of those jobs has a status other than CANCELLED. Or the bucket matched the bucket criteria (S3BucketCriteriaForJob) for at least one job that previously ran.</p></li> <li><p>FALSE - The bucket isn't explicitly included in the bucket definition (S3BucketDefinitionForJob) for any jobs, all the jobs that explicitly include the bucket in their bucket definitions have a status of CANCELLED, or the bucket didn't match the bucket criteria (S3BucketCriteriaForJob) for any jobs that previously ran.</p></li> <li><p>UNKNOWN - An exception occurred when Amazon Macie attempted to retrieve job data for the bucket.</p></li></ul>"
         },
         "isMonitoredByJob": {
           "shape": "IsMonitoredByJob",
           "locationName": "isMonitoredByJob",
-          "documentation": "<p>Specifies whether any recurring jobs are configured to analyze data in the bucket. Possible values are:</p> <ul><li><p>TRUE - The bucket is explicitly included in the bucket definition (S3BucketDefinitionForJob) for one or more recurring jobs or the bucket matches the bucket criteria (S3BucketCriteriaForJob) for one or more recurring jobs. At least one of those jobs has a status other than CANCELLED.</p></li> <li><p>FALSE - The bucket isn't explicitly included in the bucket definition (S3BucketDefinitionForJob) for any recurring jobs, the bucket doesn't match the bucket criteria (S3BucketCriteriaForJob) for any recurring jobs, or all the recurring jobs that are configured to analyze data in the bucket have a status of CANCELLED.</p></li> <li><p>UNKNOWN - An exception occurred when Amazon Macie attempted to retrieve job data for the bucket.</p></li></ul>"
+          "documentation": "<p>Specifies whether any recurring jobs are configured to analyze objects in the bucket. Possible values are:</p> <ul><li><p>TRUE - The bucket is explicitly included in the bucket definition (S3BucketDefinitionForJob) for one or more recurring jobs or the bucket matches the bucket criteria (S3BucketCriteriaForJob) for one or more recurring jobs. At least one of those jobs has a status other than CANCELLED.</p></li> <li><p>FALSE - The bucket isn't explicitly included in the bucket definition (S3BucketDefinitionForJob) for any recurring jobs, the bucket doesn't match the bucket criteria (S3BucketCriteriaForJob) for any recurring jobs, or all the recurring jobs that are configured to analyze data in the bucket have a status of CANCELLED.</p></li> <li><p>UNKNOWN - An exception occurred when Amazon Macie attempted to retrieve job data for the bucket.</p></li></ul>"
         },
         "lastJobId": {
           "shape": "__string",
           "locationName": "lastJobId",
-          "documentation": "<p>The unique identifier for the job that ran most recently and is configured to analyze data in the bucket, either the latest run of a recurring job or the only run of a one-time job.</p> <p>This value is typically null if the value for the isDefinedInJob property is FALSE or UNKNOWN.</p>"
+          "documentation": "<p>The unique identifier for the job that ran most recently and is configured to analyze objects in the bucket, either the latest run of a recurring job or the only run of a one-time job.</p> <p>This value is typically null if the value for the isDefinedInJob property is FALSE or UNKNOWN.</p>"
         },
         "lastJobRunTime": {
           "shape": "__timestampIso8601",
@@ -6726,7 +6922,7 @@
           "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when the job (lastJobId) started. If the job is a recurring job, this value indicates when the most recent run started.</p> <p>This value is typically null if the value for the isDefinedInJob property is FALSE or UNKNOWN.</p>"
         }
       },
-      "documentation": "<p>Specifies whether any one-time or recurring classification jobs are configured to analyze data in an S3 bucket, and, if so, the details of the job that ran most recently.</p>"
+      "documentation": "<p>Specifies whether any one-time or recurring classification jobs are configured to analyze objects in an S3 bucket, and, if so, the details of the job that ran most recently.</p>"
     },
     "JobScheduleFrequency": {
       "type": "structure",
@@ -6913,6 +7109,44 @@
           "shape": "__listOfAllowListSummary",
           "locationName": "allowLists",
           "documentation": "<p>An array of objects, one for each allow list.</p>"
+        },
+        "nextToken": {
+          "shape": "__string",
+          "locationName": "nextToken",
+          "documentation": "<p>The string to use in a subsequent request to get the next page of results in a paginated response. This value is null if there are no additional pages.</p>"
+        }
+      }
+    },
+    "ListAutomatedDiscoveryAccountsRequest": {
+      "type": "structure",
+      "members": {
+        "accountIds": {
+          "shape": "__listOf__string",
+          "location": "querystring",
+          "locationName": "accountIds",
+          "documentation": "<p>The Amazon Web Services account ID for each account, for as many as 50 accounts. To retrieve the status for multiple accounts, append the accountIds parameter and argument for each account, separated by an ampersand (&amp;). To retrieve the status for all the accounts in an organization, omit this parameter.</p>"
+        },
+        "maxResults": {
+          "shape": "MaxResults",
+          "location": "querystring",
+          "locationName": "maxResults",
+          "documentation": "<p>The maximum number of items to include in each page of a paginated response.</p>"
+        },
+        "nextToken": {
+          "shape": "__string",
+          "location": "querystring",
+          "locationName": "nextToken",
+          "documentation": "<p>The nextToken string that specifies which page of results to return in a paginated response.</p>"
+        }
+      }
+    },
+    "ListAutomatedDiscoveryAccountsResponse": {
+      "type": "structure",
+      "members": {
+        "items": {
+          "shape": "__listOfAutomatedDiscoveryAccount",
+          "locationName": "items",
+          "documentation": "<p>An array of objects, one for each account specified in the request. Each object specifies the Amazon Web Services account ID for an account and the current status of automated sensitive data discovery for that account.</p>"
         },
         "nextToken": {
           "shape": "__string",
@@ -7470,6 +7704,11 @@
           "locationName": "accountId",
           "documentation": "<p>The unique identifier for the Amazon Web Services account that owns the bucket.</p>"
         },
+        "automatedDiscoveryMonitoringStatus": {
+          "shape": "AutomatedDiscoveryMonitoringStatus",
+          "locationName": "automatedDiscoveryMonitoringStatus",
+          "documentation": "<p>Specifies whether automated sensitive data discovery is currently configured to analyze objects in the bucket. Possible values are: MONITORED, the bucket is included in analyses; and, NOT_MONITORED, the bucket is excluded from analyses. If automated sensitive data discovery is disabled for your account, this value is NOT_MONITORED.</p>"
+        },
         "bucketName": {
           "shape": "__string",
           "locationName": "bucketName",
@@ -7503,7 +7742,7 @@
         "lastAutomatedDiscoveryTime": {
           "shape": "__timestampIso8601",
           "locationName": "lastAutomatedDiscoveryTime",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when Amazon Macie most recently analyzed data in the bucket while performing automated sensitive data discovery for your account. This value is null if automated sensitive data discovery is currently disabled for your account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when Amazon Macie most recently analyzed objects in the bucket while performing automated sensitive data discovery. This value is null if automated sensitive data discovery is disabled for your account.</p>"
         },
         "objectCount": {
           "shape": "__long",
@@ -7518,7 +7757,7 @@
         "sensitivityScore": {
           "shape": "__integer",
           "locationName": "sensitivityScore",
-          "documentation": "<p>The current sensitivity score for the bucket, ranging from -1 (classification error) to 100 (sensitive). This value is null if automated sensitive data discovery is currently disabled for your account.</p>"
+          "documentation": "<p>The sensitivity score for the bucket, ranging from -1 (classification error) to 100 (sensitive).</p><p>If automated sensitive data discovery has never been enabled for your account or it’s been disabled for your organization or your standalone account for more than 30 days, possible values are: 1, the bucket is empty; or, 50, the bucket stores objects but it’s been excluded from recent analyses.</p>"
         },
         "sizeInBytes": {
           "shape": "__long",
@@ -7632,17 +7871,17 @@
         "customerManaged": {
           "shape": "__long",
           "locationName": "customerManaged",
-          "documentation": "<p>The total number of objects that are encrypted with a customer-provided key. The objects use customer-provided server-side encryption (SSE-C).</p>"
+          "documentation": "<p>The total number of objects that are encrypted with customer-provided keys. The objects use server-side encryption with customer-provided keys (SSE-C).</p>"
         },
         "kmsManaged": {
           "shape": "__long",
           "locationName": "kmsManaged",
-          "documentation": "<p>The total number of objects that are encrypted with an KMS key, either an Amazon Web Services managed key or a customer managed key. The objects use KMS encryption (SSE-KMS).</p>"
+          "documentation": "<p>The total number of objects that are encrypted with KMS keys, either Amazon Web Services managed keys or customer managed keys. The objects use dual-layer server-side encryption or server-side encryption with KMS keys (DSSE-KMS or SSE-KMS).</p>"
         },
         "s3Managed": {
           "shape": "__long",
           "locationName": "s3Managed",
-          "documentation": "<p>The total number of objects that are encrypted with an Amazon S3 managed key. The objects use Amazon S3 managed encryption (SSE-S3).</p>"
+          "documentation": "<p>The total number of objects that are encrypted with Amazon S3 managed keys. The objects use server-side encryption with Amazon S3 managed keys (SSE-S3).</p>"
         },
         "unencrypted": {
           "shape": "__long",
@@ -7845,7 +8084,7 @@
         "jsonPath": {
           "shape": "__string",
           "locationName": "jsonPath",
-          "documentation": "<p>The path, as a JSONPath expression, to the sensitive data. For an Avro object container or Parquet file, this is the path to the field in the record (recordIndex) that contains the data. For a JSON or JSON Lines file, this is the path to the field or array that contains the data. If the data is a value in an array, the path also indicates which value contains the data.</p> <p>If Amazon Macie detects sensitive data in the name of any element in the path, Macie omits this field. If the name of an element exceeds 20 characters, Macie truncates the name by removing characters from the beginning of the name. If the resulting full path exceeds 250 characters, Macie also truncates the path, starting with the first element in the path, until the path contains 250 or fewer characters.</p>"
+          "documentation": "<p>The path, as a JSONPath expression, to the sensitive data. For an Avro object container or Parquet file, this is the path to the field in the record (recordIndex) that contains the data. For a JSON or JSON Lines file, this is the path to the field or array that contains the data. If the data is a value in an array, the path also indicates which value contains the data.</p> <p>If Amazon Macie detects sensitive data in the name of any element in the path, Macie omits this field. If the name of an element exceeds 240 characters, Macie truncates the name by removing characters from the beginning of the name. If the resulting full path exceeds 250 characters, Macie also truncates the path, starting with the first element in the path, until the path contains 250 or fewer characters.</p>"
         },
         "recordIndex": {
           "shape": "__long",
@@ -7918,7 +8157,7 @@
           "documentation": "<p>Specifies whether Amazon Macie found sensitive data in the object.</p>"
         }
       },
-      "documentation": "<p>Provides information about an S3 object that Amazon Macie selected for analysis while performing automated sensitive data discovery for an S3 bucket, and the status and results of the analysis. This information is available only if automated sensitive data discovery is currently enabled for your account.</p>",
+      "documentation": "<p>Provides information about an S3 object that Amazon Macie selected for analysis while performing automated sensitive data discovery for an account, and the status and results of the analysis. This information is available only if automated sensitive data discovery has been enabled for the account.</p>",
       "required": [
         "classificationResultStatus",
         "arn"
@@ -7955,7 +8194,7 @@
         "totalItemsSkipped": {
           "shape": "__long",
           "locationName": "totalItemsSkipped",
-          "documentation": "<p>The total number of objects that Amazon Macie wasn't able to analyze in the bucket due to an object-level issue or error. For example, the object is a malformed file. This value includes objects that Macie wasn't able to analyze for reasons reported by other statistics in the ResourceStatistics object.</p>"
+          "documentation": "<p>The total number of objects that Amazon Macie wasn't able to analyze in the bucket due to an object-level issue or error. For example, an object is a malformed file. This value includes objects that Macie wasn't able to analyze for reasons reported by other statistics in the ResourceStatistics object.</p>"
         },
         "totalItemsSkippedInvalidEncryption": {
           "shape": "__long",
@@ -7973,7 +8212,7 @@
           "documentation": "<p>The total number of objects that Amazon Macie wasn't able to analyze in the bucket due to the permissions settings for the objects or the permissions settings for the keys that were used to encrypt the objects.</p>"
         }
       },
-      "documentation": "<p>Provides statistical data for sensitive data discovery metrics that apply to an S3 bucket that Amazon Macie monitors and analyzes for your account. The statistics capture the results of automated sensitive data discovery activities that Macie has performed for the bucket. The data is available only if automated sensitive data discovery is currently enabled for your account.</p>"
+      "documentation": "<p>Provides statistical data for sensitive data discovery metrics that apply to an S3 bucket that Amazon Macie monitors and analyzes for an account, if automated sensitive data discovery has been enabled for the account. The data captures the results of automated sensitive data discovery activities that Macie has performed for the bucket.</p>"
     },
     "ResourcesAffected": {
       "type": "structure",
@@ -7991,21 +8230,53 @@
       },
       "documentation": "<p>Provides information about the resources that a finding applies to.</p>"
     },
+    "RetrievalConfiguration": {
+      "type": "structure",
+      "members": {
+        "externalId": {
+          "shape": "__string",
+          "locationName": "externalId",
+          "documentation": "<p>The external ID to specify in the trust policy for the IAM role to assume when retrieving sensitive data from affected S3 objects (roleName). This value is null if the value for retrievalMode is CALLER_CREDENTIALS.</p> <p>This ID is a unique alphanumeric string that Amazon Macie generates automatically after you configure it to assume an IAM role. For a Macie administrator to retrieve sensitive data from an affected S3 object for a member account, the trust policy for the role in the member account must include an sts:ExternalId condition that requires this ID.</p>"
+        },
+        "retrievalMode": {
+          "shape": "RetrievalMode",
+          "locationName": "retrievalMode",
+          "documentation": "<p>The access method that's used to retrieve sensitive data from affected S3 objects. Valid values are: ASSUME_ROLE, assume an IAM role that is in the affected Amazon Web Services account and delegates access to Amazon Macie (roleName); and, CALLER_CREDENTIALS, use the credentials of the IAM user who requests the sensitive data.</p>"
+        },
+        "roleName": {
+          "shape": "__stringMin1Max64PatternW",
+          "locationName": "roleName",
+          "documentation": "<p>The name of the IAM role that is in the affected Amazon Web Services account and Amazon Macie is allowed to assume when retrieving sensitive data from affected S3 objects for the account. This value is null if the value for retrievalMode is CALLER_CREDENTIALS.</p>"
+        }
+      },
+      "documentation": "<p>Provides information about the access method and settings that are used to retrieve occurrences of sensitive data reported by findings.</p>",
+      "required": [
+        "retrievalMode"
+      ]
+    },
+    "RetrievalMode": {
+      "type": "string",
+      "documentation": "<p>The access method to use when retrieving occurrences of sensitive data reported by findings. Valid values are:</p>",
+      "enum": [
+        "CALLER_CREDENTIALS",
+        "ASSUME_ROLE"
+      ]
+    },
     "RevealConfiguration": {
       "type": "structure",
       "members": {
         "kmsKeyId": {
           "shape": "__stringMin1Max2048",
           "locationName": "kmsKeyId",
-          "documentation": "<p>The Amazon Resource Name (ARN), ID, or alias of the KMS key to use to encrypt sensitive data that's retrieved. The key must be an existing, customer managed, symmetric encryption key that's in the same Amazon Web Services Region as the Amazon Macie account.</p> <p>If this value specifies an alias, it must include the following prefix: alias/. If this value specifies a key that's owned by another Amazon Web Services account, it must specify the ARN of the key or the ARN of the key's alias.</p>"
+          "documentation": "<p>The Amazon Resource Name (ARN), ID, or alias of the KMS key to use to encrypt sensitive data that's retrieved. The key must be an existing, customer managed, symmetric encryption key that's enabled in the same Amazon Web Services Region as the Amazon Macie account.</p> <p>If this value specifies an alias, it must include the following prefix: alias/. If this value specifies a key that's owned by another Amazon Web Services account, it must specify the ARN of the key or the ARN of the key's alias.</p>"
         },
         "status": {
           "shape": "RevealStatus",
           "locationName": "status",
-          "documentation": "<p>The status of the configuration for the Amazon Macie account. In a request, valid values are: ENABLED, enable the configuration for the account; and, DISABLED, disable the configuration for the account. In a response, possible values are: ENABLED, the configuration is currently enabled for the account; and, DISABLED, the configuration is currently disabled for the account.</p>"
+          "documentation": "<p>The status of the configuration for the Amazon Macie account. In a response, possible values are: ENABLED, the configuration is currently enabled for the account; and, DISABLED, the configuration is currently disabled for the account. In a request, valid values are: ENABLED, enable the configuration for the account; and, DISABLED, disable the configuration for the account.</p> <important><p>If you disable the configuration, you also permanently delete current settings that specify how to access affected S3 objects. If your current access method is ASSUME_ROLE, Macie also deletes the external ID and role name currently specified for the configuration. These settings can't be recovered after they're deleted.</p></important>"
         }
       },
-      "documentation": "<p>Specifies the configuration settings for retrieving occurrences of sensitive data reported by findings, and the status of the configuration for an Amazon Macie account. When you enable the configuration for the first time, your request must specify an Key Management Service (KMS) key. Otherwise, an error occurs. Macie uses the specified key to encrypt the sensitive data that you retrieve.</p>",
+      "documentation": "<p>Specifies the status of the Amazon Macie configuration for retrieving occurrences of sensitive data reported by findings, and the Key Management Service (KMS) key to use to encrypt sensitive data that's retrieved. When you enable the configuration for the first time, your request must specify an KMS key. Otherwise, an error occurs.</p>",
       "required": [
         "status"
       ]
@@ -8198,7 +8469,7 @@
         "bucketName": {
           "shape": "__string",
           "locationName": "bucketName",
-          "documentation": "<p>The name of the bucket.</p>"
+          "documentation": "<p>The name of the bucket. This must be the name of an existing general purpose bucket.</p>"
         },
         "keyPrefix": {
           "shape": "__string",
@@ -8208,7 +8479,7 @@
         "kmsKeyArn": {
           "shape": "__string",
           "locationName": "kmsKeyArn",
-          "documentation": "<p>The Amazon Resource Name (ARN) of the customer managed KMS key to use for encryption of the results. This must be the ARN of an existing, symmetric encryption KMS key that's in the same Amazon Web Services Region as the bucket.</p>"
+          "documentation": "<p>The Amazon Resource Name (ARN) of the customer managed KMS key to use for encryption of the results. This must be the ARN of an existing, symmetric encryption KMS key that's enabled in the same Amazon Web Services Region as the bucket.</p>"
         }
       },
       "documentation": "<p>Specifies an S3 bucket to store data classification results in, and the encryption settings to use when storing results in that bucket.</p>",
@@ -8457,7 +8728,7 @@
         "values": {
           "shape": "__listOf__string",
           "locationName": "values",
-          "documentation": "<p>An array that lists one or more values to use in the condition. If you specify multiple values, Amazon Macie uses OR logic to join the values. Valid values for each supported property (key) are:</p> <ul><li><p>ACCOUNT_ID - A string that represents the unique identifier for the Amazon Web Services account that owns the resource.</p></li> <li><p>S3_BUCKET_EFFECTIVE_PERMISSION - A string that represents an enumerated value that Macie defines for the <a href=\"https://docs.aws.amazon.com/macie/latest/APIReference/datasources-s3.html#datasources-s3-prop-bucketpublicaccess-effectivepermission\">BucketPublicAccess.effectivePermission</a> property of an S3 bucket.</p></li> <li><p>S3_BUCKET_NAME - A string that represents the name of an S3 bucket.</p></li> <li><p>S3_BUCKET_SHARED_ACCESS - A string that represents an enumerated value that Macie defines for the <a href=\"https://docs.aws.amazon.com/macie/latest/APIReference/datasources-s3.html#datasources-s3-prop-bucketmetadata-sharedaccess\">BucketMetadata.sharedAccess</a> property of an S3 bucket.</p></li></ul> <p>Values are case sensitive. Also, Macie doesn't support use of partial values or wildcard characters in values.</p>"
+          "documentation": "<p>An array that lists one or more values to use in the condition. If you specify multiple values, Amazon Macie uses OR logic to join the values. Valid values for each supported property (key) are:</p> <ul><li><p>ACCOUNT_ID - A string that represents the unique identifier for the Amazon Web Services account that owns the resource.</p></li> <li><p>AUTOMATED_DISCOVERY_MONITORING_STATUS - A string that represents an enumerated value that Macie defines for the <a href=\"https://docs.aws.amazon.com/macie/latest/APIReference/datasources-s3.html#datasources-s3-prop-bucketmetadata-automateddiscoverymonitoringstatus\">BucketMetadata.automatedDiscoveryMonitoringStatus</a> property of an S3 bucket.</p></li> <li><p>S3_BUCKET_EFFECTIVE_PERMISSION - A string that represents an enumerated value that Macie defines for the <a href=\"https://docs.aws.amazon.com/macie/latest/APIReference/datasources-s3.html#datasources-s3-prop-bucketpublicaccess-effectivepermission\">BucketPublicAccess.effectivePermission</a> property of an S3 bucket.</p></li> <li><p>S3_BUCKET_NAME - A string that represents the name of an S3 bucket.</p></li> <li><p>S3_BUCKET_SHARED_ACCESS - A string that represents an enumerated value that Macie defines for the <a href=\"https://docs.aws.amazon.com/macie/latest/APIReference/datasources-s3.html#datasources-s3-prop-bucketmetadata-sharedaccess\">BucketMetadata.sharedAccess</a> property of an S3 bucket.</p></li></ul> <p>Values are case sensitive. Also, Macie doesn't support use of partial values or wildcard characters in values.</p>"
         }
       },
       "documentation": "<p>Specifies a property-based filter condition that determines which Amazon Web Services resources are included or excluded from the query results.</p>"
@@ -8469,7 +8740,8 @@
         "ACCOUNT_ID",
         "S3_BUCKET_NAME",
         "S3_BUCKET_EFFECTIVE_PERMISSION",
-        "S3_BUCKET_SHARED_ACCESS"
+        "S3_BUCKET_SHARED_ACCESS",
+        "AUTOMATED_DISCOVERY_MONITORING_STATUS"
       ]
     },
     "SearchResourcesSortAttributeName": {
@@ -8633,7 +8905,7 @@
           "documentation": "<p>An array of unique identifiers, one for each managed data identifier to exclude. To retrieve a list of valid values, use the ListManagedDataIdentifiers operation.</p>"
         }
       },
-      "documentation": "<p>Specifies managed data identifiers to exclude (not use) when performing automated sensitive data discovery for an Amazon Macie account. For information about the managed data identifiers that Amazon Macie currently provides, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
+      "documentation": "<p>Specifies managed data identifiers to exclude (not use) when performing automated sensitive data discovery. For information about the managed data identifiers that Amazon Macie currently provides, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
     },
     "SensitivityInspectionTemplateId": {
       "type": "string",
@@ -8658,7 +8930,7 @@
           "documentation": "<p>An array of unique identifiers, one for each managed data identifier to include.</p> <p>Amazon Macie uses these managed data identifiers in addition to managed data identifiers that are subsequently released and recommended for automated sensitive data discovery. To retrieve a list of valid values for the managed data identifiers that are currently available, use the ListManagedDataIdentifiers operation.</p> <para/>"
         }
       },
-      "documentation": "<p>Specifies the allow lists, custom data identifiers, and managed data identifiers to include (use) when performing automated sensitive data discovery for an Amazon Macie account. The configuration must specify at least one custom data identifier or managed data identifier. For information about the managed data identifiers that Amazon Macie currently provides, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
+      "documentation": "<p>Specifies the allow lists, custom data identifiers, and managed data identifiers to include (use) when performing automated sensitive data discovery. The configuration must specify at least one custom data identifier or managed data identifier. For information about the managed data identifiers that Amazon Macie currently provides, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/managed-data-identifiers.html\">Using managed data identifiers</a> in the <i>Amazon Macie User Guide</i>.</p>"
     },
     "SensitivityInspectionTemplatesEntry": {
       "type": "structure",
@@ -8674,7 +8946,7 @@
           "documentation": "<p>The name of the sensitivity inspection template: automated-sensitive-data-discovery.</p>"
         }
       },
-      "documentation": "<p>Provides information about the sensitivity inspection template for an Amazon Macie account. Macie uses the template's settings when it performs automated sensitive data discovery for the account.</p>"
+      "documentation": "<p>Provides information about the sensitivity inspection template for an Amazon Macie account.</p>"
     },
     "ServerSideEncryption": {
       "type": "structure",
@@ -8874,7 +9146,7 @@
         "comparator": {
           "shape": "JobComparator",
           "locationName": "comparator",
-          "documentation": "<p>The operator to use in the condition. Valid values for each supported property (key) are:</p> <ul><li><p>OBJECT_EXTENSION - EQ (equals) or NE (not equals)</p></li> <li><p>OBJECT_KEY - STARTS_WITH</p></li> <li><p>OBJECT_LAST_MODIFIED_DATE - Any operator except CONTAINS</p></li> <li><p>OBJECT_SIZE - Any operator except CONTAINS</p></li></ul>"
+          "documentation": "<p>The operator to use in the condition. Valid values for each supported property (key) are:</p> <ul><li><p>OBJECT_EXTENSION - EQ (equals) or NE (not equals)</p></li> <li><p>OBJECT_KEY - STARTS_WITH</p></li> <li><p>OBJECT_LAST_MODIFIED_DATE - EQ (equals), GT (greater than), GTE (greater than or equals), LT (less than), LTE (less than or equals), or NE (not equals)</p></li> <li><p>OBJECT_SIZE - EQ (equals), GT (greater than), GTE (greater than or equals), LT (less than), LTE (less than or equals), or NE (not equals)</p></li></ul>"
         },
         "key": {
           "shape": "ScopeFilterKey",
@@ -8884,7 +9156,7 @@
         "values": {
           "shape": "__listOf__string",
           "locationName": "values",
-          "documentation": "<p>An array that lists the values to use in the condition. If the value for the key property is OBJECT_EXTENSION or OBJECT_KEY, this array can specify multiple values and Amazon Macie uses OR logic to join the values. Otherwise, this array can specify only one value.</p> <p>Valid values for each supported property (key) are:</p> <ul><li><p>OBJECT_EXTENSION - A string that represents the file name extension of an object. For example: docx or pdf</p></li> <li><p>OBJECT_KEY - A string that represents the key prefix (folder name or path) of an object. For example: logs or awslogs/eventlogs. This value applies a condition to objects whose keys (names) begin with the specified value.</p></li> <li><p>OBJECT_LAST_MODIFIED_DATE - The date and time (in UTC and extended ISO 8601 format) when an object was created or last changed, whichever is latest. For example: 2020-09-28T14:31:13Z</p></li> <li><p>OBJECT_SIZE - An integer that represents the storage size (in bytes) of an object.</p></li></ul> <p>Macie doesn't support use of wildcard characters in these values. Also, string values are case sensitive.</p>"
+          "documentation": "<p>An array that lists the values to use in the condition. If the value for the key property is OBJECT_EXTENSION or OBJECT_KEY, this array can specify multiple values and Amazon Macie uses OR logic to join the values. Otherwise, this array can specify only one value.</p> <p>Valid values for each supported property (key) are:</p> <ul><li><p>OBJECT_EXTENSION - A string that represents the file name extension of an object. For example: docx or pdf</p></li> <li><p>OBJECT_KEY - A string that represents the key prefix (folder name or path) of an object. For example: logs or awslogs/eventlogs. This value applies a condition to objects whose keys (names) begin with the specified value.</p></li> <li><p>OBJECT_LAST_MODIFIED_DATE - The date and time (in UTC and extended ISO 8601 format) when an object was created or last changed, whichever is latest. For example: 2023-09-24T14:31:13Z</p></li> <li><p>OBJECT_SIZE - An integer that represents the storage size (in bytes) of an object.</p></li></ul> <p>Macie doesn't support use of wildcard characters in these values. Also, string values are case sensitive.</p>"
         }
       },
       "documentation": "<p>Specifies a property-based condition that determines whether an S3 object is included or excluded from a classification job.</p>"
@@ -9129,7 +9401,8 @@
       "enum": [
         "NONE",
         "AES256",
-        "aws:kms"
+        "aws:kms",
+        "aws:kms:dsse"
       ]
     },
     "UnavailabilityReasonCode": {
@@ -9140,7 +9413,13 @@
         "UNSUPPORTED_OBJECT_TYPE",
         "UNSUPPORTED_FINDING_TYPE",
         "INVALID_CLASSIFICATION_RESULT",
-        "OBJECT_UNAVAILABLE"
+        "OBJECT_UNAVAILABLE",
+        "ACCOUNT_NOT_IN_ORGANIZATION",
+        "MISSING_GET_MEMBER_PERMISSION",
+        "ROLE_TOO_PERMISSIVE",
+        "MEMBER_ROLE_TOO_PERMISSIVE",
+        "INVALID_RESULT_SIGNATURE",
+        "RESULT_NOT_SIGNED"
       ]
     },
     "Unit": {
@@ -9244,10 +9523,15 @@
     "UpdateAutomatedDiscoveryConfigurationRequest": {
       "type": "structure",
       "members": {
+        "autoEnableOrganizationMembers": {
+          "shape": "AutoEnableMode",
+          "locationName": "autoEnableOrganizationMembers",
+          "documentation": "<p>Specifies whether to automatically enable automated sensitive data discovery for accounts in the organization. Valid values are: ALL (default), enable it for all existing accounts and new member accounts; NEW, enable it only for new member accounts; and, NONE, don't enable it for any accounts.</p> <p>If you specify NEW or NONE, automated sensitive data discovery continues to be enabled for any existing accounts that it's currently enabled for. To enable or disable it for individual member accounts, specify NEW or NONE, and then enable or disable it for each account by using the BatchUpdateAutomatedDiscoveryAccounts operation.</p>"
+        },
         "status": {
           "shape": "AutomatedDiscoveryStatus",
           "locationName": "status",
-          "documentation": "<p>The new status of automated sensitive data discovery for the account. Valid values are: ENABLED, start or resume automated sensitive data discovery activities for the account; and, DISABLED, stop performing automated sensitive data discovery activities for the account.</p> <p>When you enable automated sensitive data discovery for the first time, Amazon Macie uses default configuration settings to determine which data sources to analyze and which managed data identifiers to use. To change these settings, use the UpdateClassificationScope and UpdateSensitivityInspectionTemplate operations, respectively. If you change the settings and subsequently disable the configuration, Amazon Macie retains your changes.</p>"
+          "documentation": "<p>The new status of automated sensitive data discovery for the organization or account. Valid values are: ENABLED, start or resume all automated sensitive data discovery activities; and, DISABLED, stop performing all automated sensitive data discovery activities.</p> <p>If you specify DISABLED for an administrator account, you also disable automated sensitive data discovery for all member accounts in the organization.</p>"
         }
       },
       "required": [
@@ -9414,7 +9698,7 @@
         "autoEnable": {
           "shape": "__boolean",
           "locationName": "autoEnable",
-          "documentation": "<p>Specifies whether to enable Amazon Macie automatically for an account when the account is added to the organization in Organizations.</p>"
+          "documentation": "<p>Specifies whether to enable Amazon Macie automatically for accounts that are added to the organization in Organizations.</p>"
         }
       },
       "required": [
@@ -9471,13 +9755,37 @@
       "type": "structure",
       "members": {}
     },
+    "UpdateRetrievalConfiguration": {
+      "type": "structure",
+      "members": {
+        "retrievalMode": {
+          "shape": "RetrievalMode",
+          "locationName": "retrievalMode",
+          "documentation": "<p>The access method to use when retrieving sensitive data from affected S3 objects. Valid values are: ASSUME_ROLE, assume an IAM role that is in the affected Amazon Web Services account and delegates access to Amazon Macie; and, CALLER_CREDENTIALS, use the credentials of the IAM user who requests the sensitive data. If you specify ASSUME_ROLE, also specify the name of an existing IAM role for Macie to assume (roleName).</p> <important><p>If you change this value from ASSUME_ROLE to CALLER_CREDENTIALS for an existing configuration, Macie permanently deletes the external ID and role name currently specified for the configuration. These settings can't be recovered after they're deleted.</p></important>"
+        },
+        "roleName": {
+          "shape": "__stringMin1Max64PatternW",
+          "locationName": "roleName",
+          "documentation": "<p>The name of the IAM role that is in the affected Amazon Web Services account and Amazon Macie is allowed to assume when retrieving sensitive data from affected S3 objects for the account. The trust and permissions policies for the role must meet all requirements for Macie to assume the role.</p>"
+        }
+      },
+      "documentation": "<p>Specifies the access method and settings to use when retrieving occurrences of sensitive data reported by findings. If your request specifies an Identity and Access Management (IAM) role to assume, Amazon Macie verifies that the role exists and the attached policies are configured correctly. If there's an issue, Macie returns an error. For information about addressing the issue, see <a href=\"https://docs.aws.amazon.com/macie/latest/user/findings-retrieve-sd-options.html\">Configuration options and requirements for retrieving sensitive data samples</a> in the <i>Amazon Macie User Guide</i>.</p>",
+      "required": [
+        "retrievalMode"
+      ]
+    },
     "UpdateRevealConfigurationRequest": {
       "type": "structure",
       "members": {
         "configuration": {
           "shape": "RevealConfiguration",
           "locationName": "configuration",
-          "documentation": "<p>The new configuration settings and the status of the configuration for the account.</p>"
+          "documentation": "<p>The KMS key to use to encrypt the sensitive data, and the status of the configuration for the Amazon Macie account.</p>"
+        },
+        "retrievalConfiguration": {
+          "shape": "UpdateRetrievalConfiguration",
+          "locationName": "retrievalConfiguration",
+          "documentation": "<p>The access method and settings to use when retrieving the sensitive data.</p>"
         }
       },
       "required": [
@@ -9490,7 +9798,12 @@
         "configuration": {
           "shape": "RevealConfiguration",
           "locationName": "configuration",
-          "documentation": "<p>The new configuration settings and the status of the configuration for the account.</p>"
+          "documentation": "<p>The KMS key to use to encrypt the sensitive data, and the status of the configuration for the Amazon Macie account.</p>"
+        },
+        "retrievalConfiguration": {
+          "shape": "RetrievalConfiguration",
+          "locationName": "retrievalConfiguration",
+          "documentation": "<p>The access method and settings to use when retrieving the sensitive data.</p>"
         }
       }
     },
@@ -9505,7 +9818,7 @@
         "excludes": {
           "shape": "SensitivityInspectionTemplateExcludes",
           "locationName": "excludes",
-          "documentation": " <p>The managed data identifiers to explicitly exclude (not use) when analyzing data.</p> <p>To exclude an allow list or custom data identifier that's currently included by the template, update the values for the SensitivityInspectionTemplateIncludes.allowListIds and SensitivityInspectionTemplateIncludes.customDataIdentifierIds properties, respectively.</p>"
+          "documentation": " <p>The managed data identifiers to explicitly exclude (not use) when performing automated sensitive data discovery.</p> <p>To exclude an allow list or custom data identifier that's currently included by the template, update the values for the SensitivityInspectionTemplateIncludes.allowListIds and SensitivityInspectionTemplateIncludes.customDataIdentifierIds properties, respectively.</p>"
         },
         "id": {
           "shape": "__string",
@@ -9516,7 +9829,7 @@
         "includes": {
           "shape": "SensitivityInspectionTemplateIncludes",
           "locationName": "includes",
-          "documentation": "<p>The allow lists, custom data identifiers, and managed data identifiers to include (use) when analyzing data.</p>"
+          "documentation": "<p>The allow lists, custom data identifiers, and managed data identifiers to explicitly include (use) when performing automated sensitive data discovery.</p>"
         }
       },
       "required": [
@@ -9564,7 +9877,7 @@
         "automatedDiscoveryFreeTrialStartDate": {
           "shape": "__timestampIso8601",
           "locationName": "automatedDiscoveryFreeTrialStartDate",
-          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when the free trial of automated sensitive data discovery started for the account. If the account is a member account in an organization, this value is the same as the value for the organization's Amazon Macie administrator account.</p>"
+          "documentation": "<p>The date and time, in UTC and extended ISO 8601 format, when the free trial of automated sensitive data discovery started for the account. This value is null if automated sensitive data discovery hasn't been enabled for the account.</p>"
         },
         "freeTrialStartDate": {
           "shape": "__timestampIso8601",
@@ -9805,6 +10118,24 @@
       "type": "list",
       "member": {
         "shape": "AllowListSummary"
+      }
+    },
+    "__listOfAutomatedDiscoveryAccount": {
+      "type": "list",
+      "member": {
+        "shape": "AutomatedDiscoveryAccount"
+      }
+    },
+    "__listOfAutomatedDiscoveryAccountUpdate": {
+      "type": "list",
+      "member": {
+        "shape": "AutomatedDiscoveryAccountUpdate"
+      }
+    },
+    "__listOfAutomatedDiscoveryAccountUpdateError": {
+      "type": "list",
+      "member": {
+        "shape": "AutomatedDiscoveryAccountUpdateError"
       }
     },
     "__listOfBatchGetCustomDataIdentifierSummary": {
@@ -10051,6 +10382,12 @@
       "min": 1,
       "max": 512,
       "pattern": "^[\\s\\S]+$"
+    },
+    "__stringMin1Max64PatternW": {
+      "type": "string",
+      "min": 1,
+      "max": 64,
+      "pattern": "^[\\w+=,.@-]*$"
     },
     "__stringMin22Max22PatternAZ0922": {
       "type": "string",

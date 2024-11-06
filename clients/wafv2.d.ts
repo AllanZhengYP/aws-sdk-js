@@ -12,11 +12,11 @@ declare class WAFV2 extends Service {
   constructor(options?: WAFV2.Types.ClientConfiguration)
   config: Config & WAFV2.Types.ClientConfiguration;
   /**
-   * Associates a web ACL with a regional application resource, to protect the resource. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To associate a web ACL, in the CloudFront call UpdateDistribution, set the web ACL ID to the Amazon Resource Name (ARN) of the web ACL. For information, see UpdateDistribution in the Amazon CloudFront Developer Guide.  When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.
+   * Associates a web ACL with a regional application resource, to protect the resource. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To associate a web ACL, in the CloudFront call UpdateDistribution, set the web ACL ID to the Amazon Resource Name (ARN) of the web ACL. For information, see UpdateDistribution in the Amazon CloudFront Developer Guide.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for AssociateWebACL in the WAF Developer Guide.   Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   associateWebACL(params: WAFV2.Types.AssociateWebACLRequest, callback?: (err: AWSError, data: WAFV2.Types.AssociateWebACLResponse) => void): Request<WAFV2.Types.AssociateWebACLResponse, AWSError>;
   /**
-   * Associates a web ACL with a regional application resource, to protect the resource. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To associate a web ACL, in the CloudFront call UpdateDistribution, set the web ACL ID to the Amazon Resource Name (ARN) of the web ACL. For information, see UpdateDistribution in the Amazon CloudFront Developer Guide.  When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.
+   * Associates a web ACL with a regional application resource, to protect the resource. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To associate a web ACL, in the CloudFront call UpdateDistribution, set the web ACL ID to the Amazon Resource Name (ARN) of the web ACL. For information, see UpdateDistribution in the Amazon CloudFront Developer Guide.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for AssociateWebACL in the WAF Developer Guide.   Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   associateWebACL(callback?: (err: AWSError, data: WAFV2.Types.AssociateWebACLResponse) => void): Request<WAFV2.Types.AssociateWebACLResponse, AWSError>;
   /**
@@ -60,13 +60,21 @@ declare class WAFV2 extends Service {
    */
   createRuleGroup(callback?: (err: AWSError, data: WAFV2.Types.CreateRuleGroupResponse) => void): Request<WAFV2.Types.CreateRuleGroupResponse, AWSError>;
   /**
-   * Creates a WebACL per the specifications provided.  A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has an action defined (allow, block, or count) for requests that match the statement of the rule. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance. 
+   * Creates a WebACL per the specifications provided.  A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has a statement that defines what to look for in web requests and an action that WAF applies to requests that match the statement. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance. 
    */
   createWebACL(params: WAFV2.Types.CreateWebACLRequest, callback?: (err: AWSError, data: WAFV2.Types.CreateWebACLResponse) => void): Request<WAFV2.Types.CreateWebACLResponse, AWSError>;
   /**
-   * Creates a WebACL per the specifications provided.  A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has an action defined (allow, block, or count) for requests that match the statement of the rule. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance. 
+   * Creates a WebACL per the specifications provided.  A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has a statement that defines what to look for in web requests and an action that WAF applies to requests that match the statement. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance. 
    */
   createWebACL(callback?: (err: AWSError, data: WAFV2.Types.CreateWebACLResponse) => void): Request<WAFV2.Types.CreateWebACLResponse, AWSError>;
+  /**
+   * Deletes the specified API key.  After you delete a key, it can take up to 24 hours for WAF to disallow use of the key in all regions. 
+   */
+  deleteAPIKey(params: WAFV2.Types.DeleteAPIKeyRequest, callback?: (err: AWSError, data: WAFV2.Types.DeleteAPIKeyResponse) => void): Request<WAFV2.Types.DeleteAPIKeyResponse, AWSError>;
+  /**
+   * Deletes the specified API key.  After you delete a key, it can take up to 24 hours for WAF to disallow use of the key in all regions. 
+   */
+  deleteAPIKey(callback?: (err: AWSError, data: WAFV2.Types.DeleteAPIKeyResponse) => void): Request<WAFV2.Types.DeleteAPIKeyResponse, AWSError>;
   /**
    * Deletes all rule groups that are managed by Firewall Manager for the specified web ACL.  You can only use this if ManagedByFirewallManager is false in the specified WebACL. 
    */
@@ -148,11 +156,11 @@ declare class WAFV2 extends Service {
    */
   describeManagedRuleGroup(callback?: (err: AWSError, data: WAFV2.Types.DescribeManagedRuleGroupResponse) => void): Request<WAFV2.Types.DescribeManagedRuleGroupResponse, AWSError>;
   /**
-   * Disassociates the specified regional application resource from any existing web ACL association. A resource can have at most one web ACL association. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To disassociate a web ACL, provide an empty web ACL ID in the CloudFront call UpdateDistribution. For information, see UpdateDistribution in the Amazon CloudFront API Reference. 
+   * Disassociates the specified regional application resource from any existing web ACL association. A resource can have at most one web ACL association. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To disassociate a web ACL, provide an empty web ACL ID in the CloudFront call UpdateDistribution. For information, see UpdateDistribution in the Amazon CloudFront API Reference.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for DisassociateWebACL in the WAF Developer Guide.
    */
   disassociateWebACL(params: WAFV2.Types.DisassociateWebACLRequest, callback?: (err: AWSError, data: WAFV2.Types.DisassociateWebACLResponse) => void): Request<WAFV2.Types.DisassociateWebACLResponse, AWSError>;
   /**
-   * Disassociates the specified regional application resource from any existing web ACL association. A resource can have at most one web ACL association. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To disassociate a web ACL, provide an empty web ACL ID in the CloudFront call UpdateDistribution. For information, see UpdateDistribution in the Amazon CloudFront API Reference. 
+   * Disassociates the specified regional application resource from any existing web ACL association. A resource can have at most one web ACL association. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  For Amazon CloudFront, don't use this call. Instead, use your CloudFront distribution configuration. To disassociate a web ACL, provide an empty web ACL ID in the CloudFront call UpdateDistribution. For information, see UpdateDistribution in the Amazon CloudFront API Reference.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for DisassociateWebACL in the WAF Developer Guide.
    */
   disassociateWebACL(callback?: (err: AWSError, data: WAFV2.Types.DisassociateWebACLResponse) => void): Request<WAFV2.Types.DisassociateWebACLResponse, AWSError>;
   /**
@@ -252,11 +260,11 @@ declare class WAFV2 extends Service {
    */
   getWebACL(callback?: (err: AWSError, data: WAFV2.Types.GetWebACLResponse) => void): Request<WAFV2.Types.GetWebACLResponse, AWSError>;
   /**
-   * Retrieves the WebACL for the specified resource. 
+   * Retrieves the WebACL for the specified resource.  This call uses GetWebACL, to verify that your account has permission to access the retrieved web ACL. If you get an error that indicates that your account isn't authorized to perform wafv2:GetWebACL on the resource, that error won't be included in your CloudTrail event history.  For Amazon CloudFront, don't use this call. Instead, call the CloudFront action GetDistributionConfig. For information, see GetDistributionConfig in the Amazon CloudFront API Reference.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for GetWebACLForResource in the WAF Developer Guide.
    */
   getWebACLForResource(params: WAFV2.Types.GetWebACLForResourceRequest, callback?: (err: AWSError, data: WAFV2.Types.GetWebACLForResourceResponse) => void): Request<WAFV2.Types.GetWebACLForResourceResponse, AWSError>;
   /**
-   * Retrieves the WebACL for the specified resource. 
+   * Retrieves the WebACL for the specified resource.  This call uses GetWebACL, to verify that your account has permission to access the retrieved web ACL. If you get an error that indicates that your account isn't authorized to perform wafv2:GetWebACL on the resource, that error won't be included in your CloudTrail event history.  For Amazon CloudFront, don't use this call. Instead, call the CloudFront action GetDistributionConfig. For information, see GetDistributionConfig in the Amazon CloudFront API Reference.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for GetWebACLForResource in the WAF Developer Guide.
    */
   getWebACLForResource(callback?: (err: AWSError, data: WAFV2.Types.GetWebACLForResourceResponse) => void): Request<WAFV2.Types.GetWebACLForResourceResponse, AWSError>;
   /**
@@ -324,11 +332,11 @@ declare class WAFV2 extends Service {
    */
   listRegexPatternSets(callback?: (err: AWSError, data: WAFV2.Types.ListRegexPatternSetsResponse) => void): Request<WAFV2.Types.ListRegexPatternSetsResponse, AWSError>;
   /**
-   * Retrieves an array of the Amazon Resource Names (ARNs) for the regional resources that are associated with the specified web ACL. If you want the list of Amazon CloudFront resources, use the CloudFront call ListDistributionsByWebACLId. 
+   * Retrieves an array of the Amazon Resource Names (ARNs) for the regional resources that are associated with the specified web ACL.  For Amazon CloudFront, don't use this call. Instead, use the CloudFront call ListDistributionsByWebACLId. For information, see ListDistributionsByWebACLId in the Amazon CloudFront API Reference.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for ListResourcesForWebACL in the WAF Developer Guide.
    */
   listResourcesForWebACL(params: WAFV2.Types.ListResourcesForWebACLRequest, callback?: (err: AWSError, data: WAFV2.Types.ListResourcesForWebACLResponse) => void): Request<WAFV2.Types.ListResourcesForWebACLResponse, AWSError>;
   /**
-   * Retrieves an array of the Amazon Resource Names (ARNs) for the regional resources that are associated with the specified web ACL. If you want the list of Amazon CloudFront resources, use the CloudFront call ListDistributionsByWebACLId. 
+   * Retrieves an array of the Amazon Resource Names (ARNs) for the regional resources that are associated with the specified web ACL.  For Amazon CloudFront, don't use this call. Instead, use the CloudFront call ListDistributionsByWebACLId. For information, see ListDistributionsByWebACLId in the Amazon CloudFront API Reference.   Required permissions for customer-managed IAM policies  This call requires permissions that are specific to the protected resource type. For details, see Permissions for ListResourcesForWebACL in the WAF Developer Guide.
    */
   listResourcesForWebACL(callback?: (err: AWSError, data: WAFV2.Types.ListResourcesForWebACLResponse) => void): Request<WAFV2.Types.ListResourcesForWebACLResponse, AWSError>;
   /**
@@ -372,11 +380,11 @@ declare class WAFV2 extends Service {
    */
   putManagedRuleSetVersions(callback?: (err: AWSError, data: WAFV2.Types.PutManagedRuleSetVersionsResponse) => void): Request<WAFV2.Types.PutManagedRuleSetVersionsResponse, AWSError>;
   /**
-   * Attaches an IAM policy to the specified resource. Use this to share a rule group across accounts. You must be the owner of the rule group to perform this operation. This action is subject to the following restrictions:   You can attach only one policy with each PutPermissionPolicy request.   The ARN in the request must be a valid WAF RuleGroup ARN and the rule group must exist in the same Region.   The user making the request must be the owner of the rule group.  
+   * Use this to share a rule group with other accounts. This action attaches an IAM policy to the specified resource. You must be the owner of the rule group to perform this operation. This action is subject to the following restrictions:   You can attach only one policy with each PutPermissionPolicy request.   The ARN in the request must be a valid WAF RuleGroup ARN and the rule group must exist in the same Region.   The user making the request must be the owner of the rule group.   If a rule group has been shared with your account, you can access it through the call GetRuleGroup, and you can reference it in CreateWebACL and UpdateWebACL. Rule groups that are shared with you don't appear in your WAF console rule groups listing. 
    */
   putPermissionPolicy(params: WAFV2.Types.PutPermissionPolicyRequest, callback?: (err: AWSError, data: WAFV2.Types.PutPermissionPolicyResponse) => void): Request<WAFV2.Types.PutPermissionPolicyResponse, AWSError>;
   /**
-   * Attaches an IAM policy to the specified resource. Use this to share a rule group across accounts. You must be the owner of the rule group to perform this operation. This action is subject to the following restrictions:   You can attach only one policy with each PutPermissionPolicy request.   The ARN in the request must be a valid WAF RuleGroup ARN and the rule group must exist in the same Region.   The user making the request must be the owner of the rule group.  
+   * Use this to share a rule group with other accounts. This action attaches an IAM policy to the specified resource. You must be the owner of the rule group to perform this operation. This action is subject to the following restrictions:   You can attach only one policy with each PutPermissionPolicy request.   The ARN in the request must be a valid WAF RuleGroup ARN and the rule group must exist in the same Region.   The user making the request must be the owner of the rule group.   If a rule group has been shared with your account, you can access it through the call GetRuleGroup, and you can reference it in CreateWebACL and UpdateWebACL. Rule groups that are shared with you don't appear in your WAF console rule groups listing. 
    */
   putPermissionPolicy(callback?: (err: AWSError, data: WAFV2.Types.PutPermissionPolicyResponse) => void): Request<WAFV2.Types.PutPermissionPolicyResponse, AWSError>;
   /**
@@ -396,11 +404,11 @@ declare class WAFV2 extends Service {
    */
   untagResource(callback?: (err: AWSError, data: WAFV2.Types.UntagResourceResponse) => void): Request<WAFV2.Types.UntagResourceResponse, AWSError>;
   /**
-   * Updates the specified IPSet.   This operation completely replaces the mutable specifications that you already have for the IP set with the ones that you provide to this call.  To modify an IP set, do the following:    Retrieve it by calling GetIPSet    Update its settings as needed   Provide the complete IP set specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.
+   * Updates the specified IPSet.   This operation completely replaces the mutable specifications that you already have for the IP set with the ones that you provide to this call.  To modify an IP set, do the following:    Retrieve it by calling GetIPSet    Update its settings as needed   Provide the complete IP set specification to this call     Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateIPSet(params: WAFV2.Types.UpdateIPSetRequest, callback?: (err: AWSError, data: WAFV2.Types.UpdateIPSetResponse) => void): Request<WAFV2.Types.UpdateIPSetResponse, AWSError>;
   /**
-   * Updates the specified IPSet.   This operation completely replaces the mutable specifications that you already have for the IP set with the ones that you provide to this call.  To modify an IP set, do the following:    Retrieve it by calling GetIPSet    Update its settings as needed   Provide the complete IP set specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.
+   * Updates the specified IPSet.   This operation completely replaces the mutable specifications that you already have for the IP set with the ones that you provide to this call.  To modify an IP set, do the following:    Retrieve it by calling GetIPSet    Update its settings as needed   Provide the complete IP set specification to this call     Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateIPSet(callback?: (err: AWSError, data: WAFV2.Types.UpdateIPSetResponse) => void): Request<WAFV2.Types.UpdateIPSetResponse, AWSError>;
   /**
@@ -412,27 +420,27 @@ declare class WAFV2 extends Service {
    */
   updateManagedRuleSetVersionExpiryDate(callback?: (err: AWSError, data: WAFV2.Types.UpdateManagedRuleSetVersionExpiryDateResponse) => void): Request<WAFV2.Types.UpdateManagedRuleSetVersionExpiryDateResponse, AWSError>;
   /**
-   * Updates the specified RegexPatternSet.  This operation completely replaces the mutable specifications that you already have for the regex pattern set with the ones that you provide to this call.  To modify a regex pattern set, do the following:    Retrieve it by calling GetRegexPatternSet    Update its settings as needed   Provide the complete regex pattern set specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.
+   * Updates the specified RegexPatternSet.  This operation completely replaces the mutable specifications that you already have for the regex pattern set with the ones that you provide to this call.  To modify a regex pattern set, do the following:    Retrieve it by calling GetRegexPatternSet    Update its settings as needed   Provide the complete regex pattern set specification to this call     Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateRegexPatternSet(params: WAFV2.Types.UpdateRegexPatternSetRequest, callback?: (err: AWSError, data: WAFV2.Types.UpdateRegexPatternSetResponse) => void): Request<WAFV2.Types.UpdateRegexPatternSetResponse, AWSError>;
   /**
-   * Updates the specified RegexPatternSet.  This operation completely replaces the mutable specifications that you already have for the regex pattern set with the ones that you provide to this call.  To modify a regex pattern set, do the following:    Retrieve it by calling GetRegexPatternSet    Update its settings as needed   Provide the complete regex pattern set specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.
+   * Updates the specified RegexPatternSet.  This operation completely replaces the mutable specifications that you already have for the regex pattern set with the ones that you provide to this call.  To modify a regex pattern set, do the following:    Retrieve it by calling GetRegexPatternSet    Update its settings as needed   Provide the complete regex pattern set specification to this call     Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateRegexPatternSet(callback?: (err: AWSError, data: WAFV2.Types.UpdateRegexPatternSetResponse) => void): Request<WAFV2.Types.UpdateRegexPatternSetResponse, AWSError>;
   /**
-   * Updates the specified RuleGroup.  This operation completely replaces the mutable specifications that you already have for the rule group with the ones that you provide to this call.  To modify a rule group, do the following:    Retrieve it by calling GetRuleGroup    Update its settings as needed   Provide the complete rule group specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.  A rule group defines a collection of rules to inspect and control web requests that you can use in a WebACL. When you create a rule group, you define an immutable capacity limit. If you update a rule group, you must stay within the capacity. This allows others to reuse the rule group with confidence in its capacity requirements. 
+   * Updates the specified RuleGroup.  This operation completely replaces the mutable specifications that you already have for the rule group with the ones that you provide to this call.  To modify a rule group, do the following:    Retrieve it by calling GetRuleGroup    Update its settings as needed   Provide the complete rule group specification to this call     A rule group defines a collection of rules to inspect and control web requests that you can use in a WebACL. When you create a rule group, you define an immutable capacity limit. If you update a rule group, you must stay within the capacity. This allows others to reuse the rule group with confidence in its capacity requirements.   Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateRuleGroup(params: WAFV2.Types.UpdateRuleGroupRequest, callback?: (err: AWSError, data: WAFV2.Types.UpdateRuleGroupResponse) => void): Request<WAFV2.Types.UpdateRuleGroupResponse, AWSError>;
   /**
-   * Updates the specified RuleGroup.  This operation completely replaces the mutable specifications that you already have for the rule group with the ones that you provide to this call.  To modify a rule group, do the following:    Retrieve it by calling GetRuleGroup    Update its settings as needed   Provide the complete rule group specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.  A rule group defines a collection of rules to inspect and control web requests that you can use in a WebACL. When you create a rule group, you define an immutable capacity limit. If you update a rule group, you must stay within the capacity. This allows others to reuse the rule group with confidence in its capacity requirements. 
+   * Updates the specified RuleGroup.  This operation completely replaces the mutable specifications that you already have for the rule group with the ones that you provide to this call.  To modify a rule group, do the following:    Retrieve it by calling GetRuleGroup    Update its settings as needed   Provide the complete rule group specification to this call     A rule group defines a collection of rules to inspect and control web requests that you can use in a WebACL. When you create a rule group, you define an immutable capacity limit. If you update a rule group, you must stay within the capacity. This allows others to reuse the rule group with confidence in its capacity requirements.   Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateRuleGroup(callback?: (err: AWSError, data: WAFV2.Types.UpdateRuleGroupResponse) => void): Request<WAFV2.Types.UpdateRuleGroupResponse, AWSError>;
   /**
-   * Updates the specified WebACL. While updating a web ACL, WAF provides continuous coverage to the resources that you have associated with the web ACL.   This operation completely replaces the mutable specifications that you already have for the web ACL with the ones that you provide to this call.  To modify a web ACL, do the following:    Retrieve it by calling GetWebACL    Update its settings as needed   Provide the complete web ACL specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.  A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has an action defined (allow, block, or count) for requests that match the statement of the rule. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance. 
+   * Updates the specified WebACL. While updating a web ACL, WAF provides continuous coverage to the resources that you have associated with the web ACL.   This operation completely replaces the mutable specifications that you already have for the web ACL with the ones that you provide to this call.  To modify a web ACL, do the following:    Retrieve it by calling GetWebACL    Update its settings as needed   Provide the complete web ACL specification to this call     A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has a statement that defines what to look for in web requests and an action that WAF applies to requests that match the statement. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.   Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateWebACL(params: WAFV2.Types.UpdateWebACLRequest, callback?: (err: AWSError, data: WAFV2.Types.UpdateWebACLResponse) => void): Request<WAFV2.Types.UpdateWebACLResponse, AWSError>;
   /**
-   * Updates the specified WebACL. While updating a web ACL, WAF provides continuous coverage to the resources that you have associated with the web ACL.   This operation completely replaces the mutable specifications that you already have for the web ACL with the ones that you provide to this call.  To modify a web ACL, do the following:    Retrieve it by calling GetWebACL    Update its settings as needed   Provide the complete web ACL specification to this call    When you make changes to web ACLs or web ACL components, like rules and rule groups, WAF propagates the changes everywhere that the web ACL and its components are stored and used. Your changes are applied within seconds, but there might be a brief period of inconsistency when the changes have arrived in some places and not in others. So, for example, if you change a rule action setting, the action might be the old action in one area and the new action in another area. Or if you add an IP address to an IP set used in a blocking rule, the new address might briefly be blocked in one area while still allowed in another. This temporary inconsistency can occur when you first associate a web ACL with an Amazon Web Services resource and when you change a web ACL that is already associated with a resource. Generally, any inconsistencies of this type last only a few seconds.  A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has an action defined (allow, block, or count) for requests that match the statement of the rule. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance. 
+   * Updates the specified WebACL. While updating a web ACL, WAF provides continuous coverage to the resources that you have associated with the web ACL.   This operation completely replaces the mutable specifications that you already have for the web ACL with the ones that you provide to this call.  To modify a web ACL, do the following:    Retrieve it by calling GetWebACL    Update its settings as needed   Provide the complete web ACL specification to this call     A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has a statement that defines what to look for in web requests and an action that WAF applies to requests that match the statement. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.   Temporary inconsistencies during updates  When you create or change a web ACL or other WAF resources, the changes take a small amount of time to propagate to all areas where the resources are stored. The propagation time can be from a few seconds to a number of minutes.  The following are examples of the temporary inconsistencies that you might notice during change propagation:    After you create a web ACL, if you try to associate it with a resource, you might get an exception indicating that the web ACL is unavailable.    After you add a rule group to a web ACL, the new rule group rules might be in effect in one area where the web ACL is used and not in another.   After you change a rule action setting, you might see the old action in some places and the new action in others.    After you add an IP address to an IP set that is in use in a blocking rule, the new address might be blocked in one area while still allowed in another.  
    */
   updateWebACL(callback?: (err: AWSError, data: WAFV2.Types.UpdateWebACLResponse) => void): Request<WAFV2.Types.UpdateWebACLResponse, AWSError>;
 }
@@ -461,11 +469,11 @@ declare namespace WAFV2 {
   export type APIKeyVersion = number;
   export interface AWSManagedRulesACFPRuleSet {
     /**
-     * The path of the account creation endpoint for your application. This is the page on your website that accepts the completed registration form for a new user. This page must accept POST requests. For example, for the URL https://example.com/web/signup, you would provide the path /web/signup.
+     * The path of the account creation endpoint for your application. This is the page on your website that accepts the completed registration form for a new user. This page must accept POST requests. For example, for the URL https://example.com/web/newaccount, you would provide the path /web/newaccount. Account creation page paths that start with the path that you provide are considered a match. For example /web/newaccount matches the account creation paths /web/newaccount, /web/newaccount/, /web/newaccountPage, and /web/newaccount/thisPage, but doesn't match the path /home/web/newaccount or /website/newaccount. 
      */
     CreationPath: CreationPathString;
     /**
-     * The path of the account registration endpoint for your application. This is the page on your website that presents the registration form to new users.   This page must accept GET text/html requests.  For example, for the URL https://example.com/web/register, you would provide the path /web/register.
+     * The path of the account registration endpoint for your application. This is the page on your website that presents the registration form to new users.   This page must accept GET text/html requests.  For example, for the URL https://example.com/web/registration, you would provide the path /web/registration. Registration page paths that start with the path that you provide are considered a match. For example /web/registration matches the registration paths /web/registration, /web/registration/, /web/registrationPage, and /web/registration/thisPage, but doesn't match the path /home/web/registration or /website/registration. 
      */
     RegistrationPagePath: RegistrationPagePathString;
     /**
@@ -483,7 +491,7 @@ declare namespace WAFV2 {
   }
   export interface AWSManagedRulesATPRuleSet {
     /**
-     * The path of the login endpoint for your application. For example, for the URL https://example.com/web/login, you would provide the path /web/login. The rule group inspects only HTTP POST requests to your specified login endpoint.
+     * The path of the login endpoint for your application. For example, for the URL https://example.com/web/login, you would provide the path /web/login. Login paths that start with the path that you provide are considered a match. For example /web/login matches the login paths /web/login, /web/login/, /web/loginPage, and /web/login/thisPage, but doesn't match the login path /home/web/login or /website/login. The rule group inspects only HTTP POST requests to your specified login endpoint.
      */
     LoginPath: String;
     /**
@@ -504,6 +512,10 @@ declare namespace WAFV2 {
      * The inspection level to use for the Bot Control rule group. The common level is the least expensive. The targeted level includes all common level rules and adds rules with more advanced inspection criteria. For details, see WAF Bot Control rule group in the WAF Developer Guide.
      */
     InspectionLevel: InspectionLevel;
+    /**
+     * Applies only to the targeted inspection level.  Determines whether to use machine learning (ML) to analyze your web traffic for bot-related activity. Machine learning is required for the Bot Control rules TGT_ML_CoordinatedActivityLow and TGT_ML_CoordinatedActivityMedium, which inspect for anomalous behavior that might indicate distributed, coordinated bot activity. For more information about this choice, see the listing for these rules in the table at Bot Control rules listing in the WAF Developer Guide. Default: TRUE 
+     */
+    EnableMachineLearning?: EnableMachineLearning;
   }
   export type Action = string;
   export interface ActionCondition {
@@ -548,10 +560,10 @@ declare namespace WAFV2 {
   }
   export interface AssociateWebACLResponse {
   }
-  export type AssociatedResourceType = "CLOUDFRONT"|string;
+  export type AssociatedResourceType = "CLOUDFRONT"|"API_GATEWAY"|"COGNITO_USER_POOL"|"APP_RUNNER_SERVICE"|"VERIFIED_ACCESS_INSTANCE"|string;
   export interface AssociationConfig {
     /**
-     * Customizes the maximum size of the request body that your protected CloudFront distributions forward to WAF for inspection. The default size is 16 KB (16,384 kilobytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing. 
+     * Customizes the maximum size of the request body that your protected CloudFront, API Gateway, Amazon Cognito, App Runner, and Verified Access resources forward to WAF for inspection. The default size is 16 KB (16,384 bytes). You can change the setting for any of the available resource types.   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing.  Example JSON:  { "API_GATEWAY": "KB_48", "APP_RUNNER_SERVICE": "KB_32" }  For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).
      */
     RequestBody?: RequestBody;
   }
@@ -563,7 +575,7 @@ declare namespace WAFV2 {
   }
   export interface Body {
     /**
-     * What WAF should do if the body is larger than WAF can inspect. WAF does not support inspecting the entire contents of the web request body if the body exceeds the limit for the resource type. If the body is larger than the limit, the underlying host service only forwards the contents that are below the limit to WAF for inspection.  The default limit is 8 KB (8,192 kilobytes) for regional resources and 16 KB (16,384 kilobytes) for CloudFront distributions. For CloudFront distributions, you can increase the limit in the web ACL AssociationConfig, for additional processing fees.  The options for oversize handling are the following:    CONTINUE - Inspect the available body contents normally, according to the rule inspection criteria.     MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.   You can combine the MATCH or NO_MATCH settings for oversize handling with your rule and web ACL action settings, so that you block any request whose body is over the limit.  Default: CONTINUE 
+     * What WAF should do if the body is larger than WAF can inspect.  WAF does not support inspecting the entire contents of the web request body if the body exceeds the limit for the resource type. When a web request body is larger than the limit, the underlying host service only forwards the contents that are within the limit to WAF for inspection.    For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).   For CloudFront, API Gateway, Amazon Cognito, App Runner, and Verified Access, the default limit is 16 KB (16,384 bytes), and you can increase the limit for each resource type in the web ACL AssociationConfig, for additional processing fees.    The options for oversize handling are the following:    CONTINUE - Inspect the available body contents normally, according to the rule inspection criteria.     MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.   You can combine the MATCH or NO_MATCH settings for oversize handling with your rule and web ACL action settings, so that you block any request whose body is over the limit.  Default: CONTINUE 
      */
     OversizeHandling?: OversizeHandling;
   }
@@ -571,7 +583,7 @@ declare namespace WAFV2 {
   export type Boolean = boolean;
   export interface ByteMatchStatement {
     /**
-     * A string value that you want WAF to search for. WAF searches only in the part of web requests that you designate for inspection in FieldToMatch. The maximum length of the value is 200 bytes. Valid values depend on the component that you specify for inspection in FieldToMatch:    Method: The HTTP method that you want WAF to search for. This indicates the type of operation specified in the request.     UriPath: The value that you want WAF to search for in the URI path, for example, /images/daily-ad.jpg.     HeaderOrder: The comma-separated list of header names to match for. WAF creates a string that contains the ordered list of header names, from the headers in the web request, and then matches against that string.    If SearchString includes alphabetic characters A-Z and a-z, note that the value is case sensitive.  If you're using the WAF API  Specify a base64-encoded version of the value. The maximum length of the value before you base64-encode it is 200 bytes. For example, suppose the value of Type is HEADER and the value of Data is User-Agent. If you want to search the User-Agent header for the value BadBot, you base64-encode BadBot using MIME base64-encoding and include the resulting value, QmFkQm90, in the value of SearchString.  If you're using the CLI or one of the Amazon Web Services SDKs  The value that you want WAF to search for. The SDK automatically base64 encodes the value.
+     * A string value that you want WAF to search for. WAF searches only in the part of web requests that you designate for inspection in FieldToMatch. The maximum length of the value is 200 bytes. Valid values depend on the component that you specify for inspection in FieldToMatch:    Method: The HTTP method that you want WAF to search for. This indicates the type of operation specified in the request.     UriPath: The value that you want WAF to search for in the URI path, for example, /images/daily-ad.jpg.     JA3Fingerprint: Available for use with Amazon CloudFront distributions and Application Load Balancers. Match against the request's JA3 fingerprint. The JA3 fingerprint is a 32-character hash derived from the TLS Client Hello of an incoming request. This fingerprint serves as a unique identifier for the client's TLS configuration. You can use this choice only with a string match ByteMatchStatement with the PositionalConstraint set to EXACTLY.  You can obtain the JA3 fingerprint for client requests from the web ACL logs. If WAF is able to calculate the fingerprint, it includes it in the logs. For information about the logging fields, see Log fields in the WAF Developer Guide.     HeaderOrder: The list of header names to match for. WAF creates a string that contains the ordered list of header names, from the headers in the web request, and then matches against that string.    If SearchString includes alphabetic characters A-Z and a-z, note that the value is case sensitive.  If you're using the WAF API  Specify a base64-encoded version of the value. The maximum length of the value before you base64-encode it is 200 bytes. For example, suppose the value of Type is HEADER and the value of Data is User-Agent. If you want to search the User-Agent header for the value BadBot, you base64-encode BadBot using MIME base64-encoding and include the resulting value, QmFkQm90, in the value of SearchString.  If you're using the CLI or one of the Amazon Web Services SDKs  The value that you want WAF to search for. The SDK automatically base64 encodes the value.
      */
     SearchString: SearchString;
     /**
@@ -579,7 +591,7 @@ declare namespace WAFV2 {
      */
     FieldToMatch: FieldToMatch;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
     /**
@@ -690,7 +702,7 @@ declare namespace WAFV2 {
      */
     MatchPattern: CookieMatchPattern;
     /**
-     * The parts of the cookies to inspect with the rule inspection criteria. If you specify All, WAF inspects both keys and values. 
+     * The parts of the cookies to inspect with the rule inspection criteria. If you specify ALL, WAF inspects both keys and values.   All does not require a match to be found in the keys and a match to be found in the values. It requires a match to be found in the keys or the values or both. To require a match in the keys and in the values, use a logical AND statement to combine two match rules, one that inspects the keys and another that inspects the values. 
      */
     MatchScope: MapMatchScope;
     /**
@@ -713,7 +725,7 @@ declare namespace WAFV2 {
      */
     Scope: Scope;
     /**
-     * The client application domains that you want to use this API key for.  Example JSON: "TokenDomains": ["abc.com", "store.abc.com"]  Public suffixes aren't allowed. For example, you can't use usa.gov or co.uk as token domains.
+     * The client application domains that you want to use this API key for.  Example JSON: "TokenDomains": ["abc.com", "store.abc.com"]  Public suffixes aren't allowed. For example, you can't use gov.au or co.uk as token domains.
      */
     TokenDomains: APIKeyTokenDomains;
   }
@@ -741,7 +753,7 @@ declare namespace WAFV2 {
      */
     IPAddressVersion: IPAddressVersion;
     /**
-     * Contains an array of strings that specifies zero or more IP addresses or blocks of IP addresses. All addresses must be specified using Classless Inter-Domain Routing (CIDR) notation. WAF supports all IPv4 and IPv6 CIDR ranges except for /0.  Example address strings:    To configure WAF to allow, block, or count requests that originated from the IP address 192.0.2.44, specify 192.0.2.44/32.   To configure WAF to allow, block, or count requests that originated from IP addresses from 192.0.2.0 to 192.0.2.255, specify 192.0.2.0/24.   To configure WAF to allow, block, or count requests that originated from the IP address 1111:0000:0000:0000:0000:0000:0000:0111, specify 1111:0000:0000:0000:0000:0000:0000:0111/128.   To configure WAF to allow, block, or count requests that originated from IP addresses 1111:0000:0000:0000:0000:0000:0000:0000 to 1111:0000:0000:0000:ffff:ffff:ffff:ffff, specify 1111:0000:0000:0000:0000:0000:0000:0000/64.   For more information about CIDR notation, see the Wikipedia entry Classless Inter-Domain Routing. Example JSON Addresses specifications:    Empty array: "Addresses": []    Array with one address: "Addresses": ["192.0.2.44/32"]    Array with three addresses: "Addresses": ["192.0.2.44/32", "192.0.2.0/24", "192.0.0.0/16"]    INVALID specification: "Addresses": [""] INVALID   
+     * Contains an array of strings that specifies zero or more IP addresses or blocks of IP addresses that you want WAF to inspect for in incoming requests. All addresses must be specified using Classless Inter-Domain Routing (CIDR) notation. WAF supports all IPv4 and IPv6 CIDR ranges except for /0.  Example address strings:    For requests that originated from the IP address 192.0.2.44, specify 192.0.2.44/32.   For requests that originated from IP addresses from 192.0.2.0 to 192.0.2.255, specify 192.0.2.0/24.   For requests that originated from the IP address 1111:0000:0000:0000:0000:0000:0000:0111, specify 1111:0000:0000:0000:0000:0000:0000:0111/128.   For requests that originated from IP addresses 1111:0000:0000:0000:0000:0000:0000:0000 to 1111:0000:0000:0000:ffff:ffff:ffff:ffff, specify 1111:0000:0000:0000:0000:0000:0000:0000/64.   For more information about CIDR notation, see the Wikipedia entry Classless Inter-Domain Routing. Example JSON Addresses specifications:    Empty array: "Addresses": []    Array with one address: "Addresses": ["192.0.2.44/32"]    Array with three addresses: "Addresses": ["192.0.2.44/32", "192.0.2.0/24", "192.0.0.0/16"]    INVALID specification: "Addresses": [""] INVALID   
      */
     Addresses: IPAddresses;
     /**
@@ -801,7 +813,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
+     * The Rule statements used to identify the web requests that you want to manage. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
      */
     Rules?: Rules;
     /**
@@ -841,7 +853,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
+     * The Rule statements used to identify the web requests that you want to manage. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
      */
     Rules?: Rules;
     /**
@@ -865,11 +877,11 @@ declare namespace WAFV2 {
      */
     ChallengeConfig?: ChallengeConfig;
     /**
-     * Specifies the domains that WAF should accept in a web request token. This enables the use of tokens across multiple protected websites. When WAF provides a token, it uses the domain of the Amazon Web Services resource that the web ACL is protecting. If you don't specify a list of token domains, WAF accepts tokens only for the domain of the protected resource. With a token domain list, WAF accepts the resource's host domain plus all domains in the token domain list, including their prefixed subdomains. Example JSON: "TokenDomains": { "mywebsite.com", "myotherwebsite.com" }  Public suffixes aren't allowed. For example, you can't use usa.gov or co.uk as token domains.
+     * Specifies the domains that WAF should accept in a web request token. This enables the use of tokens across multiple protected websites. When WAF provides a token, it uses the domain of the Amazon Web Services resource that the web ACL is protecting. If you don't specify a list of token domains, WAF accepts tokens only for the domain of the protected resource. With a token domain list, WAF accepts the resource's host domain plus all domains in the token domain list, including their prefixed subdomains. Example JSON: "TokenDomains": { "mywebsite.com", "myotherwebsite.com" }  Public suffixes aren't allowed. For example, you can't use gov.au or co.uk as token domains.
      */
     TokenDomains?: TokenDomains;
     /**
-     * Specifies custom configurations for the associations between the web ACL and protected resources.  Use this to customize the maximum size of the request body that your protected CloudFront distributions forward to WAF for inspection. The default is 16 KB (16,384 kilobytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing. 
+     * Specifies custom configurations for the associations between the web ACL and protected resources.  Use this to customize the maximum size of the request body that your protected resources forward to WAF for inspection. You can customize this setting for CloudFront, API Gateway, Amazon Cognito, App Runner, or Verified Access resources. The default setting is 16 KB (16,384 bytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing.  For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).
      */
     AssociationConfig?: AssociationConfig;
   }
@@ -909,7 +921,7 @@ declare namespace WAFV2 {
      */
     CustomResponseBodyKey?: EntityName;
     /**
-     * The HTTP headers to use in the response. Duplicate header names are not allowed.  For information about the limits on count and size for custom request and response settings, see WAF quotas in the WAF Developer Guide. 
+     * The HTTP headers to use in the response. You can specify any header name except for content-type. Duplicate header names are not allowed. For information about the limits on count and size for custom request and response settings, see WAF quotas in the WAF Developer Guide. 
      */
     ResponseHeaders?: CustomHTTPHeaders;
   }
@@ -933,6 +945,18 @@ declare namespace WAFV2 {
      * Specifies that WAF should allow requests by default.
      */
     Allow?: AllowAction;
+  }
+  export interface DeleteAPIKeyRequest {
+    /**
+     * Specifies whether this is for an Amazon CloudFront distribution or for a regional application. A regional application can be an Application Load Balancer (ALB), an Amazon API Gateway REST API, an AppSync GraphQL API, an Amazon Cognito user pool, an App Runner service, or an Amazon Web Services Verified Access instance.  To work with CloudFront, you must also specify the Region US East (N. Virginia) as follows:    CLI - Specify the Region when you use the CloudFront scope: --scope=CLOUDFRONT --region=us-east-1.    API and SDKs - For all calls, use the Region endpoint us-east-1.   
+     */
+    Scope: Scope;
+    /**
+     * The encrypted API key that you want to delete. 
+     */
+    APIKey: APIKey;
+  }
+  export interface DeleteAPIKeyResponse {
   }
   export interface DeleteFirewallManagerRuleGroupsRequest {
     /**
@@ -975,6 +999,14 @@ declare namespace WAFV2 {
      * The Amazon Resource Name (ARN) of the web ACL from which you want to delete the LoggingConfiguration.
      */
     ResourceArn: ResourceArn;
+    /**
+     * Used to distinguish between various logging options. Currently, there is one option. Default: WAF_LOGS 
+     */
+    LogType?: LogType;
+    /**
+     * The owner of the logging configuration, which must be set to CUSTOMER for the configurations that you manage.  The log scope SECURITY_LAKE indicates a configuration that is managed through Amazon Security Lake. You can use Security Lake to collect log and event data from various sources for normalization, analysis, and management. For information, see Collecting data from Amazon Web Services services in the Amazon Security Lake user guide.  Default: CUSTOMER 
+     */
+    LogScope?: LogScope;
   }
   export interface DeleteLoggingConfigurationResponse {
   }
@@ -1137,9 +1169,11 @@ declare namespace WAFV2 {
      */
     Identifier: FieldIdentifier;
   }
+  export type EnableMachineLearning = boolean;
   export type EntityDescription = string;
   export type EntityId = string;
   export type EntityName = string;
+  export type EvaluationWindowSec = number;
   export interface ExcludedRule {
     /**
      * The name of the rule whose action you want to override to Count.
@@ -1174,7 +1208,7 @@ declare namespace WAFV2 {
      */
     QueryString?: QueryString;
     /**
-     * Inspect the request body as plain text. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form.  A limited amount of the request body is forwarded to WAF for inspection by the underlying host service. For regional resources, the limit is 8 KB (8,192 kilobytes) and for CloudFront distributions, the limit is 16 KB (16,384 kilobytes). For CloudFront distributions, you can increase the limit in the web ACL's AssociationConfig, for additional processing fees.  For information about how to handle oversized request bodies, see the Body object configuration. 
+     * Inspect the request body as plain text. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form.  WAF does not support inspecting the entire contents of the web request body if the body exceeds the limit for the resource type. When a web request body is larger than the limit, the underlying host service only forwards the contents that are within the limit to WAF for inspection.    For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).   For CloudFront, API Gateway, Amazon Cognito, App Runner, and Verified Access, the default limit is 16 KB (16,384 bytes), and you can increase the limit for each resource type in the web ACL AssociationConfig, for additional processing fees.    For information about how to handle oversized request bodies, see the Body object configuration. 
      */
     Body?: Body;
     /**
@@ -1182,7 +1216,7 @@ declare namespace WAFV2 {
      */
     Method?: Method;
     /**
-     * Inspect the request body as JSON. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form.  A limited amount of the request body is forwarded to WAF for inspection by the underlying host service. For regional resources, the limit is 8 KB (8,192 kilobytes) and for CloudFront distributions, the limit is 16 KB (16,384 kilobytes). For CloudFront distributions, you can increase the limit in the web ACL's AssociationConfig, for additional processing fees.  For information about how to handle oversized request bodies, see the JsonBody object configuration. 
+     * Inspect the request body as JSON. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form.  WAF does not support inspecting the entire contents of the web request body if the body exceeds the limit for the resource type. When a web request body is larger than the limit, the underlying host service only forwards the contents that are within the limit to WAF for inspection.    For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).   For CloudFront, API Gateway, Amazon Cognito, App Runner, and Verified Access, the default limit is 16 KB (16,384 bytes), and you can increase the limit for each resource type in the web ACL AssociationConfig, for additional processing fees.    For information about how to handle oversized request bodies, see the JsonBody object configuration. 
      */
     JsonBody?: JsonBody;
     /**
@@ -1197,6 +1231,10 @@ declare namespace WAFV2 {
      * Inspect a string containing the list of the request's header names, ordered as they appear in the web request that WAF receives for inspection. WAF generates the string and then uses that as the field to match component in its inspection. WAF separates the header names in the string using colons and no added spaces, for example host:user-agent:accept:authorization:referer.
      */
     HeaderOrder?: HeaderOrder;
+    /**
+     * Available for use with Amazon CloudFront distributions and Application Load Balancers. Match against the request's JA3 fingerprint. The JA3 fingerprint is a 32-character hash derived from the TLS Client Hello of an incoming request. This fingerprint serves as a unique identifier for the client's TLS configuration. WAF calculates and logs this fingerprint for each request that has enough TLS Client Hello information for the calculation. Almost all web requests include this information.  You can use this choice only with a string match ByteMatchStatement with the PositionalConstraint set to EXACTLY.   You can obtain the JA3 fingerprint for client requests from the web ACL logs. If WAF is able to calculate the fingerprint, it includes it in the logs. For information about the logging fields, see Log fields in the WAF Developer Guide.  Provide the JA3 fingerprint string from the logs in your string match statement specification, to match with any future requests that have the same TLS configuration.
+     */
+    JA3Fingerprint?: JA3Fingerprint;
   }
   export type FieldToMatchData = string;
   export interface Filter {
@@ -1336,6 +1374,14 @@ declare namespace WAFV2 {
      * The Amazon Resource Name (ARN) of the web ACL for which you want to get the LoggingConfiguration.
      */
     ResourceArn: ResourceArn;
+    /**
+     * Used to distinguish between various logging options. Currently, there is one option. Default: WAF_LOGS 
+     */
+    LogType?: LogType;
+    /**
+     * The owner of the logging configuration, which must be set to CUSTOMER for the configurations that you manage.  The log scope SECURITY_LAKE indicates a configuration that is managed through Amazon Security Lake. You can use Security Lake to collect log and event data from various sources for normalization, analysis, and management. For information, see Collecting data from Amazon Web Services services in the Amazon Security Lake user guide.  Default: CUSTOMER 
+     */
+    LogScope?: LogScope;
   }
   export interface GetLoggingConfigurationResponse {
     /**
@@ -1623,7 +1669,7 @@ declare namespace WAFV2 {
      */
     MatchPattern: HeaderMatchPattern;
     /**
-     * The parts of the headers to match with the rule inspection criteria. If you specify All, WAF inspects both keys and values. 
+     * The parts of the headers to match with the rule inspection criteria. If you specify ALL, WAF inspects both keys and values.   All does not require a match to be found in the keys and a match to be found in the values. It requires a match to be found in the keys or the values or both. To require a match in the keys and in the values, use a logical AND statement to combine two match rules, one that inspects the keys and another that inspects the values. 
      */
     MatchScope: MapMatchScope;
     /**
@@ -1656,7 +1702,7 @@ declare namespace WAFV2 {
      */
     IPAddressVersion: IPAddressVersion;
     /**
-     * Contains an array of strings that specifies zero or more IP addresses or blocks of IP addresses. All addresses must be specified using Classless Inter-Domain Routing (CIDR) notation. WAF supports all IPv4 and IPv6 CIDR ranges except for /0.  Example address strings:    To configure WAF to allow, block, or count requests that originated from the IP address 192.0.2.44, specify 192.0.2.44/32.   To configure WAF to allow, block, or count requests that originated from IP addresses from 192.0.2.0 to 192.0.2.255, specify 192.0.2.0/24.   To configure WAF to allow, block, or count requests that originated from the IP address 1111:0000:0000:0000:0000:0000:0000:0111, specify 1111:0000:0000:0000:0000:0000:0000:0111/128.   To configure WAF to allow, block, or count requests that originated from IP addresses 1111:0000:0000:0000:0000:0000:0000:0000 to 1111:0000:0000:0000:ffff:ffff:ffff:ffff, specify 1111:0000:0000:0000:0000:0000:0000:0000/64.   For more information about CIDR notation, see the Wikipedia entry Classless Inter-Domain Routing. Example JSON Addresses specifications:    Empty array: "Addresses": []    Array with one address: "Addresses": ["192.0.2.44/32"]    Array with three addresses: "Addresses": ["192.0.2.44/32", "192.0.2.0/24", "192.0.0.0/16"]    INVALID specification: "Addresses": [""] INVALID   
+     * Contains an array of strings that specifies zero or more IP addresses or blocks of IP addresses that you want WAF to inspect for in incoming requests. All addresses must be specified using Classless Inter-Domain Routing (CIDR) notation. WAF supports all IPv4 and IPv6 CIDR ranges except for /0.  Example address strings:    For requests that originated from the IP address 192.0.2.44, specify 192.0.2.44/32.   For requests that originated from IP addresses from 192.0.2.0 to 192.0.2.255, specify 192.0.2.0/24.   For requests that originated from the IP address 1111:0000:0000:0000:0000:0000:0000:0111, specify 1111:0000:0000:0000:0000:0000:0000:0111/128.   For requests that originated from IP addresses 1111:0000:0000:0000:0000:0000:0000:0000 to 1111:0000:0000:0000:ffff:ffff:ffff:ffff, specify 1111:0000:0000:0000:0000:0000:0000:0000/64.   For more information about CIDR notation, see the Wikipedia entry Classless Inter-Domain Routing. Example JSON Addresses specifications:    Empty array: "Addresses": []    Array with one address: "Addresses": ["192.0.2.44/32"]    Array with three addresses: "Addresses": ["192.0.2.44/32", "192.0.2.0/24", "192.0.0.0/16"]    INVALID specification: "Addresses": [""] INVALID   
      */
     Addresses: IPAddresses;
   }
@@ -1715,21 +1761,27 @@ declare namespace WAFV2 {
     ImmunityTime: TimeWindowSecond;
   }
   export type InspectionLevel = "COMMON"|"TARGETED"|string;
+  export interface JA3Fingerprint {
+    /**
+     * The match status to assign to the web request if the request doesn't have a JA3 fingerprint.  You can specify the following fallback behaviors:    MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.  
+     */
+    FallbackBehavior: FallbackBehavior;
+  }
   export interface JsonBody {
     /**
      * The patterns to look for in the JSON body. WAF inspects the results of these pattern matches against the rule inspection criteria. 
      */
     MatchPattern: JsonMatchPattern;
     /**
-     * The parts of the JSON to match against using the MatchPattern. If you specify All, WAF matches against keys and values. 
+     * The parts of the JSON to match against using the MatchPattern. If you specify ALL, WAF matches against keys and values.   All does not require a match to be found in the keys and a match to be found in the values. It requires a match to be found in the keys or the values or both. To require a match in the keys and in the values, use a logical AND statement to combine two match rules, one that inspects the keys and another that inspects the values. 
      */
     MatchScope: JsonMatchScope;
     /**
-     * What WAF should do if it fails to completely parse the JSON body. The options are the following:    EVALUATE_AS_STRING - Inspect the body as plain text. WAF applies the text transformations and inspection criteria that you defined for the JSON inspection to the body text string.    MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.   If you don't provide this setting, WAF parses and evaluates the content only up to the first parsing failure that it encounters.  WAF does its best to parse the entire JSON body, but might be forced to stop for reasons such as invalid characters, duplicate keys, truncation, and any content whose root node isn't an object or an array.  WAF parses the JSON in the following examples as two valid key, value pairs:    Missing comma: {"key1":"value1""key2":"value2"}    Missing colon: {"key1":"value1","key2""value2"}    Extra colons: {"key1"::"value1","key2""value2"}   
+     * What WAF should do if it fails to completely parse the JSON body. The options are the following:    EVALUATE_AS_STRING - Inspect the body as plain text. WAF applies the text transformations and inspection criteria that you defined for the JSON inspection to the body text string.    MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.   If you don't provide this setting, WAF parses and evaluates the content only up to the first parsing failure that it encounters.   WAF parsing doesn't fully validate the input JSON string, so parsing can succeed even for invalid JSON. When parsing succeeds, WAF doesn't apply the fallback behavior. For more information, see JSON body in the WAF Developer Guide. 
      */
     InvalidFallbackBehavior?: BodyParsingFallbackBehavior;
     /**
-     * What WAF should do if the body is larger than WAF can inspect. WAF does not support inspecting the entire contents of the web request body if the body exceeds the limit for the resource type. If the body is larger than the limit, the underlying host service only forwards the contents that are below the limit to WAF for inspection.  The default limit is 8 KB (8,192 kilobytes) for regional resources and 16 KB (16,384 kilobytes) for CloudFront distributions. For CloudFront distributions, you can increase the limit in the web ACL AssociationConfig, for additional processing fees.  The options for oversize handling are the following:    CONTINUE - Inspect the available body contents normally, according to the rule inspection criteria.     MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.   You can combine the MATCH or NO_MATCH settings for oversize handling with your rule and web ACL action settings, so that you block any request whose body is over the limit.  Default: CONTINUE 
+     * What WAF should do if the body is larger than WAF can inspect.  WAF does not support inspecting the entire contents of the web request body if the body exceeds the limit for the resource type. When a web request body is larger than the limit, the underlying host service only forwards the contents that are within the limit to WAF for inspection.    For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).   For CloudFront, API Gateway, Amazon Cognito, App Runner, and Verified Access, the default limit is 16 KB (16,384 bytes), and you can increase the limit for each resource type in the web ACL AssociationConfig, for additional processing fees.    The options for oversize handling are the following:    CONTINUE - Inspect the available body contents normally, according to the rule inspection criteria.     MATCH - Treat the web request as matching the rule statement. WAF applies the rule action to the request.    NO_MATCH - Treat the web request as not matching the rule statement.   You can combine the MATCH or NO_MATCH settings for oversize handling with your rule and web ACL action settings, so that you block any request whose body is over the limit.  Default: CONTINUE 
      */
     OversizeHandling?: OversizeHandling;
   }
@@ -1905,6 +1957,10 @@ declare namespace WAFV2 {
      * The maximum number of objects that you want WAF to return for this request. If more objects are available, in the response, WAF provides a NextMarker value that you can use in a subsequent call to get the next batch of objects.
      */
     Limit?: PaginationLimit;
+    /**
+     * The owner of the logging configuration, which must be set to CUSTOMER for the configurations that you manage.  The log scope SECURITY_LAKE indicates a configuration that is managed through Amazon Security Lake. You can use Security Lake to collect log and event data from various sources for normalization, analysis, and management. For information, see Collecting data from Amazon Web Services services in the Amazon Security Lake user guide.  Default: CUSTOMER 
+     */
+    LogScope?: LogScope;
   }
   export interface ListLoggingConfigurationsResponse {
     /**
@@ -2079,6 +2135,8 @@ declare namespace WAFV2 {
   }
   export type LockToken = string;
   export type LogDestinationConfigs = ResourceArn[];
+  export type LogScope = "CUSTOMER"|"SECURITY_LAKE"|string;
+  export type LogType = "WAF_LOGS"|string;
   export interface LoggingConfiguration {
     /**
      * The Amazon Resource Name (ARN) of the web ACL that you want to associate with LogDestinationConfigs.
@@ -2089,7 +2147,7 @@ declare namespace WAFV2 {
      */
     LogDestinationConfigs: LogDestinationConfigs;
     /**
-     * The parts of the request that you want to keep out of the logs. For example, if you redact the SingleHeader field, the HEADER field in the logs will be REDACTED for all rules that use the SingleHeader FieldToMatch setting.  Redaction applies only to the component that's specified in the rule's FieldToMatch setting, so the SingleHeader redaction doesn't apply to rules that use the Headers FieldToMatch.  You can specify only the following fields for redaction: UriPath, QueryString, SingleHeader, and Method. 
+     * The parts of the request that you want to keep out of the logs. For example, if you redact the SingleHeader field, the HEADER field in the logs will be REDACTED for all rules that use the SingleHeader FieldToMatch setting.  Redaction applies only to the component that's specified in the rule's FieldToMatch setting, so the SingleHeader redaction doesn't apply to rules that use the Headers FieldToMatch.  You can specify only the following fields for redaction: UriPath, QueryString, SingleHeader, and Method.   This setting has no impact on request sampling. With request sampling, the only way to exclude fields is by disabling sampling in the web ACL visibility configuration.  
      */
     RedactedFields?: RedactedFields;
     /**
@@ -2100,6 +2158,14 @@ declare namespace WAFV2 {
      * Filtering that specifies which web requests are kept in the logs and which are dropped. You can filter on the rule action and on the web request labels that were applied by matching rules during web ACL evaluation. 
      */
     LoggingFilter?: LoggingFilter;
+    /**
+     * Used to distinguish between various logging options. Currently, there is one option. Default: WAF_LOGS 
+     */
+    LogType?: LogType;
+    /**
+     * The owner of the logging configuration, which must be set to CUSTOMER for the configurations that you manage.  The log scope SECURITY_LAKE indicates a configuration that is managed through Amazon Security Lake. You can use Security Lake to collect log and event data from various sources for normalization, analysis, and management. For information, see Collecting data from Amazon Web Services services in the Amazon Security Lake user guide.  Default: CUSTOMER 
+     */
+    LogScope?: LogScope;
   }
   export type LoggingConfigurations = LoggingConfiguration[];
   export interface LoggingFilter {
@@ -2463,6 +2529,10 @@ declare namespace WAFV2 {
      */
     Limit: RateLimit;
     /**
+     * The amount of time, in seconds, that WAF should include in its request counts, looking back from the current time. For example, for a setting of 120, when WAF checks the rate, it counts the requests for the 2 minutes immediately preceding the current time. Valid settings are 60, 120, 300, and 600.  This setting doesn't determine how often WAF checks the rate, but how far back it looks each time it checks. WAF checks the rate about every 10 seconds. Default: 300 (5 minutes)
+     */
+    EvaluationWindowSec?: EvaluationWindowSec;
+    /**
      * Setting that indicates how to aggregate the request counts.   Web requests that are missing any of the components specified in the aggregation keys are omitted from the rate-based rule evaluation and handling.      CONSTANT - Count and limit the requests that match the rate-based rule's scope-down statement. With this option, the counted requests aren't further aggregated. The scope-down statement is the only specification used. When the count of all requests that satisfy the scope-down statement goes over the limit, WAF applies the rule action to all requests that satisfy the scope-down statement.  With this option, you must configure the ScopeDownStatement property.     CUSTOM_KEYS - Aggregate the request counts using one or more web request components as the aggregate keys. With this option, you must specify the aggregate keys in the CustomKeys property.  To aggregate on only the IP address or only the forwarded IP address, don't use custom keys. Instead, set the aggregate key type to IP or FORWARDED_IP.    FORWARDED_IP - Aggregate the request counts on the first IP address in an HTTP header.  With this option, you must specify the header to use in the ForwardedIPConfig property.  To aggregate on a combination of the forwarded IP address with other aggregate keys, use CUSTOM_KEYS.     IP - Aggregate the request counts on the IP address from the web request origin. To aggregate on a combination of the IP address with other aggregate keys, use CUSTOM_KEYS.   
      */
     AggregateKeyType: RateBasedStatementAggregateKeyType;
@@ -2536,7 +2606,7 @@ declare namespace WAFV2 {
      */
     Name: FieldToMatchData;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
@@ -2550,7 +2620,7 @@ declare namespace WAFV2 {
      */
     Name: FieldToMatchData;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
@@ -2568,19 +2638,19 @@ declare namespace WAFV2 {
      */
     Name: FieldToMatchData;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
   export interface RateLimitQueryString {
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
   export interface RateLimitUriPath {
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
@@ -2601,7 +2671,7 @@ declare namespace WAFV2 {
      */
     FieldToMatch: FieldToMatch;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
@@ -2637,7 +2707,7 @@ declare namespace WAFV2 {
      */
     FieldToMatch: FieldToMatch;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
@@ -2682,7 +2752,7 @@ declare namespace WAFV2 {
   export type RequestBody = {[key: string]: RequestBodyAssociatedResourceTypeConfig};
   export interface RequestBodyAssociatedResourceTypeConfig {
     /**
-     * Specifies the maximum size of the web request body component that an associated CloudFront distribution should send to WAF for inspection. This applies to statements in the web ACL that inspect the body or JSON body.  Default: 16 KB (16,384 kilobytes) 
+     * Specifies the maximum size of the web request body component that an associated CloudFront, API Gateway, Amazon Cognito, App Runner, or Verified Access resource should send to WAF for inspection. This applies to statements in the web ACL that inspect the body or JSON body.  Default: 16 KB (16,384 bytes) 
      */
     DefaultSizeInspectionLimit: SizeInspectionLimit;
   }
@@ -2810,7 +2880,7 @@ declare namespace WAFV2 {
   export type ResponseStatusCode = number;
   export interface Rule {
     /**
-     * The name of the rule. You can't change the name of a Rule after you create it. 
+     * The name of the rule.  If you change the name of a Rule after you create it and you want the rule's metric name to reflect the change, update the metric name in the rule's VisibilityConfig settings. WAF doesn't automatically update the metric name when you update the rule name. 
      */
     Name: EntityName;
     /**
@@ -2834,7 +2904,7 @@ declare namespace WAFV2 {
      */
     RuleLabels?: Labels;
     /**
-     * Defines and enables Amazon CloudWatch metrics and web request sample collection. 
+     * Defines and enables Amazon CloudWatch metrics and web request sample collection.  If you change the name of a Rule after you create it and you want the rule's metric name to reflect the change, update the metric name as well. WAF doesn't automatically update the metric name. 
      */
     VisibilityConfig: VisibilityConfig;
     /**
@@ -2901,7 +2971,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
+     * The Rule statements used to identify the web requests that you want to manage. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
      */
     Rules?: Rules;
     /**
@@ -3054,7 +3124,7 @@ declare namespace WAFV2 {
      */
     Size: Size;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }
@@ -3066,7 +3136,7 @@ declare namespace WAFV2 {
      */
     FieldToMatch: FieldToMatch;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
     /**
@@ -3088,7 +3158,7 @@ declare namespace WAFV2 {
      */
     XssMatchStatement?: XssMatchStatement;
     /**
-     * A rule statement that compares a number of bytes against the size of a request component, using a comparison operator, such as greater than (&gt;) or less than (&lt;). For example, you can use a size constraint statement to look for query strings that are longer than 100 bytes.  If you configure WAF to inspect the request body, WAF inspects only the number of bytes of the body up to the limit for the web ACL. By default, for regional web ACLs, this limit is 8 KB (8,192 kilobytes) and for CloudFront web ACLs, this limit is 16 KB (16,384 kilobytes). For CloudFront web ACLs, you can increase the limit in the web ACL AssociationConfig, for additional fees. If you know that the request body for your web requests should never exceed the inspection limit, you could use a size constraint statement to block requests that have a larger request body size. If you choose URI for the value of Part of the request to filter on, the slash (/) in the URI counts as one character. For example, the URI /logo.jpg is nine characters long.
+     * A rule statement that compares a number of bytes against the size of a request component, using a comparison operator, such as greater than (&gt;) or less than (&lt;). For example, you can use a size constraint statement to look for query strings that are longer than 100 bytes.  If you configure WAF to inspect the request body, WAF inspects only the number of bytes in the body up to the limit for the web ACL and protected resource type. If you know that the request body for your web requests should never exceed the inspection limit, you can use a size constraint statement to block requests that have a larger request body size. For more information about the inspection limits, see Body and JsonBody settings for the FieldToMatch data type.  If you choose URI for the value of Part of the request to filter on, the slash (/) in the URI counts as one character. For example, the URI /logo.jpg is nine characters long.
      */
     SizeConstraintStatement?: SizeConstraintStatement;
     /**
@@ -3096,7 +3166,7 @@ declare namespace WAFV2 {
      */
     GeoMatchStatement?: GeoMatchStatement;
     /**
-     * A rule statement used to run the rules that are defined in a RuleGroup. To use this, create a rule group with your rules, then provide the ARN of the rule group in this statement. You cannot nest a RuleGroupReferenceStatement, for example for use inside a NotStatement or OrStatement. You can only use a rule group reference statement at the top level inside a web ACL. 
+     * A rule statement used to run the rules that are defined in a RuleGroup. To use this, create a rule group with your rules, then provide the ARN of the rule group in this statement. You cannot nest a RuleGroupReferenceStatement, for example for use inside a NotStatement or OrStatement. You cannot use a rule group reference statement inside another rule group. You can only reference a rule group as a top-level statement within a rule that you define in a web ACL.
      */
     RuleGroupReferenceStatement?: RuleGroupReferenceStatement;
     /**
@@ -3108,7 +3178,7 @@ declare namespace WAFV2 {
      */
     RegexPatternSetReferenceStatement?: RegexPatternSetReferenceStatement;
     /**
-     * A rate-based rule counts incoming requests and rate limits requests when they are coming at too fast a rate. The rule categorizes requests according to your aggregation criteria, collects them into aggregation instances, and counts and rate limits the requests for each instance.  You can specify individual aggregation keys, like IP address or HTTP method. You can also specify aggregation key combinations, like IP address and HTTP method, or HTTP method, query argument, and cookie.  Each unique set of values for the aggregation keys that you specify is a separate aggregation instance, with the value from each key contributing to the aggregation instance definition.  For example, assume the rule evaluates web requests with the following IP address and HTTP method values:    IP address 10.1.1.1, HTTP method POST   IP address 10.1.1.1, HTTP method GET   IP address 127.0.0.0, HTTP method POST   IP address 10.1.1.1, HTTP method GET   The rule would create different aggregation instances according to your aggregation criteria, for example:    If the aggregation criteria is just the IP address, then each individual address is an aggregation instance, and WAF counts requests separately for each. The aggregation instances and request counts for our example would be the following:    IP address 10.1.1.1: count 3   IP address 127.0.0.0: count 1     If the aggregation criteria is HTTP method, then each individual HTTP method is an aggregation instance. The aggregation instances and request counts for our example would be the following:    HTTP method POST: count 2   HTTP method GET: count 2     If the aggregation criteria is IP address and HTTP method, then each IP address and each HTTP method would contribute to the combined aggregation instance. The aggregation instances and request counts for our example would be the following:    IP address 10.1.1.1, HTTP method POST: count 1   IP address 10.1.1.1, HTTP method GET: count 2   IP address 127.0.0.0, HTTP method POST: count 1     For any n-tuple of aggregation keys, each unique combination of values for the keys defines a separate aggregation instance, which WAF counts and rate-limits individually.  You can optionally nest another statement inside the rate-based statement, to narrow the scope of the rule so that it only counts and rate limits requests that match the nested statement. You can use this nested scope-down statement in conjunction with your aggregation key specifications or you can just count and rate limit all requests that match the scope-down statement, without additional aggregation. When you choose to just manage all requests that match a scope-down statement, the aggregation instance is singular for the rule.  You cannot nest a RateBasedStatement inside another statement, for example inside a NotStatement or OrStatement. You can define a RateBasedStatement inside a web ACL and inside a rule group.  For additional information about the options, see Rate limiting web requests using rate-based rules in the WAF Developer Guide.  If you only aggregate on the individual IP address or forwarded IP address, you can retrieve the list of IP addresses that WAF is currently rate limiting for a rule through the API call GetRateBasedStatementManagedKeys. This option is not available for other aggregation configurations. WAF tracks and manages web requests separately for each instance of a rate-based rule that you use. For example, if you provide the same rate-based rule settings in two web ACLs, each of the two rule statements represents a separate instance of the rate-based rule and gets its own tracking and management by WAF. If you define a rate-based rule inside a rule group, and then use that rule group in multiple places, each use creates a separate instance of the rate-based rule that gets its own tracking and management by WAF. 
+     * A rate-based rule counts incoming requests and rate limits requests when they are coming at too fast a rate. The rule categorizes requests according to your aggregation criteria, collects them into aggregation instances, and counts and rate limits the requests for each instance.   If you change any of these settings in a rule that's currently in use, the change resets the rule's rate limiting counts. This can pause the rule's rate limiting activities for up to a minute.   You can specify individual aggregation keys, like IP address or HTTP method. You can also specify aggregation key combinations, like IP address and HTTP method, or HTTP method, query argument, and cookie.  Each unique set of values for the aggregation keys that you specify is a separate aggregation instance, with the value from each key contributing to the aggregation instance definition.  For example, assume the rule evaluates web requests with the following IP address and HTTP method values:    IP address 10.1.1.1, HTTP method POST   IP address 10.1.1.1, HTTP method GET   IP address 127.0.0.0, HTTP method POST   IP address 10.1.1.1, HTTP method GET   The rule would create different aggregation instances according to your aggregation criteria, for example:    If the aggregation criteria is just the IP address, then each individual address is an aggregation instance, and WAF counts requests separately for each. The aggregation instances and request counts for our example would be the following:    IP address 10.1.1.1: count 3   IP address 127.0.0.0: count 1     If the aggregation criteria is HTTP method, then each individual HTTP method is an aggregation instance. The aggregation instances and request counts for our example would be the following:    HTTP method POST: count 2   HTTP method GET: count 2     If the aggregation criteria is IP address and HTTP method, then each IP address and each HTTP method would contribute to the combined aggregation instance. The aggregation instances and request counts for our example would be the following:    IP address 10.1.1.1, HTTP method POST: count 1   IP address 10.1.1.1, HTTP method GET: count 2   IP address 127.0.0.0, HTTP method POST: count 1     For any n-tuple of aggregation keys, each unique combination of values for the keys defines a separate aggregation instance, which WAF counts and rate-limits individually.  You can optionally nest another statement inside the rate-based statement, to narrow the scope of the rule so that it only counts and rate limits requests that match the nested statement. You can use this nested scope-down statement in conjunction with your aggregation key specifications or you can just count and rate limit all requests that match the scope-down statement, without additional aggregation. When you choose to just manage all requests that match a scope-down statement, the aggregation instance is singular for the rule.  You cannot nest a RateBasedStatement inside another statement, for example inside a NotStatement or OrStatement. You can define a RateBasedStatement inside a web ACL and inside a rule group.  For additional information about the options, see Rate limiting web requests using rate-based rules in the WAF Developer Guide.  If you only aggregate on the individual IP address or forwarded IP address, you can retrieve the list of IP addresses that WAF is currently rate limiting for a rule through the API call GetRateBasedStatementManagedKeys. This option is not available for other aggregation configurations. WAF tracks and manages web requests separately for each instance of a rate-based rule that you use. For example, if you provide the same rate-based rule settings in two web ACLs, each of the two rule statements represents a separate instance of the rate-based rule and gets its own tracking and management by WAF. If you define a rate-based rule inside a rule group, and then use that rule group in multiple places, each use creates a separate instance of the rate-based rule that gets its own tracking and management by WAF. 
      */
     RateBasedStatement?: RateBasedStatement;
     /**
@@ -3124,7 +3194,7 @@ declare namespace WAFV2 {
      */
     NotStatement?: NotStatement;
     /**
-     * A rule statement used to run the rules that are defined in a managed rule group. To use this, provide the vendor name and the name of the rule group in this statement. You can retrieve the required names by calling ListAvailableManagedRuleGroups. You cannot nest a ManagedRuleGroupStatement, for example for use inside a NotStatement or OrStatement. It can only be referenced as a top-level statement within a rule.  You are charged additional fees when you use the WAF Bot Control managed rule group AWSManagedRulesBotControlRuleSet, the WAF Fraud Control account takeover prevention (ATP) managed rule group AWSManagedRulesATPRuleSet, or the WAF Fraud Control account creation fraud prevention (ACFP) managed rule group AWSManagedRulesACFPRuleSet. For more information, see WAF Pricing. 
+     * A rule statement used to run the rules that are defined in a managed rule group. To use this, provide the vendor name and the name of the rule group in this statement. You can retrieve the required names by calling ListAvailableManagedRuleGroups. You cannot nest a ManagedRuleGroupStatement, for example for use inside a NotStatement or OrStatement. You cannot use a managed rule group inside another rule group. You can only reference a managed rule group as a top-level statement within a rule that you define in a web ACL.  You are charged additional fees when you use the WAF Bot Control managed rule group AWSManagedRulesBotControlRuleSet, the WAF Fraud Control account takeover prevention (ATP) managed rule group AWSManagedRulesATPRuleSet, or the WAF Fraud Control account creation fraud prevention (ACFP) managed rule group AWSManagedRulesACFPRuleSet. For more information, see WAF Pricing. 
      */
     ManagedRuleGroupStatement?: ManagedRuleGroupStatement;
     /**
@@ -3182,7 +3252,7 @@ declare namespace WAFV2 {
      */
     Priority: TextTransformationPriority;
     /**
-     * You can specify the following transformation types:  BASE64_DECODE - Decode a Base64-encoded string.  BASE64_DECODE_EXT - Decode a Base64-encoded string, but use a forgiving implementation that ignores characters that aren't valid.  CMD_LINE - Command-line transformations. These are helpful in reducing effectiveness of attackers who inject an operating system command-line command and use unusual formatting to disguise some or all of the command.    Delete the following characters: \ " ' ^    Delete spaces before the following characters: / (    Replace the following characters with a space: , ;    Replace multiple spaces with one space   Convert uppercase letters (A-Z) to lowercase (a-z)    COMPRESS_WHITE_SPACE - Replace these characters with a space character (decimal 32):     \f, formfeed, decimal 12    \t, tab, decimal 9    \n, newline, decimal 10    \r, carriage return, decimal 13    \v, vertical tab, decimal 11   Non-breaking space, decimal 160    COMPRESS_WHITE_SPACE also replaces multiple spaces with one space.  CSS_DECODE - Decode characters that were encoded using CSS 2.x escape rules syndata.html#characters. This function uses up to two bytes in the decoding process, so it can help to uncover ASCII characters that were encoded using CSS encoding that wouldn’t typically be encoded. It's also useful in countering evasion, which is a combination of a backslash and non-hexadecimal characters. For example, ja\vascript for javascript.   ESCAPE_SEQ_DECODE - Decode the following ANSI C escape sequences: \a, \b, \f, \n, \r, \t, \v, \\, \?, \', \", \xHH (hexadecimal), \0OOO (octal). Encodings that aren't valid remain in the output.   HEX_DECODE - Decode a string of hexadecimal characters into a binary.  HTML_ENTITY_DECODE - Replace HTML-encoded characters with unencoded characters. HTML_ENTITY_DECODE performs these operations:    Replaces (ampersand)quot; with "    Replaces (ampersand)nbsp; with a non-breaking space, decimal 160   Replaces (ampersand)lt; with a "less than" symbol   Replaces (ampersand)gt; with &gt;    Replaces characters that are represented in hexadecimal format, (ampersand)#xhhhh;, with the corresponding characters   Replaces characters that are represented in decimal format, (ampersand)#nnnn;, with the corresponding characters    JS_DECODE - Decode JavaScript escape sequences. If a \ u HHHH code is in the full-width ASCII code range of FF01-FF5E, then the higher byte is used to detect and adjust the lower byte. If not, only the lower byte is used and the higher byte is zeroed, causing a possible loss of information.   LOWERCASE - Convert uppercase letters (A-Z) to lowercase (a-z).   MD5 - Calculate an MD5 hash from the data in the input. The computed hash is in a raw binary form.   NONE - Specify NONE if you don't want any text transformations.   NORMALIZE_PATH - Remove multiple slashes, directory self-references, and directory back-references that are not at the beginning of the input from an input string.   NORMALIZE_PATH_WIN - This is the same as NORMALIZE_PATH, but first converts backslash characters to forward slashes.   REMOVE_NULLS - Remove all NULL bytes from the input.   REPLACE_COMMENTS - Replace each occurrence of a C-style comment (/* ... *) with a single space. Multiple consecutive occurrences are not compressed. Unterminated comments are also replaced with a space (ASCII 0x20). However, a standalone termination of a comment (*) is not acted upon.   REPLACE_NULLS - Replace NULL bytes in the input with space characters (ASCII 0x20).   SQL_HEX_DECODE - Decode SQL hex data. Example (0x414243) will be decoded to (ABC).  URL_DECODE - Decode a URL-encoded value.   URL_DECODE_UNI - Like URL_DECODE, but with support for Microsoft-specific %u encoding. If the code is in the full-width ASCII code range of FF01-FF5E, the higher byte is used to detect and adjust the lower byte. Otherwise, only the lower byte is used and the higher byte is zeroed.   UTF8_TO_UNICODE - Convert all UTF-8 character sequences to Unicode. This helps input normalization, and minimizing false-positives and false-negatives for non-English languages.
+     * For detailed descriptions of each of the transformation types, see Text transformations in the WAF Developer Guide.
      */
     Type: TextTransformationType;
   }
@@ -3235,7 +3305,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * Contains an array of strings that specifies zero or more IP addresses or blocks of IP addresses. All addresses must be specified using Classless Inter-Domain Routing (CIDR) notation. WAF supports all IPv4 and IPv6 CIDR ranges except for /0.  Example address strings:    To configure WAF to allow, block, or count requests that originated from the IP address 192.0.2.44, specify 192.0.2.44/32.   To configure WAF to allow, block, or count requests that originated from IP addresses from 192.0.2.0 to 192.0.2.255, specify 192.0.2.0/24.   To configure WAF to allow, block, or count requests that originated from the IP address 1111:0000:0000:0000:0000:0000:0000:0111, specify 1111:0000:0000:0000:0000:0000:0000:0111/128.   To configure WAF to allow, block, or count requests that originated from IP addresses 1111:0000:0000:0000:0000:0000:0000:0000 to 1111:0000:0000:0000:ffff:ffff:ffff:ffff, specify 1111:0000:0000:0000:0000:0000:0000:0000/64.   For more information about CIDR notation, see the Wikipedia entry Classless Inter-Domain Routing. Example JSON Addresses specifications:    Empty array: "Addresses": []    Array with one address: "Addresses": ["192.0.2.44/32"]    Array with three addresses: "Addresses": ["192.0.2.44/32", "192.0.2.0/24", "192.0.0.0/16"]    INVALID specification: "Addresses": [""] INVALID   
+     * Contains an array of strings that specifies zero or more IP addresses or blocks of IP addresses that you want WAF to inspect for in incoming requests. All addresses must be specified using Classless Inter-Domain Routing (CIDR) notation. WAF supports all IPv4 and IPv6 CIDR ranges except for /0.  Example address strings:    For requests that originated from the IP address 192.0.2.44, specify 192.0.2.44/32.   For requests that originated from IP addresses from 192.0.2.0 to 192.0.2.255, specify 192.0.2.0/24.   For requests that originated from the IP address 1111:0000:0000:0000:0000:0000:0000:0111, specify 1111:0000:0000:0000:0000:0000:0000:0111/128.   For requests that originated from IP addresses 1111:0000:0000:0000:0000:0000:0000:0000 to 1111:0000:0000:0000:ffff:ffff:ffff:ffff, specify 1111:0000:0000:0000:0000:0000:0000:0000/64.   For more information about CIDR notation, see the Wikipedia entry Classless Inter-Domain Routing. Example JSON Addresses specifications:    Empty array: "Addresses": []    Array with one address: "Addresses": ["192.0.2.44/32"]    Array with three addresses: "Addresses": ["192.0.2.44/32", "192.0.2.0/24", "192.0.0.0/16"]    INVALID specification: "Addresses": [""] INVALID   
      */
     Addresses: IPAddresses;
     /**
@@ -3339,7 +3409,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
+     * The Rule statements used to identify the web requests that you want to manage. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
      */
     Rules?: Rules;
     /**
@@ -3383,7 +3453,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
+     * The Rule statements used to identify the web requests that you want to manage. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
      */
     Rules?: Rules;
     /**
@@ -3407,11 +3477,11 @@ declare namespace WAFV2 {
      */
     ChallengeConfig?: ChallengeConfig;
     /**
-     * Specifies the domains that WAF should accept in a web request token. This enables the use of tokens across multiple protected websites. When WAF provides a token, it uses the domain of the Amazon Web Services resource that the web ACL is protecting. If you don't specify a list of token domains, WAF accepts tokens only for the domain of the protected resource. With a token domain list, WAF accepts the resource's host domain plus all domains in the token domain list, including their prefixed subdomains. Example JSON: "TokenDomains": { "mywebsite.com", "myotherwebsite.com" }  Public suffixes aren't allowed. For example, you can't use usa.gov or co.uk as token domains.
+     * Specifies the domains that WAF should accept in a web request token. This enables the use of tokens across multiple protected websites. When WAF provides a token, it uses the domain of the Amazon Web Services resource that the web ACL is protecting. If you don't specify a list of token domains, WAF accepts tokens only for the domain of the protected resource. With a token domain list, WAF accepts the resource's host domain plus all domains in the token domain list, including their prefixed subdomains. Example JSON: "TokenDomains": { "mywebsite.com", "myotherwebsite.com" }  Public suffixes aren't allowed. For example, you can't use gov.au or co.uk as token domains.
      */
     TokenDomains?: TokenDomains;
     /**
-     * Specifies custom configurations for the associations between the web ACL and protected resources.  Use this to customize the maximum size of the request body that your protected CloudFront distributions forward to WAF for inspection. The default is 16 KB (16,384 kilobytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing. 
+     * Specifies custom configurations for the associations between the web ACL and protected resources.  Use this to customize the maximum size of the request body that your protected resources forward to WAF for inspection. You can customize this setting for CloudFront, API Gateway, Amazon Cognito, App Runner, or Verified Access resources. The default setting is 16 KB (16,384 bytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing.  For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).
      */
     AssociationConfig?: AssociationConfig;
   }
@@ -3444,7 +3514,7 @@ declare namespace WAFV2 {
   export type VersionsToPublish = {[key: string]: VersionToPublish};
   export interface VisibilityConfig {
     /**
-     * Indicates whether WAF should store a sampling of the web requests that match the rules. You can view the sampled requests through the WAF console. 
+     * Indicates whether WAF should store a sampling of the web requests that match the rules. You can view the sampled requests through the WAF console.   Request sampling doesn't provide a field redaction option, and any field redaction that you specify in your logging configuration doesn't affect sampling. The only way to exclude fields from request sampling is by disabling sampling in the web ACL visibility configuration.  
      */
     SampledRequestsEnabled: Boolean;
     /**
@@ -3478,7 +3548,7 @@ declare namespace WAFV2 {
      */
     Description?: EntityDescription;
     /**
-     * The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
+     * The Rule statements used to identify the web requests that you want to manage. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them. 
      */
     Rules?: Rules;
     /**
@@ -3522,7 +3592,7 @@ declare namespace WAFV2 {
      */
     TokenDomains?: TokenDomains;
     /**
-     * Specifies custom configurations for the associations between the web ACL and protected resources.  Use this to customize the maximum size of the request body that your protected CloudFront distributions forward to WAF for inspection. The default is 16 KB (16,384 kilobytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing. 
+     * Specifies custom configurations for the associations between the web ACL and protected resources.  Use this to customize the maximum size of the request body that your protected resources forward to WAF for inspection. You can customize this setting for CloudFront, API Gateway, Amazon Cognito, App Runner, or Verified Access resources. The default setting is 16 KB (16,384 bytes).   You are charged additional fees when your protected resources forward body sizes that are larger than the default. For more information, see WAF Pricing.  For Application Load Balancer and AppSync, the limit is fixed at 8 KB (8,192 bytes).
      */
     AssociationConfig?: AssociationConfig;
   }
@@ -3555,7 +3625,7 @@ declare namespace WAFV2 {
      */
     FieldToMatch: FieldToMatch;
     /**
-     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the component contents. 
+     * Text transformations eliminate some of the unusual formatting that attackers use in web requests in an effort to bypass detection. Text transformations are used in rule match statements, to transform the FieldToMatch request component before inspecting it, and they're used in rate-based rule statements, to transform request components before using them as custom aggregation keys. If you specify one or more transformations to apply, WAF performs all transformations on the specified content, starting from the lowest priority setting, and then uses the transformed component contents. 
      */
     TextTransformations: TextTransformations;
   }

@@ -29,11 +29,11 @@ declare class Transfer extends Service {
    */
   createAgreement(callback?: (err: AWSError, data: Transfer.Types.CreateAgreementResponse) => void): Request<Transfer.Types.CreateAgreementResponse, AWSError>;
   /**
-   * Creates the connector, which captures the parameters for a connection for the AS2 or SFTP protocol. For AS2, the connector is required for sending files to an externally hosted AS2 server. For SFTP, the connector is required when sending files to an SFTP server or receiving files from an SFTP server. For more details about connectors, see Create AS2 connectors and Create SFTP connectors.  You must specify exactly one configuration object: either for AS2 (As2Config) or SFTP (SftpConfig). 
+   * Creates the connector, which captures the parameters for a connection for the AS2 or SFTP protocol. For AS2, the connector is required for sending files to an externally hosted AS2 server. For SFTP, the connector is required when sending files to an SFTP server or receiving files from an SFTP server. For more details about connectors, see Configure AS2 connectors and Create SFTP connectors.  You must specify exactly one configuration object: either for AS2 (As2Config) or SFTP (SftpConfig). 
    */
   createConnector(params: Transfer.Types.CreateConnectorRequest, callback?: (err: AWSError, data: Transfer.Types.CreateConnectorResponse) => void): Request<Transfer.Types.CreateConnectorResponse, AWSError>;
   /**
-   * Creates the connector, which captures the parameters for a connection for the AS2 or SFTP protocol. For AS2, the connector is required for sending files to an externally hosted AS2 server. For SFTP, the connector is required when sending files to an SFTP server or receiving files from an SFTP server. For more details about connectors, see Create AS2 connectors and Create SFTP connectors.  You must specify exactly one configuration object: either for AS2 (As2Config) or SFTP (SftpConfig). 
+   * Creates the connector, which captures the parameters for a connection for the AS2 or SFTP protocol. For AS2, the connector is required for sending files to an externally hosted AS2 server. For SFTP, the connector is required when sending files to an SFTP server or receiving files from an SFTP server. For more details about connectors, see Configure AS2 connectors and Create SFTP connectors.  You must specify exactly one configuration object: either for AS2 (As2Config) or SFTP (SftpConfig). 
    */
   createConnector(callback?: (err: AWSError, data: Transfer.Types.CreateConnectorResponse) => void): Request<Transfer.Types.CreateConnectorResponse, AWSError>;
   /**
@@ -205,11 +205,11 @@ declare class Transfer extends Service {
    */
   describeProfile(callback?: (err: AWSError, data: Transfer.Types.DescribeProfileResponse) => void): Request<Transfer.Types.DescribeProfileResponse, AWSError>;
   /**
-   * Describes the security policy that is attached to your file transfer protocol-enabled server. The response contains a description of the security policy's properties. For more information about security policies, see Working with security policies.
+   * Describes the security policy that is attached to your server or SFTP connector. The response contains a description of the security policy's properties. For more information about security policies, see Working with security policies for servers or Working with security policies for SFTP connectors.
    */
   describeSecurityPolicy(params: Transfer.Types.DescribeSecurityPolicyRequest, callback?: (err: AWSError, data: Transfer.Types.DescribeSecurityPolicyResponse) => void): Request<Transfer.Types.DescribeSecurityPolicyResponse, AWSError>;
   /**
-   * Describes the security policy that is attached to your file transfer protocol-enabled server. The response contains a description of the security policy's properties. For more information about security policies, see Working with security policies.
+   * Describes the security policy that is attached to your server or SFTP connector. The response contains a description of the security policy's properties. For more information about security policies, see Working with security policies for servers or Working with security policies for SFTP connectors.
    */
   describeSecurityPolicy(callback?: (err: AWSError, data: Transfer.Types.DescribeSecurityPolicyResponse) => void): Request<Transfer.Types.DescribeSecurityPolicyResponse, AWSError>;
   /**
@@ -317,11 +317,11 @@ declare class Transfer extends Service {
    */
   listProfiles(callback?: (err: AWSError, data: Transfer.Types.ListProfilesResponse) => void): Request<Transfer.Types.ListProfilesResponse, AWSError>;
   /**
-   * Lists the security policies that are attached to your file transfer protocol-enabled servers.
+   * Lists the security policies that are attached to your servers and SFTP connectors. For more information about security policies, see Working with security policies for servers or Working with security policies for SFTP connectors.
    */
   listSecurityPolicies(params: Transfer.Types.ListSecurityPoliciesRequest, callback?: (err: AWSError, data: Transfer.Types.ListSecurityPoliciesResponse) => void): Request<Transfer.Types.ListSecurityPoliciesResponse, AWSError>;
   /**
-   * Lists the security policies that are attached to your file transfer protocol-enabled servers.
+   * Lists the security policies that are attached to your servers and SFTP connectors. For more information about security policies, see Working with security policies for servers or Working with security policies for SFTP connectors.
    */
   listSecurityPolicies(callback?: (err: AWSError, data: Transfer.Types.ListSecurityPoliciesResponse) => void): Request<Transfer.Types.ListSecurityPoliciesResponse, AWSError>;
   /**
@@ -365,11 +365,19 @@ declare class Transfer extends Service {
    */
   sendWorkflowStepState(callback?: (err: AWSError, data: Transfer.Types.SendWorkflowStepStateResponse) => void): Request<Transfer.Types.SendWorkflowStepStateResponse, AWSError>;
   /**
-   * Begins a file transfer between local Amazon Web Services storage and a remote AS2 or SFTP server.   For an AS2 connector, you specify the ConnectorId and one or more SendFilePaths to identify the files you want to transfer.   For an SFTP connector, the file transfer can be either outbound or inbound. In both cases, you specify the ConnectorId. Depending on the direction of the transfer, you also specify the following items:   If you are transferring file from a partner's SFTP server to Amazon Web Services storage, you specify one or more RetreiveFilePaths to identify the files you want to transfer, and a LocalDirectoryPath to specify the destination folder.   If you are transferring file to a partner's SFTP server from Amazon Web Services storage, you specify one or more SendFilePaths to identify the files you want to transfer, and a RemoteDirectoryPath to specify the destination folder.    
+   * Retrieves a list of the contents of a directory from a remote SFTP server. You specify the connector ID, the output path, and the remote directory path. You can also specify the optional MaxItems value to control the maximum number of items that are listed from the remote directory. This API returns a list of all files and directories in the remote directory (up to the maximum value), but does not return files or folders in sub-directories. That is, it only returns a list of files and directories one-level deep. After you receive the listing file, you can provide the files that you want to transfer to the RetrieveFilePaths parameter of the StartFileTransfer API call. The naming convention for the output file is  connector-ID-listing-ID.json. The output file contains the following information:    filePath: the complete path of a remote file, relative to the directory of the listing request for your SFTP connector on the remote server.    modifiedTimestamp: the last time the file was modified, in UTC time format. This field is optional. If the remote file attributes don't contain a timestamp, it is omitted from the file listing.    size: the size of the file, in bytes. This field is optional. If the remote file attributes don't contain a file size, it is omitted from the file listing.    path: the complete path of a remote directory, relative to the directory of the listing request for your SFTP connector on the remote server.    truncated: a flag indicating whether the list output contains all of the items contained in the remote directory or not. If your Truncated output value is true, you can increase the value provided in the optional max-items input attribute to be able to list more items (up to the maximum allowed list size of 10,000 items).  
+   */
+  startDirectoryListing(params: Transfer.Types.StartDirectoryListingRequest, callback?: (err: AWSError, data: Transfer.Types.StartDirectoryListingResponse) => void): Request<Transfer.Types.StartDirectoryListingResponse, AWSError>;
+  /**
+   * Retrieves a list of the contents of a directory from a remote SFTP server. You specify the connector ID, the output path, and the remote directory path. You can also specify the optional MaxItems value to control the maximum number of items that are listed from the remote directory. This API returns a list of all files and directories in the remote directory (up to the maximum value), but does not return files or folders in sub-directories. That is, it only returns a list of files and directories one-level deep. After you receive the listing file, you can provide the files that you want to transfer to the RetrieveFilePaths parameter of the StartFileTransfer API call. The naming convention for the output file is  connector-ID-listing-ID.json. The output file contains the following information:    filePath: the complete path of a remote file, relative to the directory of the listing request for your SFTP connector on the remote server.    modifiedTimestamp: the last time the file was modified, in UTC time format. This field is optional. If the remote file attributes don't contain a timestamp, it is omitted from the file listing.    size: the size of the file, in bytes. This field is optional. If the remote file attributes don't contain a file size, it is omitted from the file listing.    path: the complete path of a remote directory, relative to the directory of the listing request for your SFTP connector on the remote server.    truncated: a flag indicating whether the list output contains all of the items contained in the remote directory or not. If your Truncated output value is true, you can increase the value provided in the optional max-items input attribute to be able to list more items (up to the maximum allowed list size of 10,000 items).  
+   */
+  startDirectoryListing(callback?: (err: AWSError, data: Transfer.Types.StartDirectoryListingResponse) => void): Request<Transfer.Types.StartDirectoryListingResponse, AWSError>;
+  /**
+   * Begins a file transfer between local Amazon Web Services storage and a remote AS2 or SFTP server.   For an AS2 connector, you specify the ConnectorId and one or more SendFilePaths to identify the files you want to transfer.   For an SFTP connector, the file transfer can be either outbound or inbound. In both cases, you specify the ConnectorId. Depending on the direction of the transfer, you also specify the following items:   If you are transferring file from a partner's SFTP server to Amazon Web Services storage, you specify one or more RetrieveFilePaths to identify the files you want to transfer, and a LocalDirectoryPath to specify the destination folder.   If you are transferring file to a partner's SFTP server from Amazon Web Services storage, you specify one or more SendFilePaths to identify the files you want to transfer, and a RemoteDirectoryPath to specify the destination folder.    
    */
   startFileTransfer(params: Transfer.Types.StartFileTransferRequest, callback?: (err: AWSError, data: Transfer.Types.StartFileTransferResponse) => void): Request<Transfer.Types.StartFileTransferResponse, AWSError>;
   /**
-   * Begins a file transfer between local Amazon Web Services storage and a remote AS2 or SFTP server.   For an AS2 connector, you specify the ConnectorId and one or more SendFilePaths to identify the files you want to transfer.   For an SFTP connector, the file transfer can be either outbound or inbound. In both cases, you specify the ConnectorId. Depending on the direction of the transfer, you also specify the following items:   If you are transferring file from a partner's SFTP server to Amazon Web Services storage, you specify one or more RetreiveFilePaths to identify the files you want to transfer, and a LocalDirectoryPath to specify the destination folder.   If you are transferring file to a partner's SFTP server from Amazon Web Services storage, you specify one or more SendFilePaths to identify the files you want to transfer, and a RemoteDirectoryPath to specify the destination folder.    
+   * Begins a file transfer between local Amazon Web Services storage and a remote AS2 or SFTP server.   For an AS2 connector, you specify the ConnectorId and one or more SendFilePaths to identify the files you want to transfer.   For an SFTP connector, the file transfer can be either outbound or inbound. In both cases, you specify the ConnectorId. Depending on the direction of the transfer, you also specify the following items:   If you are transferring file from a partner's SFTP server to Amazon Web Services storage, you specify one or more RetrieveFilePaths to identify the files you want to transfer, and a LocalDirectoryPath to specify the destination folder.   If you are transferring file to a partner's SFTP server from Amazon Web Services storage, you specify one or more SendFilePaths to identify the files you want to transfer, and a RemoteDirectoryPath to specify the destination folder.    
    */
   startFileTransfer(callback?: (err: AWSError, data: Transfer.Types.StartFileTransferResponse) => void): Request<Transfer.Types.StartFileTransferResponse, AWSError>;
   /**
@@ -397,11 +405,11 @@ declare class Transfer extends Service {
    */
   tagResource(callback?: (err: AWSError, data: {}) => void): Request<{}, AWSError>;
   /**
-   * Tests whether your SFTP connector is set up successfully. We highly recommend that you call this operation to test your ability to transfer files between a Transfer Family server and a trading partner's SFTP server.
+   * Tests whether your SFTP connector is set up successfully. We highly recommend that you call this operation to test your ability to transfer files between local Amazon Web Services storage and a trading partner's SFTP server.
    */
   testConnection(params: Transfer.Types.TestConnectionRequest, callback?: (err: AWSError, data: Transfer.Types.TestConnectionResponse) => void): Request<Transfer.Types.TestConnectionResponse, AWSError>;
   /**
-   * Tests whether your SFTP connector is set up successfully. We highly recommend that you call this operation to test your ability to transfer files between a Transfer Family server and a trading partner's SFTP server.
+   * Tests whether your SFTP connector is set up successfully. We highly recommend that you call this operation to test your ability to transfer files between local Amazon Web Services storage and a trading partner's SFTP server.
    */
   testConnection(callback?: (err: AWSError, data: Transfer.Types.TestConnectionResponse) => void): Request<Transfer.Types.TestConnectionResponse, AWSError>;
   /**
@@ -477,11 +485,11 @@ declare class Transfer extends Service {
    */
   updateServer(callback?: (err: AWSError, data: Transfer.Types.UpdateServerResponse) => void): Request<Transfer.Types.UpdateServerResponse, AWSError>;
   /**
-   * Assigns new properties to a user. Parameters you pass modify any or all of the following: the home directory, role, and policy for the UserName and ServerId you specify. The response returns the ServerId and the UserName for the updated user.
+   * Assigns new properties to a user. Parameters you pass modify any or all of the following: the home directory, role, and policy for the UserName and ServerId you specify. The response returns the ServerId and the UserName for the updated user. In the console, you can select Restricted when you create or update a user. This ensures that the user can't access anything outside of their home directory. The programmatic way to configure this behavior is to update the user. Set their HomeDirectoryType to LOGICAL, and specify HomeDirectoryMappings with Entry as root (/) and Target as their home directory. For example, if the user's home directory is /test/admin-user, the following command updates the user so that their configuration in the console shows the Restricted flag as selected.   aws transfer update-user --server-id &lt;server-id&gt; --user-name admin-user --home-directory-type LOGICAL --home-directory-mappings "[{\"Entry\":\"/\", \"Target\":\"/test/admin-user\"}]" 
    */
   updateUser(params: Transfer.Types.UpdateUserRequest, callback?: (err: AWSError, data: Transfer.Types.UpdateUserResponse) => void): Request<Transfer.Types.UpdateUserResponse, AWSError>;
   /**
-   * Assigns new properties to a user. Parameters you pass modify any or all of the following: the home directory, role, and policy for the UserName and ServerId you specify. The response returns the ServerId and the UserName for the updated user.
+   * Assigns new properties to a user. Parameters you pass modify any or all of the following: the home directory, role, and policy for the UserName and ServerId you specify. The response returns the ServerId and the UserName for the updated user. In the console, you can select Restricted when you create or update a user. This ensures that the user can't access anything outside of their home directory. The programmatic way to configure this behavior is to update the user. Set their HomeDirectoryType to LOGICAL, and specify HomeDirectoryMappings with Entry as root (/) and Target as their home directory. For example, if the user's home directory is /test/admin-user, the following command updates the user so that their configuration in the console shows the Restricted flag as selected.   aws transfer update-user --server-id &lt;server-id&gt; --user-name admin-user --home-directory-type LOGICAL --home-directory-mappings "[{\"Entry\":\"/\", \"Target\":\"/test/admin-user\"}]" 
    */
   updateUser(callback?: (err: AWSError, data: Transfer.Types.UpdateUserResponse) => void): Request<Transfer.Types.UpdateUserResponse, AWSError>;
   /**
@@ -525,7 +533,7 @@ declare namespace Transfer {
      */
     Compression?: CompressionEnum;
     /**
-     * The algorithm that is used to encrypt the file.  You can only specify NONE if the URL for your connector uses HTTPS. This ensures that no traffic is sent in clear text. 
+     * The algorithm that is used to encrypt the file. Note the following:   Do not use the DES_EDE3_CBC algorithm unless you must support a legacy client that requires it, as it is a weak encryption algorithm.   You can only specify NONE if the URL for your connector uses HTTPS. Using HTTPS ensures that no traffic is sent in clear text.  
      */
     EncryptionAlgorithm?: EncryptionAlg;
     /**
@@ -559,9 +567,10 @@ declare namespace Transfer {
   export type CertificateIds = CertificateId[];
   export type CertificateStatusType = "ACTIVE"|"PENDING_ROTATION"|"INACTIVE"|string;
   export type CertificateType = "CERTIFICATE"|"CERTIFICATE_WITH_PRIVATE_KEY"|string;
-  export type CertificateUsageType = "SIGNING"|"ENCRYPTION"|string;
+  export type CertificateUsageType = "SIGNING"|"ENCRYPTION"|"TLS"|string;
   export type CompressionEnum = "ZLIB"|"DISABLED"|string;
   export type ConnectorId = string;
+  export type ConnectorSecurityPolicyName = string;
   export interface CopyStepDetails {
     /**
      * The name of the step, used as an identifier.
@@ -582,11 +591,11 @@ declare namespace Transfer {
   }
   export interface CreateAccessRequest {
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -686,6 +695,10 @@ declare namespace Transfer {
      * A structure that contains the parameters for an SFTP connector object.
      */
     SftpConfig?: SftpConnectorConfig;
+    /**
+     * Specifies the name of the security policy for the connector.
+     */
+    SecurityPolicyName?: ConnectorSecurityPolicyName;
   }
   export interface CreateConnectorResponse {
     /**
@@ -749,7 +762,7 @@ declare namespace Transfer {
     /**
      * The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role that allows a server to turn on Amazon CloudWatch logging for Amazon S3 or Amazon EFSevents. When set, you can view user activity in your CloudWatch logs.
      */
-    LoggingRole?: Role;
+    LoggingRole?: NullableRole;
     /**
      * Specifies a string to display when users connect to a server. This string is displayed after the user authenticates.  The SFTP protocol does not support post-authentication display banners. 
      */
@@ -767,7 +780,7 @@ declare namespace Transfer {
      */
     ProtocolDetails?: ProtocolDetails;
     /**
-     * Specifies the name of the security policy that is attached to the server.
+     * Specifies the name of the security policy for the server.
      */
     SecurityPolicyName?: SecurityPolicyName;
     /**
@@ -782,6 +795,10 @@ declare namespace Transfer {
      * Specifies the log groups to which your server logs are sent. To specify a log group, you must provide the ARN for an existing log group. In this case, the format of the log group is as follows:  arn:aws:logs:region-name:amazon-account-id:log-group:log-group-name:*  For example, arn:aws:logs:us-east-1:111122223333:log-group:mytestgroup:*  If you have previously specified a log group for a server, you can clear it, and in effect turn off structured logging, by providing an empty value for this parameter in an update-server call. For example:  update-server --server-id s-1234567890abcdef0 --structured-log-destinations 
      */
     StructuredLogDestinations?: StructuredLogDestinations;
+    /**
+     * Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. By default, home directory mappings have a TYPE of DIRECTORY. If you enable this option, you would then need to explicitly set the HomeDirectoryMapEntry Type to FILE if you want a mapping to have a file target.
+     */
+    S3StorageOptions?: S3StorageOptions;
   }
   export interface CreateServerResponse {
     /**
@@ -791,11 +808,11 @@ declare namespace Transfer {
   }
   export interface CreateUserRequest {
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -1113,7 +1130,7 @@ declare namespace Transfer {
   }
   export interface DescribeSecurityPolicyRequest {
     /**
-     * Specifies the name of the security policy that is attached to the server.
+     * Specify the text name of the security policy for which you want the details.
      */
     SecurityPolicyName: SecurityPolicyName;
   }
@@ -1169,7 +1186,7 @@ declare namespace Transfer {
   }
   export interface DescribedAccess {
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
@@ -1177,7 +1194,7 @@ declare namespace Transfer {
      */
     HomeDirectoryMappings?: HomeDirectoryMappings;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -1246,7 +1263,7 @@ declare namespace Transfer {
      */
     CertificateId?: CertificateId;
     /**
-     * Specifies whether this certificate is used for signing or encryption.
+     * Specifies how this certificate is used. It can be used in the following ways:    SIGNING: For signing AS2 messages    ENCRYPTION: For encrypting AS2 messages    TLS: For securing AS2 communications sent over HTTPS  
      */
     Usage?: CertificateUsageType;
     /**
@@ -1327,6 +1344,14 @@ declare namespace Transfer {
      * A structure that contains the parameters for an SFTP connector object.
      */
     SftpConfig?: SftpConnectorConfig;
+    /**
+     * The list of egress IP addresses of this connector. These IP addresses are assigned automatically when you create the connector.
+     */
+    ServiceManagedEgressIpAddresses?: ServiceManagedEgressIpAddresses;
+    /**
+     * The text name of the security policy for the specified connector.
+     */
+    SecurityPolicyName?: ConnectorSecurityPolicyName;
   }
   export interface DescribedExecution {
     /**
@@ -1417,29 +1442,41 @@ declare namespace Transfer {
   }
   export interface DescribedSecurityPolicy {
     /**
-     * Specifies whether this policy enables Federal Information Processing Standards (FIPS).
+     * Specifies whether this policy enables Federal Information Processing Standards (FIPS). This parameter applies to both server and connector security policies.
      */
     Fips?: Fips;
     /**
-     * Specifies the name of the security policy that is attached to the server.
+     * The text name of the specified security policy.
      */
     SecurityPolicyName: SecurityPolicyName;
     /**
-     * Specifies the enabled Secure Shell (SSH) cipher encryption algorithms in the security policy that is attached to the server.
+     * Lists the enabled Secure Shell (SSH) cipher encryption algorithms in the security policy that is attached to the server or connector. This parameter applies to both server and connector security policies.
      */
     SshCiphers?: SecurityPolicyOptions;
     /**
-     * Specifies the enabled SSH key exchange (KEX) encryption algorithms in the security policy that is attached to the server.
+     * Lists the enabled SSH key exchange (KEX) encryption algorithms in the security policy that is attached to the server or connector. This parameter applies to both server and connector security policies.
      */
     SshKexs?: SecurityPolicyOptions;
     /**
-     * Specifies the enabled SSH message authentication code (MAC) encryption algorithms in the security policy that is attached to the server.
+     * Lists the enabled SSH message authentication code (MAC) encryption algorithms in the security policy that is attached to the server or connector. This parameter applies to both server and connector security policies.
      */
     SshMacs?: SecurityPolicyOptions;
     /**
-     * Specifies the enabled Transport Layer Security (TLS) cipher encryption algorithms in the security policy that is attached to the server.
+     * Lists the enabled Transport Layer Security (TLS) cipher encryption algorithms in the security policy that is attached to the server.  This parameter only applies to security policies for servers. 
      */
     TlsCiphers?: SecurityPolicyOptions;
+    /**
+     * Lists the host key algorithms for the security policy.  This parameter only applies to security policies for connectors. 
+     */
+    SshHostKeyAlgorithms?: SecurityPolicyOptions;
+    /**
+     * The resource type to which the security policy applies, either server or connector.
+     */
+    Type?: SecurityPolicyResourceType;
+    /**
+     * Lists the file transfer protocols that the security policy applies to.
+     */
+    Protocols?: SecurityPolicyProtocols;
   }
   export interface DescribedServer {
     /**
@@ -1455,7 +1492,7 @@ declare namespace Transfer {
      */
     ProtocolDetails?: ProtocolDetails;
     /**
-     * Specifies the domain of the storage system that is used for file transfers.
+     * Specifies the domain of the storage system that is used for file transfers. There are two domains available: Amazon Simple Storage Service (Amazon S3) and Amazon Elastic File System (Amazon EFS). The default value is S3.
      */
     Domain?: Domain;
     /**
@@ -1481,7 +1518,7 @@ declare namespace Transfer {
     /**
      * The Amazon Resource Name (ARN) of the Identity and Access Management (IAM) role that allows a server to turn on Amazon CloudWatch logging for Amazon S3 or Amazon EFSevents. When set, you can view user activity in your CloudWatch logs.
      */
-    LoggingRole?: Role;
+    LoggingRole?: NullableRole;
     /**
      * Specifies a string to display when users connect to a server. This string is displayed after the user authenticates.  The SFTP protocol does not support post-authentication display banners. 
      */
@@ -1495,7 +1532,7 @@ declare namespace Transfer {
      */
     Protocols?: Protocols;
     /**
-     * Specifies the name of the security policy that is attached to the server.
+     * Specifies the name of the security policy for the server.
      */
     SecurityPolicyName?: SecurityPolicyName;
     /**
@@ -1522,6 +1559,14 @@ declare namespace Transfer {
      * Specifies the log groups to which your server logs are sent. To specify a log group, you must provide the ARN for an existing log group. In this case, the format of the log group is as follows:  arn:aws:logs:region-name:amazon-account-id:log-group:log-group-name:*  For example, arn:aws:logs:us-east-1:111122223333:log-group:mytestgroup:*  If you have previously specified a log group for a server, you can clear it, and in effect turn off structured logging, by providing an empty value for this parameter in an update-server call. For example:  update-server --server-id s-1234567890abcdef0 --structured-log-destinations 
      */
     StructuredLogDestinations?: StructuredLogDestinations;
+    /**
+     * Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. By default, home directory mappings have a TYPE of DIRECTORY. If you enable this option, you would then need to explicitly set the HomeDirectoryMapEntry Type to FILE if you want a mapping to have a file target.
+     */
+    S3StorageOptions?: S3StorageOptions;
+    /**
+     * The list of egress IP addresses of this server. These IP addresses are only relevant for servers that use the AS2 protocol. They are used for sending asynchronous MDNs. These IP addresses are assigned automatically when you create an AS2 server. Additionally, if you update an existing server and add the AS2 protocol, static IP addresses are assigned as well.
+     */
+    As2ServiceManagedEgressIpAddresses?: ServiceManagedEgressIpAddresses;
   }
   export interface DescribedUser {
     /**
@@ -1529,7 +1574,7 @@ declare namespace Transfer {
      */
     Arn: Arn;
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
@@ -1537,7 +1582,7 @@ declare namespace Transfer {
      */
     HomeDirectoryMappings?: HomeDirectoryMappings;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -1593,6 +1638,7 @@ declare namespace Transfer {
   }
   export type Description = string;
   export type DirectoryId = string;
+  export type DirectoryListingOptimization = "ENABLED"|"DISABLED"|string;
   export type Domain = "S3"|"EFS"|string;
   export interface EfsFileLocation {
     /**
@@ -1606,11 +1652,11 @@ declare namespace Transfer {
   }
   export type EfsFileSystemId = string;
   export type EfsPath = string;
-  export type EncryptionAlg = "AES128_CBC"|"AES192_CBC"|"AES256_CBC"|"NONE"|string;
+  export type EncryptionAlg = "AES128_CBC"|"AES192_CBC"|"AES256_CBC"|"DES_EDE3_CBC"|"NONE"|string;
   export type EncryptionType = "PGP"|string;
   export interface EndpointDetails {
     /**
-     * A list of address allocation IDs that are required to attach an Elastic IP address to your server's endpoint.  This property can only be set when EndpointType is set to VPC and it is only valid in the UpdateServer API. 
+     * A list of address allocation IDs that are required to attach an Elastic IP address to your server's endpoint. An address allocation ID corresponds to the allocation ID of an Elastic IP address. This value can be retrieved from the allocationId field from the Amazon EC2 Address data type. One way to retrieve this value is by calling the EC2 DescribeAddresses API. This parameter is optional. Set this parameter if you want to make your VPC endpoint public-facing. For details, see Create an internet-facing endpoint for your server.  This property can only be set as follows:    EndpointType must be set to VPC    The Transfer Family server must be offline.   You cannot set this parameter for Transfer Family servers that use the FTP protocol.   The server must already have SubnetIds populated (SubnetIds and AddressAllocationIds cannot be updated simultaneously).    AddressAllocationIds can't contain duplicates, and must be equal in length to SubnetIds. For example, if you have three subnet IDs, you must also specify three address allocation IDs.   Call the UpdateServer API to set or change this parameter.   
      */
     AddressAllocationIds?: AddressAllocationIds;
     /**
@@ -1692,9 +1738,13 @@ declare namespace Transfer {
      */
     Entry: MapEntry;
     /**
-     * Represents the map target that is used in a HomeDirectorymapEntry.
+     * Represents the map target that is used in a HomeDirectoryMapEntry.
      */
     Target: MapTarget;
+    /**
+     * Specifies the type of mapping. Set the type to FILE if you want the mapping to point to a file, or DIRECTORY for the directory to point to a directory.  By default, home directory mappings have a Type of DIRECTORY when you create a Transfer Family server. You would need to explicitly set Type to FILE if you want a mapping to have a file target. 
+     */
+    Type?: MapType;
   }
   export type HomeDirectoryMappings = HomeDirectoryMapEntry[];
   export type HomeDirectoryType = "PATH"|"LOGICAL"|string;
@@ -1713,7 +1763,7 @@ declare namespace Transfer {
      */
     InvocationRole?: Role;
     /**
-     * The identifier of the Directory Service directory that you want to stop sharing.
+     * The identifier of the Directory Service directory that you want to use as your identity provider.
      */
     DirectoryId?: DirectoryId;
     /**
@@ -1728,7 +1778,7 @@ declare namespace Transfer {
   export type IdentityProviderType = "SERVICE_MANAGED"|"API_GATEWAY"|"AWS_DIRECTORY_SERVICE"|"AWS_LAMBDA"|string;
   export interface ImportCertificateRequest {
     /**
-     * Specifies whether this certificate is used for signing or encryption.
+     * Specifies how this certificate is used. It can be used in the following ways:    SIGNING: For signing AS2 messages    ENCRYPTION: For encrypting AS2 messages    TLS: For securing AS2 communications sent over HTTPS  
      */
     Usage: CertificateUsageType;
     /**
@@ -2078,7 +2128,7 @@ declare namespace Transfer {
      */
     MaxResults?: MaxResults;
     /**
-     * When you can get additional results from the ListUsers call, a NextToken parameter is returned in the output. You can then pass in a subsequent command to the NextToken parameter to continue listing additional users.
+     * If there are additional results from the ListUsers call, a NextToken parameter is returned in the output. You can then pass the NextToken to a subsequent ListUsers command, to continue listing additional users.
      */
     NextToken?: NextToken;
     /**
@@ -2122,11 +2172,11 @@ declare namespace Transfer {
   }
   export interface ListedAccess {
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -2180,7 +2230,7 @@ declare namespace Transfer {
      */
     CertificateId?: CertificateId;
     /**
-     * Specifies whether this certificate is used for signing or encryption.
+     * Specifies how this certificate is used. It can be used in the following ways:    SIGNING: For signing AS2 messages    ENCRYPTION: For encrypting AS2 messages    TLS: For securing AS2 communications sent over HTTPS  
      */
     Usage?: CertificateUsageType;
     /**
@@ -2291,7 +2341,7 @@ declare namespace Transfer {
      */
     Arn: Arn;
     /**
-     * Specifies the domain of the storage system that is used for file transfers.
+     * Specifies the domain of the storage system that is used for file transfers. There are two domains available: Amazon Simple Storage Service (Amazon S3) and Amazon Elastic File System (Amazon EFS). The default value is S3.
      */
     Domain?: Domain;
     /**
@@ -2326,11 +2376,11 @@ declare namespace Transfer {
      */
     Arn: Arn;
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -2362,6 +2412,7 @@ declare namespace Transfer {
     Arn?: Arn;
   }
   export type ListedWorkflows = ListedWorkflow[];
+  export type ListingId = string;
   export type LogGroupName = string;
   export interface LoggingConfiguration {
     /**
@@ -2375,6 +2426,8 @@ declare namespace Transfer {
   }
   export type MapEntry = string;
   export type MapTarget = string;
+  export type MapType = "FILE"|"DIRECTORY"|string;
+  export type MaxItems = number;
   export type MaxResults = number;
   export type MdnResponse = "SYNC"|"NONE"|string;
   export type MdnSigningAlg = "SHA256"|"SHA384"|"SHA512"|"SHA1"|"NONE"|"DEFAULT"|string;
@@ -2384,6 +2437,7 @@ declare namespace Transfer {
   export type NullableRole = string;
   export type OnPartialUploadWorkflowDetails = WorkflowDetail[];
   export type OnUploadWorkflowDetails = WorkflowDetail[];
+  export type OutputFileName = string;
   export type OverwriteExisting = "TRUE"|"FALSE"|string;
   export type PassiveIp = string;
   export type Policy = string;
@@ -2460,6 +2514,12 @@ declare namespace Transfer {
     Key?: S3Key;
   }
   export type S3Key = string;
+  export interface S3StorageOptions {
+    /**
+     * Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. By default, home directory mappings have a TYPE of DIRECTORY. If you enable this option, you would then need to explicitly set the HomeDirectoryMapEntry Type to FILE if you want a mapping to have a file target.
+     */
+    DirectoryListingOptimization?: DirectoryListingOptimization;
+  }
   export interface S3Tag {
     /**
      * The name assigned to the tag that you create.
@@ -2482,6 +2542,9 @@ declare namespace Transfer {
   export type SecurityPolicyNames = SecurityPolicyName[];
   export type SecurityPolicyOption = string;
   export type SecurityPolicyOptions = SecurityPolicyOption[];
+  export type SecurityPolicyProtocol = "SFTP"|"FTPS"|string;
+  export type SecurityPolicyProtocols = SecurityPolicyProtocol[];
+  export type SecurityPolicyResourceType = "SERVER"|"CONNECTOR"|string;
   export interface SendWorkflowStepStateRequest {
     /**
      * A unique identifier for the workflow.
@@ -2503,6 +2566,8 @@ declare namespace Transfer {
   export interface SendWorkflowStepStateResponse {
   }
   export type ServerId = string;
+  export type ServiceManagedEgressIpAddress = string;
+  export type ServiceManagedEgressIpAddresses = ServiceManagedEgressIpAddress[];
   export interface ServiceMetadata {
     /**
      * The Server ID (ServerId), Session ID (SessionId) and user (UserName) make up the UserDetails.
@@ -2514,11 +2579,11 @@ declare namespace Transfer {
   export type SftpAuthenticationMethods = "PASSWORD"|"PUBLIC_KEY"|"PUBLIC_KEY_OR_PASSWORD"|"PUBLIC_KEY_AND_PASSWORD"|string;
   export interface SftpConnectorConfig {
     /**
-     * The identifier for the secret (in Amazon Web Services Secrets Manager) that contains the SFTP user's private key, password, or both. The identifier can be either the Amazon Resource Name (ARN) or the name of the secret.
+     * The identifier for the secret (in Amazon Web Services Secrets Manager) that contains the SFTP user's private key, password, or both. The identifier must be the Amazon Resource Name (ARN) of the secret.
      */
     UserSecretId?: SecretId;
     /**
-     * The public portion of the host key, or keys, that are used to authenticate the user to the external server to which you are connecting. You can use the ssh-keyscan command against the SFTP server to retrieve the necessary key. The three standard SSH public key format elements are &lt;key type&gt;, &lt;body base64&gt;, and an optional &lt;comment&gt;, with spaces between each element. For the trusted host key, Transfer Family accepts RSA and ECDSA keys.   For RSA keys, the key type is ssh-rsa.   For ECDSA keys, the key type is either ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, or ecdsa-sha2-nistp521, depending on the size of the key you generated.  
+     * The public portion of the host key, or keys, that are used to identify the external server to which you are connecting. You can use the ssh-keyscan command against the SFTP server to retrieve the necessary key. The three standard SSH public key format elements are &lt;key type&gt;, &lt;body base64&gt;, and an optional &lt;comment&gt;, with spaces between each element. Specify only the &lt;key type&gt; and &lt;body base64&gt;: do not enter the &lt;comment&gt; portion of the key. For the trusted host key, Transfer Family accepts RSA and ECDSA keys.   For RSA keys, the &lt;key type&gt; string is ssh-rsa.   For ECDSA keys, the &lt;key type&gt; string is either ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, or ecdsa-sha2-nistp521, depending on the size of the key you generated.   Run this command to retrieve the SFTP server host key, where your SFTP server name is ftp.host.com.  ssh-keyscan ftp.host.com  This prints the public host key to standard output.  ftp.host.com ssh-rsa AAAAB3Nza...&lt;long-string-for-public-key  Copy and paste this string into the TrustedHostKeys field for the create-connector command or into the Trusted host keys field in the console.
      */
     TrustedHostKeys?: SftpConnectorTrustedHostKeyList;
   }
@@ -2545,6 +2610,34 @@ declare namespace Transfer {
   export type SshPublicKeyCount = number;
   export type SshPublicKeyId = string;
   export type SshPublicKeys = SshPublicKey[];
+  export interface StartDirectoryListingRequest {
+    /**
+     * The unique identifier for the connector.
+     */
+    ConnectorId: ConnectorId;
+    /**
+     * Specifies the directory on the remote SFTP server for which you want to list its contents.
+     */
+    RemoteDirectoryPath: FilePath;
+    /**
+     * An optional parameter where you can specify the maximum number of file/directory names to retrieve. The default value is 1,000.
+     */
+    MaxItems?: MaxItems;
+    /**
+     * Specifies the path (bucket and prefix) in Amazon S3 storage to store the results of the directory listing.
+     */
+    OutputDirectoryPath: FilePath;
+  }
+  export interface StartDirectoryListingResponse {
+    /**
+     * Returns a unique identifier for the directory listing call.
+     */
+    ListingId: ListingId;
+    /**
+     * Returns the file name where the results are stored. This is a combination of the connector ID and the listing ID: &lt;connector-id&gt;-&lt;listing-id&gt;.json.
+     */
+    OutputFileName: OutputFileName;
+  }
   export interface StartFileTransferRequest {
     /**
      * The unique identifier for the connector.
@@ -2646,7 +2739,7 @@ declare namespace Transfer {
      */
     Status?: Status;
     /**
-     * Returns Connection succeeded if the test is successful. Or, returns a descriptive error message if the test fails. The following list provides the details for some error messages and troubleshooting steps for each.    Unable to access secrets manager: Verify that your secret name aligns with the one in Transfer Role permissions.    Unknown Host/Connection failed: Verify the server URL in the connector configuration , and verify that the login credentials work successfully outside of the connector.    Private key not found: Verify that the secret exists and is formatted correctly.    Invalid trusted host keys: Verify that the trusted host key in the connector configuration matches the ssh-keyscan output.  
+     * Returns Connection succeeded if the test is successful. Or, returns a descriptive error message if the test fails. The following list provides troubleshooting details, depending on the error message that you receive.   Verify that your secret name aligns with the one in Transfer Role permissions.   Verify the server URL in the connector configuration , and verify that the login credentials work successfully outside of the connector.   Verify that the secret exists and is formatted correctly.   Verify that the trusted host key in the connector configuration matches the ssh-keyscan output.  
      */
     StatusMessage?: Message;
   }
@@ -2704,11 +2797,11 @@ declare namespace Transfer {
   }
   export interface UpdateAccessRequest {
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
@@ -2832,6 +2925,10 @@ declare namespace Transfer {
      * A structure that contains the parameters for an SFTP connector object.
      */
     SftpConfig?: SftpConnectorConfig;
+    /**
+     * Specifies the name of the security policy for the connector.
+     */
+    SecurityPolicyName?: ConnectorSecurityPolicyName;
   }
   export interface UpdateConnectorResponse {
     /**
@@ -2921,7 +3018,7 @@ declare namespace Transfer {
      */
     Protocols?: Protocols;
     /**
-     * Specifies the name of the security policy that is attached to the server.
+     * Specifies the name of the security policy for the server.
      */
     SecurityPolicyName?: SecurityPolicyName;
     /**
@@ -2936,6 +3033,10 @@ declare namespace Transfer {
      * Specifies the log groups to which your server logs are sent. To specify a log group, you must provide the ARN for an existing log group. In this case, the format of the log group is as follows:  arn:aws:logs:region-name:amazon-account-id:log-group:log-group-name:*  For example, arn:aws:logs:us-east-1:111122223333:log-group:mytestgroup:*  If you have previously specified a log group for a server, you can clear it, and in effect turn off structured logging, by providing an empty value for this parameter in an update-server call. For example:  update-server --server-id s-1234567890abcdef0 --structured-log-destinations 
      */
     StructuredLogDestinations?: StructuredLogDestinations;
+    /**
+     * Specifies whether or not performance for your Amazon S3 directories is optimized. This is disabled by default. By default, home directory mappings have a TYPE of DIRECTORY. If you enable this option, you would then need to explicitly set the HomeDirectoryMapEntry Type to FILE if you want a mapping to have a file target.
+     */
+    S3StorageOptions?: S3StorageOptions;
   }
   export interface UpdateServerResponse {
     /**
@@ -2945,11 +3046,11 @@ declare namespace Transfer {
   }
   export interface UpdateUserRequest {
     /**
-     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.
+     * The landing directory (folder) for a user when they log in to the server using the client. A HomeDirectory example is /bucket_name/home/mydirectory.  The HomeDirectory parameter is only used if HomeDirectoryType is set to PATH. 
      */
     HomeDirectory?: HomeDirectory;
     /**
-     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or EFS paths as is in their file transfer protocol clients. If you set it LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.
+     * The type of landing directory (folder) that you want your users' home directory to be when they log in to the server. If you set it to PATH, the user will see the absolute Amazon S3 bucket or Amazon EFS path as is in their file transfer protocol clients. If you set it to LOGICAL, you need to provide mappings in the HomeDirectoryMappings for how you want to make Amazon S3 or Amazon EFS paths visible to your users.  If HomeDirectoryType is LOGICAL, you must provide mappings, using the HomeDirectoryMappings parameter. If, on the other hand, HomeDirectoryType is PATH, you provide an absolute path using the HomeDirectory parameter. You cannot have both HomeDirectory and HomeDirectoryMappings in your template. 
      */
     HomeDirectoryType?: HomeDirectoryType;
     /**
